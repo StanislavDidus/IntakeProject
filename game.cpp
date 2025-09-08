@@ -4,30 +4,33 @@
 
 namespace Tmpl8
 {
-	// -----------------------------------------------------------
-	// Initialize the application
-	// -----------------------------------------------------------
-	void Game::Init()
-	{
-	}
-	
-	// -----------------------------------------------------------
-	// Close down application
-	// -----------------------------------------------------------
-	void Game::Shutdown()
-	{
-	}
+    // -----------------------------------------------------------
+    // Initialize the application
+    // -----------------------------------------------------------
+    void Game::Init()
+    {
+    }
 
-	static Sprite rotatingGun(new Surface("assets/aagun.tga"), 36);
-	static int frame = 0;
+    // -----------------------------------------------------------
+    // Close down application
+    // -----------------------------------------------------------
+    void Game::Shutdown()
+    {
+    }
 
-	// -----------------------------------------------------------
-	// Main application tick function
-	// -----------------------------------------------------------
-	void Game::Tick(float deltaTime)
-	{
-		screen->Clear(0);
+    static Sprite rotatingGun(new Surface("assets/aagun.tga"), 36);
+    static int frame = 0;
 
+    // -----------------------------------------------------------
+    // Main application tick function
+    // -----------------------------------------------------------
+    void Game::Tick(float deltaTime)
+    {
+        screen->Clear(0);
 
-	}
+        rotatingGun.SetFrame(frame);
+        rotatingGun.Draw(screen, 10, 10);
+        frame = (frame + 1) % 36;
+
+    }
 };
