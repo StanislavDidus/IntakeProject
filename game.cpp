@@ -18,8 +18,10 @@ namespace Tmpl8
 	{
 	}
 
-	static Sprite rotatingGun(new Surface("assets/aagun.tga"), 36);
+	static Sprite npc(new Surface("assets/npc.png"), 1);
 	static int frame = 0;
+
+	float angle = 0.f;
 
 	// -----------------------------------------------------------
 	// Main application tick function
@@ -28,6 +30,9 @@ namespace Tmpl8
 	{
 		screen->Clear(0);
 
+		npc.DrawScaledRotated(376, 220, 48, 72, angle, screen);
 
+		angle += 1.f;
+		
 	}
 };

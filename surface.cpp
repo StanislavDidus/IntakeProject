@@ -7,6 +7,9 @@
 #include <cstring>
 #include "FreeImage.h"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 namespace Tmpl8 {
 
 void NotifyUser( char* s );
@@ -432,6 +435,35 @@ void Sprite::DrawScaled( int a_X, int a_Y, int a_Width, int a_Height, Surface* a
 		int v = (int)((float)y * ((float)m_Height / (float)a_Height));
 		Pixel color = GetBuffer()[u + v * m_Pitch];
 		if (color & 0xffffff) a_Target->GetBuffer()[a_X + x + ((a_Y + y) * a_Target->GetPitch())] = color;
+	}
+}
+
+void Sprite::DrawScaledRotated(int px, int py, int width, int height, float angle, Surface* screen)
+{
+	if ((width == 0) || (height == 0)) return;
+	for (int x = 0; x < width; x++) for (int y = 0; y < height; y++)
+	{
+		float radians = angle * 3.1415f / 180;
+		float sin = std::sin(radians);
+		float cos = std::cos(radians);
+
+		int cx = width / 2;
+		int cy = height / 2;
+
+		int sx = x - cx;
+		int sy = y - cy;
+
+		float rx = float(sx) * cos + float(sy) * sin + float(cx);
+		float ry = float(-sx) * sin + float(sy) * cos + float(cy);
+
+		int u = (int)(rx * ((float)m_Width / (float)width));
+		int v = (int)(ry * ((float)m_Height / (float)height));
+
+		if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) continue;
+
+		Pixel color = GetBuffer()[u + v * m_Pitch];
+
+		if (color & 0xffffff) screen->GetBuffer()[(px + x) + ((py + y) * screen->GetPitch())] = color;
 	}
 }
 
