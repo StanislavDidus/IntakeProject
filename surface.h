@@ -41,7 +41,7 @@ public:
 	// constructor / destructor
 	Surface( int a_Width, int a_Height, Pixel* a_Buffer, int a_Pitch );
 	Surface( int a_Width, int a_Height );
-	Surface( char* a_File );
+	Surface( const char* a_File );
 	~Surface();
 	// member data access
 	Pixel* GetBuffer() { return m_Buffer; }
@@ -52,13 +52,14 @@ public:
 	void SetPitch( int a_Pitch ) { m_Pitch = a_Pitch; }
 	// Special operations
 	void InitCharset();
-	void SetChar( int c, char* c1, char* c2, char* c3, char* c4, char* c5 );
-	void Centre( char* a_String, int y1, Pixel color );
-	void Print( char* a_String, int x1, int y1, Pixel color );
+	void SetChar( int c, const char* c1, const char* c2, const char* c3, const char* c4, const char* c5 );
+	void Centre( const char* a_String, int y1, Pixel color );
+	void Print( const char* a_String, int x1, int y1, Pixel color );
 	void Clear( Pixel a_Color );
 	void Line( float x1, float y1, float x2, float y2, Pixel color );
+	template<bool BoundsCheck = true>
 	void Plot( int x, int y, Pixel c );
-	void LoadImage( char* a_File );
+	void LoadImage( const char* a_File );
 	void CopyTo( Surface* a_Dst, int a_X, int a_Y );
 	void BlendCopyTo( Surface* a_Dst, int a_X, int a_Y );
 	void ScaleColor( unsigned int a_Scale );
@@ -102,6 +103,7 @@ public:
 	void Draw( Surface* a_Target, int a_X, int a_Y );
 	void DrawScaled( int a_X, int a_Y, int a_Width, int a_Height, Surface* a_Target );
 	void DrawScaledRotated(int px, int py, int width, int height, float angle, Surface* screen);
+	void DrawScaledRotated(float px, float py, int width, int height, float angle, Surface* screen);
 	void SetFlags( unsigned int a_Flags ) { m_Flags = a_Flags; }
 	void SetFrame( unsigned int a_Index ) { m_CurrentFrame = a_Index; }
 	unsigned int GetFlags() const { return m_Flags; }
