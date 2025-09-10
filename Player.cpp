@@ -6,12 +6,15 @@ void Player::update(float deltaTime)
 	x += velocity.x * deltaTime;
 	y += velocity.y * deltaTime;
 
+	x = fmodf(x + ScreenWidth, ScreenWidth);
+	y = fmodf(y + ScreenHeight, ScreenHeight);
 	
 }
 
 void Player::render(Tmpl8::Surface* screen)
 {
 	sprite->DrawScaledRotated(x, y, width, height, angle ,screen);
+//	sprite->DrawScaledRotated(fmodf( x + ScreenWidth, ScreenWidth ), fmodf(y + ScreenHeight, ScreenHeight), width, height, angle ,screen);
 }
 
 void Player::move(float deltaTime)
