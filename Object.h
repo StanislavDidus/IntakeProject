@@ -11,6 +11,17 @@ public:
 
 	virtual void update(float deltaTime) {}
 	virtual void render(Tmpl8::Surface* screen) { sprite->DrawScaled(static_cast<int>(x), static_cast<int>(y), width, height, screen); }
+
+	const Tmpl8::vec2 getPosition() const
+	{
+		return { x, y };
+	}
+
+	const Tmpl8::vec2i getSize() const
+	{
+		return { width, height };
+	}
+
 protected:
 	Tmpl8::Sprite* sprite;
 	float x, y;

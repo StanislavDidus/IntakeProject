@@ -101,6 +101,31 @@ public:
 	float dot( const vec2& operand ) const { return x * operand.x + y * operand.y; }
 };
 
+class vec2i 
+{
+public:
+	union { struct { int x, y; }; int cell[2]; };
+	vec2i() : x(0), y(0) {}
+	vec2i(int v) : x(v), y(v) {}
+	vec2i(int x, int y) : x(x), y(y) {}
+	vec2i operator - () const { return vec2i(-x, -y); }
+	vec2i operator + (const vec2i& addOperand) const { return vec2i(x + addOperand.x, y + addOperand.y); }
+	vec2i operator - (const vec2i& operand) const { return vec2i(x - operand.x, y - operand.y); }
+	vec2i operator * (const vec2i& operand) const { return vec2i(x * operand.x, y * operand.y); }
+	vec2i operator * (int operand) const { return vec2i(x * operand, y * operand); }
+	void operator -= (const vec2i& a) { x -= a.x; y -= a.y; }
+	void operator += (const vec2i& a) { x += a.x; y += a.y; }
+	void operator *= (const vec2i& a) { x *= a.x; y *= a.y; }
+	void operator *= (int a) { x *= a; y *= a; }
+	int& operator [] (const int idx) { return cell[idx]; }
+	double length() { return sqrt(x * x + y * y); }
+	int sqrLentgh() { return x * x + y * y; }
+	vec2i normalized() { int r = static_cast<int>(1.0f / length()); return vec2i(x * r, y * r); }
+	void normalize() { int r = static_cast<int>(1.0f / length()); x *= r; y *= r; }
+	static vec2i normalize(vec2i v) { return v.normalized(); }
+	int dot(const vec2i& operand) const { return x * operand.x + y * operand.y; }
+};
+
 class vec3
 {
 public:

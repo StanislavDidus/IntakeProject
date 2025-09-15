@@ -4,30 +4,44 @@
 #include "surface.h"
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
-#include "Object.h"
+#include "PhysicObject.h"
+#include "Bullet.h"
 
-class Player : public Object
+class Player : public PhysicObject
 {
 public:
-	Player(Tmpl8::Sprite* sprite, float x, float y, int width, int height) : Object(sprite, x, y, width, height),
-		angle(0.f), rotationSpeed(1.f), direction{ 0.f, -1.f }, velocity{ 0.f, 0.f }, maxVelocity{ 150.f, 150.f }, acceleration{550.f, 550.f} {
+	Player
+	(
+		Tmpl8::Sprite* sprite,
+		Tmpl8::Sprite* bulletSprite,
+		float x,
+		float y,
+		int width,
+		int height,
+		Tmpl8::vec2 velocity,
+		Tmpl8::vec2 maxVelocity,
+		Tmpl8::vec2 acceleration,
+		Tmpl8::vec2 direction
+		) : PhysicObject(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, 0.f), rotationSpeed(1.f), bulletSprite(bulletSprite), shootSpeed(0.2f), shootTimer(0.f) {
 	}
 
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface* screen) override;
 
-	void move(float deltaTime);
-	void stop(float deltaTime);
 	void rotate(float angle);
+
+	void shoot();
 private:
-	float angle;
+	void updateBullets(float deltaTime);
+
+	Tmpl8::Sprite* bulletSprite;
+
+	float shootSpeed;
+	float shootTimer;
 	float rotationSpeed;
 
-	Tmpl8::vec2 velocity;
-	Tmpl8::vec2 maxVelocity;
-	Tmpl8::vec2 acceleration;
-	//Tmpl8::vec2 friction;
-	Tmpl8::vec2 direction;
+	std::vector<std::shared_ptr<Bullet>> bullets;
 };
 

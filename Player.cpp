@@ -1,51 +1,90 @@
 #include "Player.h"
 #include <cmath>
+#include <algorithm>
+#include <iostream>
 
 void Player::update(float deltaTime)
 {
-	x += velocity.x * deltaTime;
-	y += velocity.y * deltaTime;
-
-	x = fmodf(x + ScreenWidth, ScreenWidth);
-	y = fmodf(y + ScreenHeight, ScreenHeight);
+	shootTimer += deltaTime;
 	
+	x += velocity.x * direction.x * deltaTime;
+	y += velocity.y * direction.y * deltaTime;
+
+	if (x >= 800) x = 0;
+	if (y >= 512) y = 0;
+
+	if (x <= static_cast<float>(-width)) x = 800 - static_cast<float>(width);
+	if (y <= static_cast<float>(-height)) y = 512 - static_cast<float>(height);
+
+	updateBullets(deltaTime);
+}
+
+void Player::updateBullets(float deltaTime)
+{
+	for (const auto& bullet : bullets)
+	{
+		bullet->update(deltaTime);
+	}
+
+	for (auto it = bullets.begin(); it != bullets.end(); )
+	{
+		auto& bullet = *it;
+
+		auto& pos = bullet->getPosition();
+		auto& size = bullet->getSize();
+		
+		if (pos.x + size.x < 0.f || pos.x >= 800.f || pos.y + size.y < 0.f || pos.y >= 512.f)
+		{
+			it = bullets.erase(it);
+		}
+		else
+			++it;
+	}
 }
 
 void Player::render(Tmpl8::Surface* screen)
 {
-	sprite->DrawScaledRotated(x, y, width, height, angle ,screen);
-//	sprite->DrawScaledRotated(fmodf( x + ScreenWidth, ScreenWidth ), fmodf(y + ScreenHeight, ScreenHeight), width, height, angle ,screen);
+	for (const auto& bullet : bullets)
+		bullet->render(screen);
+	
+	sprite->DrawScaledRotated(x, y, width, height, angle, screen);
+	sprite->DrawScaledRotated(fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + ScreenHeight, ScreenHeight), width, height, angle, screen);
+	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, screen);
 }
-
-void Player::move(float deltaTime)
-{
-	velocity.x += direction.x * acceleration.x * deltaTime;
-	velocity.y += direction.y * acceleration.y * deltaTime;
-
-	velocity.x = std::min(std::max(-maxVelocity.x, velocity.x), maxVelocity.x);
-	velocity.y = std::min(std::max(-maxVelocity.y, velocity.y), maxVelocity.y);
-}
-
-void Player::stop(float deltaTime)
-{
-	velocity.x -= velocity.x * deltaTime;
-	velocity.y -= velocity.y * deltaTime;
-
-	if (std::abs(velocity.x) <= 0.01f) velocity.x = 0.f;
-	if (std::abs(velocity.y) <= 0.01f) velocity.y = 0.f;
-}
-
 void Player::rotate(float angle)
 {
 	this->angle += angle * rotationSpeed;
+	this->angle = fmodf(this->angle, 360.f);
 
-	float radians = angle * 3.1415f / 180.f;
+	float radians = this->angle * 3.1415f / 180.f;
 	float sin = std::sin(radians);
 	float cos = std::cos(radians);
 
-	float oldX = direction.x;
-	float oldY = direction.y;
+	direction.x = sin;
+	direction.y = -cos;
 
-	direction.x = oldX * cos - oldY * sin;
-	direction.y = oldX * sin + oldY * cos;
+	direction.normalize();
+}
+
+void Player::shoot()
+{
+	if (shootTimer < shootSpeed)
+		return;
+	shootTimer = 0.f;
+
+	auto bullet = std::make_shared<Bullet>
+		(
+			bulletSprite,
+			x,
+			y,
+			width,
+			height,
+			Tmpl8::vec2{ 0.f, 0.f },
+			Tmpl8::vec2{ 1500.f, 1500.f },
+			Tmpl8::vec2{ 5000.f, 5000.f },
+			direction,
+			angle
+		);
+
+	bullets.push_back(bullet);
 }
