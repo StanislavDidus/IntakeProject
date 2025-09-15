@@ -41,7 +41,7 @@ private:
 	void initPlayer();
 
 	void update(float deltaTime);
-	void render(Tmpl8::Surface* screen);
+	void render(Tmpl8::Surface& screen);
 
 	void updateControls(float deltaTime);
 	bool isKeyDown(int key);

@@ -28,7 +28,7 @@ public:
 	}
 
 	void update(float deltaTime) override;
-	void render(Tmpl8::Surface* screen) override;
+	void render(Tmpl8::Surface& screen) override;
 
 	void rotate(float angle);
 
