@@ -42,15 +42,16 @@ void Player::updateBullets(float deltaTime)
 	}
 }
 
-void Player::render(Tmpl8::Surface* screen)
+void Player::render(Tmpl8::Surface& screen)
 {
 	for (const auto& bullet : bullets)
 		bullet->render(screen);
 	
-	sprite->DrawScaledRotated(x, y, width, height, angle, screen);
-	sprite->DrawScaledRotated(fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + ScreenHeight, ScreenHeight), width, height, angle, screen);
-	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, screen);
+	sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
+	sprite->DrawScaledRotated(fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + ScreenHeight, ScreenHeight), width, height, angle, &screen);
+	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);
 }
+
 void Player::rotate(float angle)
 {
 	this->angle += angle * rotationSpeed;

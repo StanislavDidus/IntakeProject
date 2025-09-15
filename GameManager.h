@@ -14,7 +14,7 @@ public:
 	GameManager();
 
 	void update(float deltaTime);
-	void render(Tmpl8::Surface* screen);
+	void render(Tmpl8::Surface& screen );
 private:
 	void spawnAsteroid();
 

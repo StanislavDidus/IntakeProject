@@ -73,7 +73,7 @@ namespace Tmpl8
 		deltaTime /= 1000.f;
 
 		update(deltaTime);
-		render(screen);
+		render(*screen);
 	}
 
 	void Game::update(float deltaTime)
@@ -84,6 +84,8 @@ namespace Tmpl8
 
 		gameManager->update(deltaTime);
 
+		// Check collisions.
+
 		//Update buttons
 		for (const auto& key : downButtons)
 		{
@@ -93,11 +95,11 @@ namespace Tmpl8
 		upButtons.clear();
 	}
 
-	void Game::render(Tmpl8::Surface* screen)
+	void Game::render(Tmpl8::Surface& screen)
 	{
-		screen->Clear(0);
+		screen.Clear(0);
 
-		sprites["space"]->Draw(screen, 0, 0);
+		sprites["space"]->Draw(&screen, 0, 0);
 		player->render(screen);
 
 		gameManager->render(screen);
@@ -119,7 +121,7 @@ namespace Tmpl8
 			player->rotate(1.f);
 
 		//Shoot
-		if (isKeyHold('e'))
+		if (isKeyHold('e') || isKeyHold(' '))
 			player->shoot();
 			
 		//Stop

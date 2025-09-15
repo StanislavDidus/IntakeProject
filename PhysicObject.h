@@ -26,9 +26,9 @@ public:
 		float angle
 	) : Object(sprite, x, y, width, height), velocity(velocity), maxVelocity(maxVelocity),  acceleration(acceleration), direction(direction), angle(angle) {}
 
-	void render(Tmpl8::Surface* screen) override
+	void render(Tmpl8::Surface& screen) override
 	{
-		sprite->DrawScaledRotated(x, y, width, height, angle, screen);
+		sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
 	}
 
 	virtual void move(float deltaTime)
