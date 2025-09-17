@@ -6,6 +6,7 @@
 #include <string>
 #include <stdlib.h>
 #include <time.h>
+
 #include "Player.h"
 
 class GameManager
@@ -15,12 +16,14 @@ public:
 
 	void update(float deltaTime);
 	void render(Tmpl8::Surface& screen );
+
+	std::vector<std::shared_ptr<Asteroid>> asteroids;
 private:
 	void spawnAsteroid();
 
 	float spawnRate, spawnTimer;
 
-	std::vector<std::shared_ptr<Asteroid>> asteroids;
+	
 
 	std::vector<Tmpl8::Surface*> surfaces;
 	std::vector<Tmpl8::Sprite*> sprites;

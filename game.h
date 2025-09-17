@@ -7,6 +7,7 @@
 
 #include "Player.h"
 #include "GameManager.h"
+#include "CollisionManager.h"
 
 namespace Tmpl8 {
 
@@ -28,16 +29,17 @@ private:
 
 	std::shared_ptr<Player> player;
 	std::shared_ptr<GameManager> gameManager;
+	std::unique_ptr<CollisionManager> colManager;
 	
 	std::set<int> downButtons;
 	std::set<int> holdButtons;
 	std::set<int> upButtons;
 
-	std::unordered_map<std::string, Tmpl8::Surface*> surfaces;
 	std::unordered_map<std::string, Tmpl8::Sprite*> sprites;
 
 	void initSprites();
 	void initGameManager();
+	void initCollisionManager();
 	void initPlayer();
 
 	void update(float deltaTime);

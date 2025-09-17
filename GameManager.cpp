@@ -16,6 +16,7 @@ int randomRange(int min, int max)
 
 GameManager::GameManager() : spawnRate(3.f), spawnTimer(0.f)
 {
+    
 }
 
 void GameManager::update(float deltaTime)
@@ -26,12 +27,28 @@ void GameManager::update(float deltaTime)
     {
         spawnTimer = 0.f;
 
-        spawnAsteroid();
+       spawnAsteroid();
     }
 
     for (const auto& asteroid : asteroids)
     {
         asteroid->update(deltaTime);
+
+        
+    }
+
+    for (auto it = asteroids.begin(); it != asteroids.end();)
+    {
+        auto& asteroid = *it;
+        if (asteroid->getPosition().x < -asteroid->getSize().x ||
+            asteroid->getPosition().x + asteroid->getSize().x >= ScreenWidth + asteroid->getSize().x ||
+            asteroid->getPosition().y < -asteroid->getSize().y ||
+            asteroid->getSize().y + asteroid->getSize().y >= ScreenHeight + asteroid->getSize().y)
+        {
+            it = asteroids.erase(it);
+        }
+        else
+            ++it;
     }
 }
 

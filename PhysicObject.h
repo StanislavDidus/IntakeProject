@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Object.h"
+#include <vector>
 
 inline float clamp(float value, float min, float max)
 {
@@ -24,7 +25,15 @@ public:
 		Tmpl8::vec2 acceleration,
 		Tmpl8::vec2 direction,
 		float angle
-	) : Object(sprite, x, y, width, height), velocity(velocity), maxVelocity(maxVelocity),  acceleration(acceleration), direction(direction), angle(angle) {}
+	) : Object(sprite, x, y, width, height, angle), velocity(velocity), maxVelocity(maxVelocity),  acceleration(acceleration), direction(direction) 
+	{
+		physicObjects.push_back(this);
+	}
+
+	virtual ~PhysicObject()
+	{
+		physicObjects.erase(std::remove(physicObjects.begin(), physicObjects.end(), this), physicObjects.end());
+	}
 
 	void render(Tmpl8::Surface& screen) override
 	{
@@ -48,9 +57,10 @@ public:
 		if (std::abs(velocity.x) <= 0.01f) velocity.x = 0.f;
 		if (std::abs(velocity.y) <= 0.01f) velocity.y = 0.f;
 	}
-protected:
-	float angle;
 
+	static std::vector<PhysicObject*> physicObjects;
+
+protected:
 	Tmpl8::vec2 velocity;
 	Tmpl8::vec2 maxVelocity;
 	Tmpl8::vec2 acceleration;

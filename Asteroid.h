@@ -20,6 +20,7 @@ public:
 	}
 
 	void update(float deltaTime) override;
+	void render(Tmpl8::Surface& screen) override;
 private:
 	float rotationSpeed;
 };

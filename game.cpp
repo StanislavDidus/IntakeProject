@@ -1,5 +1,6 @@
 #include "game.h"
 #include "surface.h"
+
 #include <cstdio> //printf
 
 namespace Tmpl8
@@ -10,22 +11,20 @@ namespace Tmpl8
 
 	void Game::initSprites()
 	{
-		surfaces["ship"] = new Surface("assets/airship.png");
-		sprites["ship"] = new Sprite(surfaces["ship"], 1);
-
-		surfaces["space"] = new Surface("assets/space.png");
-		sprites["space"] = new Sprite(surfaces["space"], 1);
-
-		surfaces["bullet"] = new Surface("assets/bullet.png");
-		sprites["bullet"] = new Sprite(surfaces["bullet"], 1);
-
-		surfaces["asteroid"] = new Surface("assets/asteroid1.png");
-		sprites["asteroid"] = new Sprite(surfaces["asteroid"], 3);
+		sprites["ship"] = new Sprite(new Surface("assets/airship.png"), 1);
+		sprites["space"] = new Sprite(new Surface("assets/space.png"), 1);
+		sprites["bullet"] = new Sprite(new Surface("assets/bullet.png"), 1);
+		sprites["asteroid"] = new Sprite(new Surface("assets/asteroid1.png"), 3);
 	}
 
 	void Game::initGameManager()
 	{
 		gameManager = std::make_shared<GameManager>();
+	}
+
+	void Game::initCollisionManager()
+	{
+		colManager = std::make_unique<CollisionManager>();
 	}
 
 	void Game::initPlayer()
@@ -49,6 +48,7 @@ namespace Tmpl8
 	{
 		initSprites();
 		initGameManager();
+		initCollisionManager();
 		initPlayer();
 	}
 	
@@ -62,7 +62,6 @@ namespace Tmpl8
 			delete sprite;
 		}
 		sprites.clear();
-		surfaces.clear();
 	}
 
 	// -----------------------------------------------------------
@@ -85,6 +84,7 @@ namespace Tmpl8
 		gameManager->update(deltaTime);
 
 		// Check collisions.
+		colManager->checkCollision();
 
 		//Update buttons
 		for (const auto& key : downButtons)
@@ -103,6 +103,9 @@ namespace Tmpl8
 		player->render(screen);
 
 		gameManager->render(screen);
+
+		std::vector<std::shared_ptr<PhysicObject>> physicObg(gameManager->asteroids.begin(), gameManager->asteroids.end());
+		colManager->render(player, physicObg, screen);
 	}
 
 	void Game::updateControls(float deltaTime)

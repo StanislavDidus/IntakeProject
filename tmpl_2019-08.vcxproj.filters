@@ -13,6 +13,8 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="PhysicObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
@@ -28,6 +30,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="CollisionManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

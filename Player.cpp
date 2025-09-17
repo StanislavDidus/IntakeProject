@@ -10,11 +10,11 @@ void Player::update(float deltaTime)
 	x += velocity.x * direction.x * deltaTime;
 	y += velocity.y * direction.y * deltaTime;
 
-	if (x >= 800) x = 0;
-	if (y >= 512) y = 0;
+	if (x >= ScreenWidth) x = 0;
+	if (y >= ScreenHeight) y = 0;
 
-	if (x <= static_cast<float>(-width)) x = 800 - static_cast<float>(width);
-	if (y <= static_cast<float>(-height)) y = 512 - static_cast<float>(height);
+	if (x <= static_cast<float>(-width)) x = ScreenWidth - static_cast<float>(width);
+	if (y <= static_cast<float>(-height)) y = ScreenWidth - static_cast<float>(height);
 
 	updateBullets(deltaTime);
 }
@@ -47,9 +47,11 @@ void Player::render(Tmpl8::Surface& screen)
 	for (const auto& bullet : bullets)
 		bullet->render(screen);
 	
-	sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
-	sprite->DrawScaledRotated(fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + ScreenHeight, ScreenHeight), width, height, angle, &screen);
+	sprite->DrawScaledRotated(x, y, width, height, angle, &screen); //Draw main ship
+
 	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);
+	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + ScreenHeight, ScreenHeight), width, height, angle, &screen);
+	sprite->DrawScaledRotated(fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);
 }
 
 void Player::rotate(float angle)
