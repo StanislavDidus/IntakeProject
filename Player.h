@@ -24,15 +24,18 @@ public:
 		Tmpl8::vec2 maxVelocity,
 		Tmpl8::vec2 acceleration,
 		Tmpl8::vec2 direction
-		) : PhysicObject(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, 0.f), rotationSpeed(1.f), bulletSprite(bulletSprite), shootSpeed(0.2f), shootTimer(0.f) {
-	}
+	);
 
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;
 
-	void rotate(float angle);
+	void rotate(float angle, float deltaTime);
 
 	void shoot();
+
+	void onCollisionEnter(const CollisionEvent& event) override;
+	void onCollisionStay(const CollisionEvent& event) override;
+	void onCollisionExit(const CollisionEvent& event) override;
 private:
 	void updateBullets(float deltaTime);
 

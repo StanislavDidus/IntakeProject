@@ -14,7 +14,7 @@ int randomRange(int min, int max)
     return dist(rng);
 }
 
-GameManager::GameManager() : spawnRate(3.f), spawnTimer(0.f)
+GameManager::GameManager() : spawnRate(8.f), spawnTimer(0.f)
 {
     
 }

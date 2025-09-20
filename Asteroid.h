@@ -16,7 +16,7 @@ public:
 		Tmpl8::vec2 maxVelocity,
 		Tmpl8::vec2 acceleration,
 		Tmpl8::vec2 direction
-	) : PhysicObject(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, 0.f), rotationSpeed(10.f) {
+	) : PhysicObject(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, 0.f, "asteroid"), rotationSpeed(10.f) {
 	}
 
 	void update(float deltaTime) override;

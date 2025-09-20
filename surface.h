@@ -104,6 +104,7 @@ public:
 	void DrawScaled( int a_X, int a_Y, int a_Width, int a_Height, Surface* a_Target );
 	void DrawScaledRotated(int px, int py, int width, int height, float angle, Surface* screen);
 	void DrawScaledRotated(float px, float py, int width, int height, float angle, Surface* screen);
+	Pixel getPixelRotatedToPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle);
 	void SetFlags( unsigned int a_Flags ) { m_Flags = a_Flags; }
 	void SetFrame( unsigned int a_Index ) { m_CurrentFrame = a_Index; }
 	unsigned int GetFlags() const { return m_Flags; }

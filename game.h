@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "GameManager.h"
 #include "CollisionManager.h"
+#include "EventBus.h"
 
 namespace Tmpl8 {
 

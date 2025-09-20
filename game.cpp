@@ -35,8 +35,8 @@ namespace Tmpl8
 				sprites["bullet"],
 				static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
 				static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
-				32,
-				32,
+				64,
+				64,
 				Tmpl8::vec2{0.f, 0.f},
 				Tmpl8::vec2{150.f, 150.f},
 				Tmpl8::vec2{550.f, 550.f},
@@ -83,8 +83,8 @@ namespace Tmpl8
 
 		gameManager->update(deltaTime);
 
-		// Check collisions.
 		colManager->checkCollision();
+		
 
 		//Update buttons
 		for (const auto& key : downButtons)
@@ -104,8 +104,10 @@ namespace Tmpl8
 
 		gameManager->render(screen);
 
-		std::vector<std::shared_ptr<PhysicObject>> physicObg(gameManager->asteroids.begin(), gameManager->asteroids.end());
-		colManager->render(player, physicObg, screen);
+#ifdef _DEBUG
+		colManager->renderDEBUG(screen);
+#endif
+
 	}
 
 	void Game::updateControls(float deltaTime)
@@ -118,10 +120,10 @@ namespace Tmpl8
 		
 		//Rotation
 		if(isKeyHold('a'))
-			player->rotate(-1.f);
+			player->rotate(-1.f, deltaTime);
 			
 		if(isKeyHold('d'))
-			player->rotate(1.f);
+			player->rotate(1.f, deltaTime);
 
 		//Shoot
 		if (isKeyHold('e') || isKeyHold(' '))

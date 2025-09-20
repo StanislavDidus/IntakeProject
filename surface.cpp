@@ -12,17 +12,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-inline int clamp(int value, int min, int max)
-{
-	if (value < min) return min;
-	if (value > max) return max;
-	return value;
-}
-
-inline Tmpl8::vec2i clampVec2i(Tmpl8::vec2i value, Tmpl8::vec2i min, Tmpl8::vec2i max)
-{
-	return { clamp(value.x, min.x, max.x), clamp(value.y, min.y, max.y) };
-}
+#include "Functions.h"
 
 namespace Tmpl8 {
 
@@ -478,6 +468,8 @@ namespace Tmpl8 {
 		if (clampedMax.x < max.x) sizeOffset.x = max.x - clampedMax.x;
 		if (clampedMax.y < max.y) sizeOffset.y = max.y - clampedMax.y;
 
+		//if (width - sizeOffset.x <= 0 || height - sizeOffset.y <= 0) return;
+
 		for (int x = posOffset.x; x < width - sizeOffset.x; x++) for (int y = posOffset.y; y < height - sizeOffset.y; y++)
 		{
 			float radians = angle * 3.1415f / 180.f;
@@ -507,6 +499,31 @@ namespace Tmpl8 {
 	void Sprite::DrawScaledRotated(float px, float py, int width, int height, float angle, Surface* screen)
 	{
 		DrawScaledRotated(static_cast<int>(px), static_cast<int>(py), width, height, angle, screen);
+	}
+
+	Pixel Sprite::getPixelRotatedToPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle)
+	{
+		float radians = angle * 3.1415f / 180.f;
+		float sin = std::sin(radians);
+		float cos = std::cos(radians);
+
+		int cx = width / 2;
+		int cy = height / 2;
+
+		int sx = pixelX - spriteX - cx;
+		int sy = pixelY - spriteY - cy;
+
+		float rx = float(sx) * cos + float(sy) * sin + float(cx);
+		float ry = float(-sx) * sin + float(sy) * cos + float(cy);
+
+		int u = (int)(rx * ((float)m_Width / (float)width));
+		int v = (int)(ry * ((float)m_Height / (float)height));
+
+		if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) return Pixel{};
+
+		Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
+
+		return color;
 	}
 
 	void Sprite::InitializeStartData()
