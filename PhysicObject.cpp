@@ -1,6 +1,7 @@
 #include "PhysicObject.h"
 #include "Functions.h"
 
+std::vector<PhysicObject*> PhysicObject::physicObjects;
 
 PhysicObject::PhysicObject
 (
@@ -21,12 +22,12 @@ PhysicObject::PhysicObject
 	acceleration(acceleration),
 	direction(direction)
 {
-	
+	physicObjects.push_back(this);
 }
 
 PhysicObject::~PhysicObject()
 {
-	
+	physicObjects.erase(std::remove(physicObjects.begin(), physicObjects.end(), this), physicObjects.end());
 }
 
 void PhysicObject::render(Tmpl8::Surface& screen)

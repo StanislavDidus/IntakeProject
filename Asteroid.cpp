@@ -4,6 +4,8 @@ void Asteroid::update(float deltaTime)
 {
 	angle += rotationSpeed * deltaTime;
 
+	lastPosition = { x, y };
+
 	move(deltaTime);
 
 	x += velocity.x * direction.x * deltaTime;

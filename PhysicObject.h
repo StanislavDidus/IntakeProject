@@ -29,6 +29,8 @@ public:
 
 	virtual void stop(float deltaTime);
 
+	static std::vector<PhysicObject*> physicObjects;
+
 protected:
 	Tmpl8::vec2 velocity;
 	Tmpl8::vec2 maxVelocity;

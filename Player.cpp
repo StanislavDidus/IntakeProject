@@ -6,7 +6,6 @@
 Player::Player
 (
 	Tmpl8::Sprite* sprite,
-	Tmpl8::Sprite* bulletSprite,
 	float x,
 	float y,
 	int width,
@@ -17,7 +16,6 @@ Player::Player
 	Tmpl8::vec2 direction
 ) : PhysicObject(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, 0.f, "player"),
 	rotationSpeed(200.f),
-	bulletSprite(bulletSprite),
 	shootSpeed(0.2f),
 	shootTimer(0.f) 
 {
@@ -27,6 +25,8 @@ Player::Player
 void Player::update(float deltaTime)
 {
 	shootTimer += deltaTime;
+
+	lastPosition = { x, y };
 	
 	x += velocity.x * direction.x * deltaTime;
 	y += velocity.y * direction.y * deltaTime;
@@ -40,34 +40,12 @@ void Player::update(float deltaTime)
 	x = fmodf(x + ScreenWidth, ScreenWidth);
 	y = fmodf(y + ScreenHeight, ScreenHeight);
 
-	updateBullets(deltaTime);
 }
 
-void Player::updateBullets(float deltaTime)
-{
-	for (const auto& bullet : bullets)
-	{
-		bullet->update(deltaTime);
-	}
 
-	for (auto it = bullets.begin(); it != bullets.end(); )
-	{
-		auto& bullet = *it;
-
-		if(bullet->destroy)
-		{
-			it = bullets.erase(it);
-		}
-		else
-			++it;
-	}
-}
 
 void Player::render(Tmpl8::Surface& screen)
 {
-	for (const auto& bullet : bullets)
-		bullet->render(screen);
-	
 	sprite->DrawScaledRotated(x, y, width, height, angle, &screen); //Draw main ship
 
 	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);
@@ -96,7 +74,7 @@ void Player::shoot()
 		return;
 	shootTimer = 0.f;
 
-	auto bullet = std::make_shared<Bullet>
+	/*auto  bullet = std::make_shared<Bullet>
 		(
 			bulletSprite,
 			x,
@@ -110,7 +88,9 @@ void Player::shoot()
 			angle
 		);
 
-	bullets.push_back(bullet);
+	bullets.push_back(bullet);*/
+
+	EventBus::Get().Push<event::createBullet>(event::createBullet{ Tmpl8::vec2{x, y}, Tmpl8::vec2i{width, height}, direction, angle });
 }
 
 void Player::onCollisionEnter(const CollisionEvent& event)

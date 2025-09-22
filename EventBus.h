@@ -4,27 +4,52 @@
 #include <unordered_map>
 #include <array>
 #include <functional>
+#include <queue>
 
 #include "Object.h"
 
 //My EventBus implementation is a slightly changed version of ECS(Entity-Component-System) from this article:https://austinmorlan.com/posts/entity_component_system/
 
+constexpr int MAX_OBJECTS = 1000;
+
+class Listener
+{
+public:
+	Listener()
+	{
+
+	}
+	virtual ~Listener()
+	{
+
+	}
+private:
+
+};
+
 namespace event
 {
-	struct CollisionEvent
+	struct createBullet
 	{
-		int n;
+		Tmpl8::vec2 pos;
+		Tmpl8::vec2i size;
+		Tmpl8::vec2 direction;
+		float angle;
 	};
 
-	struct Killed
+	struct objectDestroyed
 	{
-		int id;
+		Object* obj;
 	};
 }
 
 using Obj = size_t;
 
-class IEventArray { };
+class IEventArray 
+{ 
+public:
+	virtual void Do() = 0;
+};
 
 template<typename T>
 class EventArray : public IEventArray
@@ -69,18 +94,31 @@ public:
 		return data[objectToIndex[id]];
 	}
 
-	void Do(const T& t)
+	void Push(const T& t)
 	{
-		for (int i = 0; i < size; i++)
+		dataQueue.push(t);
+	}
+
+	void Do() override
+	{
+		while (!dataQueue.empty())
 		{
-			data[i](t);
+			auto& d = dataQueue.front();
+			dataQueue.pop();
+
+			for (int i = 0; i < size; i++)
+			{
+				data[i](d);
+			}
+
 		}
 	}
 
 private:
-	std::array<std::function<void(const T&)>, 1000> data;
+	std::array<std::function<void(const T&)>, MAX_OBJECTS> data;
 	std::unordered_map<Obj, size_t> objectToIndex;
-	std::array<Obj, 100> objects;
+	std::array<Obj, MAX_OBJECTS> objects;
+	std::queue<T> dataQueue;
 
 	size_t size;
 };
@@ -110,14 +148,14 @@ public:
 		eventArrays[name] = eventArray;
 	}
 
-	void RegisterObject(Object* obj)
+	void RegisterListener(Listener* obj)
 	{
 		objectToId[obj] = size;
 		size++;
 	}
 
 	template<typename T>
-	void AddListener(Object* obj, const std::function<void(const T&)>& func)
+	void AddListener(Listener* obj, const std::function<void(const T&)>& func)
 	{
 		const char* name = typeid(T).name();
 
@@ -126,14 +164,14 @@ public:
 
 		if (objectToId.find(obj) == objectToId.end())
 		{
-			RegisterObject(obj);
+			RegisterListener(obj);
 		}
 
 		getEventArray<T>()->addData(objectToId[obj], func);
 	}
 
 	template<typename T>
-	void RemovedListener(Object* obj)
+	void RemovedListener(Listener* obj)
 	{
 		const char* name = typeid(T).name();
 
@@ -143,12 +181,27 @@ public:
 	template<typename T>
 	void Push(const T& t)
 	{
-		getEventArray<T>()->Do(t);
+		const char* name = typeid(T).name();
+
+		getEventArray<T>()->Push(t);
+		eventQueue.push(name);
+	}
+
+	void process()
+	{
+		while(!eventQueue.empty())
+		{
+			auto& eventName = eventQueue.front();
+			eventQueue.pop();
+
+			eventArrays[eventName]->Do();
+		}
 	}
 
 private:
 	std::unordered_map<const char*, std::shared_ptr<IEventArray>> eventArrays;
-	std::unordered_map<Object*, Obj> objectToId;
+	std::unordered_map<Listener*, Obj> objectToId;
+	std::queue<const char*> eventQueue;
 
 	template<typename T>
 	std::shared_ptr<EventArray<T>> getEventArray()

@@ -6,6 +6,8 @@
 #include <optional>
 #include <set>
 
+#include "Grid.h"
+
 struct CollisionEvent
 {
 	Object* collider;
@@ -26,15 +28,14 @@ struct unordered_pair
 class CollisionManager
 {
 public:
-	CollisionManager();
+	CollisionManager(std::shared_ptr<Grid> grid);
 
 	void checkCollision();
+	void destroyObject(Object* object);
 	void render(Tmpl8::Surface& screen);
 	void renderDEBUG(Tmpl8::Surface& screen);
 
 private:
-	bool AABB(Object* target, Object* col);
-	bool SAT(Object* target, Object* col); //Separating Axis Theorem
 	bool PointRectangle(Tmpl8::vec2 target, Object* col);
 	bool PixelPerfectCheck(Object* target, Object* col, const Tmpl8::int4& overlap);
 	bool PixelPerfectCheck(Object* target, Object* col, const Tmpl8::vec4& overlap);
@@ -45,5 +46,7 @@ private:
 	void CheckCollisionStatus(Object* A, Object* B, bool isCollision);
 
 	std::vector<unordered_pair<Object*>> collisions; // All collision in current frame
+
+	std::shared_ptr<Grid> grid;
 };
 

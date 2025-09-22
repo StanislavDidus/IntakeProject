@@ -1,43 +1,96 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="game.cpp" />
     <ClCompile Include="surface.cpp">
       <Filter>template code</Filter>
     </ClCompile>
     <ClCompile Include="template.cpp">
       <Filter>template code</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Bullet.cpp" />
-    <ClCompile Include="Asteroid.cpp" />
-    <ClCompile Include="GameManager.cpp" />
-    <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="PhysicObject.cpp" />
-    <ClCompile Include="EventBus.cpp" />
+    <ClCompile Include="Player.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="EventBus.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Asteroid.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game.h" />
     <ClInclude Include="surface.h">
       <Filter>template code</Filter>
     </ClInclude>
     <ClInclude Include="template.h">
       <Filter>template code</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="PhysicObject.h" />
-    <ClInclude Include="Bullet.h" />
-    <ClInclude Include="Asteroid.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="Functions.h" />
-    <ClInclude Include="EventBus.h" />
+    <ClInclude Include="Asteroid.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="EventBus.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicObject.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionHelper.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">
       <UniqueIdentifier>{bf32dd6e-4be7-4889-8ac6-49e7ee163c40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{54cf3bc8-88ac-48e6-bf47-ad48ac159140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{8b2c0e23-ced3-4491-95da-2bc24679a13c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -19,12 +19,17 @@ namespace Tmpl8
 
 	void Game::initGameManager()
 	{
-		gameManager = std::make_shared<GameManager>();
+		gameManager = std::make_shared<GameManager>(colManager, *sprites["bullet"]);
+	}
+
+	void Game::initGrid()
+	{
+		grid = std::make_shared<Grid>(0.f, 0.f, ScreenWidth, ScreenHeight, 10, 10);
 	}
 
 	void Game::initCollisionManager()
 	{
-		colManager = std::make_unique<CollisionManager>();
+		colManager = std::make_shared<CollisionManager>(grid);
 	}
 
 	void Game::initPlayer()
@@ -32,7 +37,6 @@ namespace Tmpl8
 		player = std::make_shared<Player>
 			(
 				sprites["ship"],
-				sprites["bullet"],
 				static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
 				static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
 				64,
@@ -47,8 +51,9 @@ namespace Tmpl8
 	void Game::Init()
 	{
 		initSprites();
-		initGameManager();
+		initGrid();
 		initCollisionManager();
+		initGameManager();
 		initPlayer();
 	}
 	
@@ -73,6 +78,19 @@ namespace Tmpl8
 
 		update(deltaTime);
 		render(*screen);
+#ifdef _DEBUG
+		grid->renderDEBUG(*screen);
+		colManager->renderDEBUG(*screen);
+
+		//FPS Counter
+		std::stringstream ss;
+		ss << "FPS: " + std::to_string(1.f / deltaTime);
+		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
+#else 
+		std::stringstream ss;
+		ss << "FPS: " + std::to_string(1.f / deltaTime);
+		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
+#endif
 	}
 
 	void Game::update(float deltaTime)
@@ -81,10 +99,11 @@ namespace Tmpl8
 
 		player->update(deltaTime);
 
+		colManager->checkCollision();
+
 		gameManager->update(deltaTime);
 
-		colManager->checkCollision();
-		
+		EventBus::Get().process();
 
 		//Update buttons
 		for (const auto& key : downButtons)
@@ -103,11 +122,6 @@ namespace Tmpl8
 		player->render(screen);
 
 		gameManager->render(screen);
-
-#ifdef _DEBUG
-		colManager->renderDEBUG(screen);
-#endif
-
 	}
 
 	void Game::updateControls(float deltaTime)

@@ -3,12 +3,15 @@
 #include <set>
 #include <memory>
 #include <unordered_map>
+#include <iostream>
 #include <string>
+#include <sstream>
 
 #include "Player.h"
 #include "GameManager.h"
 #include "CollisionManager.h"
 #include "EventBus.h"
+#include "Grid.h"
 
 namespace Tmpl8 {
 
@@ -30,7 +33,8 @@ private:
 
 	std::shared_ptr<Player> player;
 	std::shared_ptr<GameManager> gameManager;
-	std::unique_ptr<CollisionManager> colManager;
+	std::shared_ptr<CollisionManager> colManager;
+	std::shared_ptr<Grid> grid;
 	
 	std::set<int> downButtons;
 	std::set<int> holdButtons;
@@ -40,6 +44,7 @@ private:
 
 	void initSprites();
 	void initGameManager();
+	void initGrid();
 	void initCollisionManager();
 	void initPlayer();
 

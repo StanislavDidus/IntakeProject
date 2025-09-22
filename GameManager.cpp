@@ -14,9 +14,31 @@ int randomRange(int min, int max)
     return dist(rng);
 }
 
-GameManager::GameManager() : spawnRate(8.f), spawnTimer(0.f)
+GameManager::GameManager(std::shared_ptr<CollisionManager> colManager, Tmpl8::Sprite& bulletSprite) : colManager(colManager), bulletSprite(bulletSprite), spawnRate(2.5f), spawnTimer(0.f)
 {
-    
+    EventBus::Get().AddListener<event::createBullet>(this, [&](const event::createBullet& event) 
+        {
+            auto  bullet = std::make_shared<Bullet>
+                (
+                    &bulletSprite,
+                    event.pos.x,
+                    event.pos.y,
+                    event.size.x,
+                    event.size.y,
+                    Tmpl8::vec2{ 0.f, 0.f },
+                    Tmpl8::vec2{ 1500.f, 1500.f },
+                    Tmpl8::vec2{ 5000.f, 5000.f },
+                    event.direction,
+                    event.angle
+                );
+
+            bullets.push_back(bullet);
+        });
+}
+
+GameManager::~GameManager()
+{
+    EventBus::Get().RemovedListener<event::createBullet>(this);
 }
 
 void GameManager::update(float deltaTime)
@@ -30,11 +52,38 @@ void GameManager::update(float deltaTime)
        spawnAsteroid();
     }
 
+
+    updateBullets(deltaTime);
+    updateAsteroids(deltaTime);
+}
+
+void GameManager::updateBullets(float deltaTime)
+{
+    for (const auto& bullet : bullets)
+    {
+        bullet->update(deltaTime);
+    }
+
+    for (auto it = bullets.begin(); it != bullets.end(); )
+    {
+        auto& bullet = *it;
+
+        if (bullet->destroy)
+        {
+            it = bullets.erase(it);
+
+            colManager->destroyObject(bullet.get());
+        }
+        else
+            ++it;
+    }
+}
+
+void GameManager::updateAsteroids(float deltaTime)
+{
     for (const auto& asteroid : asteroids)
     {
         asteroid->update(deltaTime);
-
-        
     }
 
     for (auto it = asteroids.begin(); it != asteroids.end();)
@@ -46,6 +95,8 @@ void GameManager::update(float deltaTime)
             asteroid->getSize().y + asteroid->getSize().y >= ScreenHeight + asteroid->getSize().y)
         {
             it = asteroids.erase(it);
+
+            colManager->destroyObject(asteroid.get());
         }
         else
             ++it;
@@ -54,6 +105,11 @@ void GameManager::update(float deltaTime)
 
 void GameManager::render(Tmpl8::Surface& screen)
 {
+    for (const auto& bullet : bullets)
+    {
+        bullet->render(screen);
+    }
+    
     for (const auto& asteroid : asteroids)
     {
         asteroid->render(screen);

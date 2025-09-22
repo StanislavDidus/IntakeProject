@@ -92,6 +92,7 @@ public:
 	void operator += ( const vec2& a ) { x += a.x; y += a.y; }
 	void operator *= ( const vec2& a ) { x *= a.x; y *= a.y; }
 	void operator *= ( float a ) { x *= a; y *= a; }
+	bool operator == (const vec2& a) const { return x == a.x && y == a.y; }
 	float& operator [] ( const int idx ) { return cell[idx]; }
 	float length() { return sqrtf( x * x + y * y ); }
 	float sqrLentgh() { return x * x + y * y; }
@@ -117,6 +118,7 @@ public:
 	void operator += (const vec2i& a) { x += a.x; y += a.y; }
 	void operator *= (const vec2i& a) { x *= a.x; y *= a.y; }
 	void operator *= (int a) { x *= a; y *= a; }
+	bool operator == (const vec2i& a) const { return x == a.x && y == a.y; }
 	int& operator [] (const int idx) { return cell[idx]; }
 	double length() { return sqrt(x * x + y * y); }
 	int sqrLentgh() { return x * x + y * y; }

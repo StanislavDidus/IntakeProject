@@ -30,8 +30,7 @@ public:
 	float getAngle() const;
 	Tmpl8::Sprite* getSprite() const;
 	const std::string& getTag() const;
-
-	static std::vector<Object*> objects;
+	const Tmpl8::vec2 getLastPosition() const;
 
 	virtual void onCollisionEnter(const CollisionEvent& event);
 	virtual void onCollisionStay(const CollisionEvent& event);
@@ -44,5 +43,6 @@ protected:
 	int width, height;
 	float angle;
 	std::string tag;
+	Tmpl8::vec2 lastPosition;
 };
 

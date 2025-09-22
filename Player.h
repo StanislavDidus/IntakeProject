@@ -8,6 +8,7 @@
 
 #include "PhysicObject.h"
 #include "Bullet.h"
+#include "EventBus.h"
 
 class Player : public PhysicObject
 {
@@ -15,7 +16,6 @@ public:
 	Player
 	(
 		Tmpl8::Sprite* sprite,
-		Tmpl8::Sprite* bulletSprite,
 		float x,
 		float y,
 		int width,
@@ -37,14 +37,8 @@ public:
 	void onCollisionStay(const CollisionEvent& event) override;
 	void onCollisionExit(const CollisionEvent& event) override;
 private:
-	void updateBullets(float deltaTime);
-
-	Tmpl8::Sprite* bulletSprite;
-
 	float shootSpeed;
 	float shootTimer;
 	float rotationSpeed;
-
-	std::vector<std::shared_ptr<Bullet>> bullets;
 };
 

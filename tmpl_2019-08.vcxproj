@@ -232,6 +232,7 @@
     <ClCompile Include="EventBus.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PhysicObject.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -241,11 +242,13 @@
   <ItemGroup>
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="CollisionHelper.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="EventBus.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PhysicObject.h" />
     <ClInclude Include="Player.h" />

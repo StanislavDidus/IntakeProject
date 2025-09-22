@@ -22,6 +22,8 @@ public:
 
 	void update(float deltaTime) override
 	{
+		lastPosition = { x, y };
+		
 		move(deltaTime);
 
 		x += velocity.x * direction.x * deltaTime;

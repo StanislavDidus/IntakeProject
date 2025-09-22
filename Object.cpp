@@ -1,20 +1,23 @@
 #include "Object.h"
 #include "CollisionManager.h"
 
-std::vector<Object*> Object::objects;
-
-Object::Object(Tmpl8::Sprite* sprite, float x, float y, int width, int height, float angle, const std::string& tag) : sprite(sprite), x(x), y(y), width(width), height(height), angle(angle), tag(tag), destroy(false)
+Object::Object(Tmpl8::Sprite* sprite, float x, float y, int width, int height, float angle, const std::string& tag) : sprite(sprite), x(x), y(y), width(width), height(height), angle(angle), tag(tag), destroy(false), lastPosition(x, y)
 {
-	objects.push_back(this);
+	
 }
 
 Object::~Object()
 {
-	objects.erase(std::remove(objects.begin(), objects.end(), this), objects.end());
+	
 }
 
 void Object::update(float deltaTime)
 {
+	lastPosition = { x, y };
+	
+	//Move
+
+	
 }
 
 void Object::render(Tmpl8::Surface& screen)
@@ -127,6 +130,11 @@ Tmpl8::Sprite* Object::getSprite() const
 const std::string& Object::getTag() const
 {
 	return tag;
+}
+
+const Tmpl8::vec2 Object::getLastPosition() const
+{
+	return lastPosition;
 }
 
 void Object::onCollisionEnter(const CollisionEvent& event)
