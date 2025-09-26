@@ -2,23 +2,22 @@
 #include "Functions.h"
 #include "CollisionHelper.h"
 
-CollisionManager::CollisionManager(std::shared_ptr<Grid> grid) : grid(grid)
+CollisionManager::CollisionManager(std::shared_ptr<GameManager> gameManager) : gameManager(gameManager)
 {
+	
+}
+
+CollisionManager::~CollisionManager()
+{
+	
 }
 
 void CollisionManager::checkCollision()
 {
 	//Reset grid
-	for (const auto& col : PhysicObject::physicObjects)
+	for (const auto& col : gameManager->getObjects())
 	{
-		grid->addObject(col);
-	}
-
-	for (const auto& col : PhysicObject::physicObjects)
-	{
-		std::vector<Object*> possibleCollisions;
-		grid->getCollisions(col, possibleCollisions);
-		for (const auto& col1 : possibleCollisions)
+		for (const auto& col1 : gameManager->getObjects())
 		{
 			if (col == col1) continue;
 
@@ -39,21 +38,16 @@ void CollisionManager::checkCollision()
 	}
 }
 
-void CollisionManager::destroyObject(Object* object)
-{
-	grid->destroyObject(object);
-}
-
 void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 {
-	for (const auto& col : PhysicObject::physicObjects)
+	for (const auto& col : gameManager->getObjects())
 	{
 		auto& objVerticies = col->getVerticies();
 		screen.Line(objVerticies[0].x, objVerticies[0].y, objVerticies[1].x, objVerticies[1].y, Tmpl8::RedMask);
 		screen.Line(objVerticies[1].x, objVerticies[1].y, objVerticies[2].x, objVerticies[2].y, Tmpl8::RedMask);
 		screen.Line(objVerticies[2].x, objVerticies[2].y, objVerticies[3].x, objVerticies[3].y, Tmpl8::RedMask);
 		screen.Line(objVerticies[3].x, objVerticies[3].y, objVerticies[0].x, objVerticies[0].y, Tmpl8::RedMask);
-		for (const auto& col1 : PhysicObject::physicObjects)
+		for (const auto& col1 : gameManager->getObjects())
 		{
 			if (col == col1) continue;
 
@@ -75,7 +69,7 @@ void CollisionManager::render(Tmpl8::Surface& screen)
 
 }
 
-bool CollisionManager::PointRectangle(Tmpl8::vec2 target, Object* col)
+bool CollisionManager::PointRectangle(Tmpl8::vec2 target, std::shared_ptr<Object>  col)
 {
 	Tmpl8::vec2 pos = col->getPosition();
 	Tmpl8::vec2 size = col->getSize();
@@ -91,7 +85,7 @@ bool CollisionManager::PointRectangle(Tmpl8::vec2 target, Object* col)
 	return false;
 }
 
-bool CollisionManager::PixelPerfectCheck(Object* target, Object* col, const Tmpl8::int4& overlap)
+bool CollisionManager::PixelPerfectCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col, const Tmpl8::int4& overlap)
 {
 	for (int x = overlap.x; x < overlap.x + overlap.z; x++)
 	{
@@ -108,7 +102,7 @@ bool CollisionManager::PixelPerfectCheck(Object* target, Object* col, const Tmpl
 	return false;
 }
 
-bool CollisionManager::PixelPerfectCheck(Object* target, Object* col, const Tmpl8::vec4& overlap)
+bool CollisionManager::PixelPerfectCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object> col, const Tmpl8::vec4& overlap)
 {
 	Tmpl8::int4 iOverlap = { static_cast<int>(overlap.x), static_cast<int>(overlap.y),  static_cast<int>(overlap.z),  static_cast<int>(overlap.w) };
 	return PixelPerfectCheck(target, col, iOverlap);
@@ -143,7 +137,7 @@ void CollisionManager::LineLineIntersection(Tmpl8::vec4 target, Tmpl8::vec4 col,
 	}
 }
 
-Tmpl8::vec4 CollisionManager::getIntersection(Object* target, Object* col)
+Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col)
 {
 	std::vector<Tmpl8::vec2> intersectionPoints;
 
@@ -198,9 +192,9 @@ Tmpl8::vec4 CollisionManager::getIntersection(Object* target, Object* col)
 	return { min.x, min.y, width, height };
 }
 
-void CollisionManager::CheckCollisionStatus(Object* A, Object* B, bool isCollision)
+void CollisionManager::CheckCollisionStatus(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision)
 {
-	unordered_pair<Object*> pair{ A,B };
+	unordered_pair<std::shared_ptr<Object> > pair{ A,B };
 	auto it = std::find(collisions.begin(), collisions.end(), pair);
 
 	if (isCollision)
@@ -210,14 +204,14 @@ void CollisionManager::CheckCollisionStatus(Object* A, Object* B, bool isCollisi
 			collisions.push_back(pair);
 
 			//OnCollisionEnter
-			A->onCollisionEnter(CollisionEvent{ B });
-			B->onCollisionEnter(CollisionEvent{ A });
+			A->onCollisionEnter(CollisionEvent{ B.get() });
+			B->onCollisionEnter(CollisionEvent{ A.get() });
 		}
 		else if (it != collisions.end())
 		{
 			//OnCollisionStay
-			A->onCollisionStay(CollisionEvent{ B });
-			B->onCollisionStay(CollisionEvent{ A });
+			A->onCollisionStay(CollisionEvent{ B.get() });
+			B->onCollisionStay(CollisionEvent{ A.get() });
 		}
 	}
 	else
@@ -227,8 +221,8 @@ void CollisionManager::CheckCollisionStatus(Object* A, Object* B, bool isCollisi
 			collisions.erase(it);
 
 			//OnCollisionExit
-			A->onCollisionExit(CollisionEvent{ B });
-			B->onCollisionExit(CollisionEvent{ A });
+			A->onCollisionExit(CollisionEvent{ B.get() });
+			B->onCollisionExit(CollisionEvent{ A.get() });
 		}
 	}
 }

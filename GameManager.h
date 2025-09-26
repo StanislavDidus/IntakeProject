@@ -1,37 +1,39 @@
 #pragma once
 
-#include "Asteroid.h"
 #include <memory>
 #include <vector>
 #include <string>
 #include <stdlib.h>
 #include <time.h>
 
+#include "Asteroid.h"
 #include "Player.h"
-#include "CollisionManager.h"
 
 class GameManager : public Listener
 {
 public:
-	GameManager(std::shared_ptr<CollisionManager> colManager, Tmpl8::Sprite& bulletSprite);
+	GameManager(Tmpl8::Sprite& bulletSprite, Tmpl8::Sprite& playerSprite);
 	virtual ~GameManager();
 
 	void update(float deltaTime);
 	void render(Tmpl8::Surface& screen );
 
-	std::vector<std::shared_ptr<Asteroid>> asteroids;
+	std::shared_ptr<Player> getPlayer() const;
+
+	std::vector<std::shared_ptr<Object>> getObjects() const;
 private:
-	void updateBullets(float deltaTime);
-	void updateAsteroids(float deltaTime);
+	void updatePlayer(float deltaTime);
+	void updateObjects(float deltaTime);
 
 	void spawnAsteroid();
-
+		
 	float spawnRate, spawnTimer;
 
-	std::shared_ptr<CollisionManager> colManager;
+	std::shared_ptr<Player> player;
+	std::vector<std::shared_ptr<Object>> objects;
 
-	std::vector<std::shared_ptr<Bullet>> bullets;
 	Tmpl8::Sprite bulletSprite;
+	Tmpl8::Sprite playerSprite;
 
 	std::vector<Tmpl8::Surface*> surfaces;
 	std::vector<Tmpl8::Sprite*> sprites;

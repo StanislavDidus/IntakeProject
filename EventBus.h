@@ -39,7 +39,7 @@ namespace event
 
 	struct objectDestroyed
 	{
-		Object* obj;
+		std::shared_ptr<Object> object;
 	};
 }
 
@@ -171,7 +171,7 @@ public:
 	}
 
 	template<typename T>
-	void RemovedListener(Listener* obj)
+	void RemoveListener(Listener* obj)
 	{
 		const char* name = typeid(T).name();
 
@@ -182,6 +182,8 @@ public:
 	void Push(const T& t)
 	{
 		const char* name = typeid(T).name();
+
+		//Possible bug if an array of a certain type does not exist
 
 		getEventArray<T>()->Push(t);
 		eventQueue.push(name);

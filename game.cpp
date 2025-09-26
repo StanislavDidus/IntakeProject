@@ -19,42 +19,25 @@ namespace Tmpl8
 
 	void Game::initGameManager()
 	{
-		gameManager = std::make_shared<GameManager>(colManager, *sprites["bullet"]);
-	}
-
-	void Game::initGrid()
-	{
-		grid = std::make_shared<Grid>(0.f, 0.f, ScreenWidth, ScreenHeight, 10, 10);
+		gameManager = std::make_shared<GameManager>(*sprites["bullet"], *sprites["ship"]);
 	}
 
 	void Game::initCollisionManager()
 	{
-		colManager = std::make_shared<CollisionManager>(grid);
+		colManager = std::make_shared<CollisionManager>(gameManager);
 	}
 
-	void Game::initPlayer()
+	/*void Game::initPlayer()
 	{
-		player = std::make_shared<Player>
-			(
-				sprites["ship"],
-				static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
-				static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
-				64,
-				64,
-				Tmpl8::vec2{0.f, 0.f},
-				Tmpl8::vec2{150.f, 150.f},
-				Tmpl8::vec2{550.f, 550.f},
-				Tmpl8::vec2{0.f, -1.f}
-			);
-	}
+		
+	}*/
 	
 	void Game::Init()
 	{
 		initSprites();
-		initGrid();
-		initCollisionManager();
 		initGameManager();
-		initPlayer();
+		initCollisionManager();
+		//initPlayer();
 	}
 	
 	// -----------------------------------------------------------
@@ -79,7 +62,6 @@ namespace Tmpl8
 		update(deltaTime);
 		render(*screen);
 #ifdef _DEBUG
-		grid->renderDEBUG(*screen);
 		colManager->renderDEBUG(*screen);
 
 		//FPS Counter
@@ -97,11 +79,9 @@ namespace Tmpl8
 	{
 		updateControls(deltaTime);
 
-		player->update(deltaTime);
+		gameManager->update(deltaTime);
 
 		colManager->checkCollision();
-
-		gameManager->update(deltaTime);
 
 		EventBus::Get().process();
 
@@ -119,7 +99,7 @@ namespace Tmpl8
 		screen.Clear(0);
 
 		sprites["space"]->Draw(&screen, 0, 0);
-		player->render(screen);
+		//player->render(screen);
 
 		gameManager->render(screen);
 	}
@@ -129,23 +109,23 @@ namespace Tmpl8
 		//Movement
 		if (isKeyHold('w'))
 		{
-			player->move(deltaTime);
+			gameManager->getPlayer()->move(deltaTime);
 		}
 		
 		//Rotation
 		if(isKeyHold('a'))
-			player->rotate(-1.f, deltaTime);
+			gameManager->getPlayer()->rotate(-1.f, deltaTime);
 			
 		if(isKeyHold('d'))
-			player->rotate(1.f, deltaTime);
+			gameManager->getPlayer()->rotate(1.f, deltaTime);
 
 		//Shoot
 		if (isKeyHold('e') || isKeyHold(' '))
-			player->shoot();
+			gameManager->getPlayer()->shoot();
 			
 		//Stop
 		if (!isKeyHold('w'))
-			player->stop(deltaTime);
+			gameManager->getPlayer()->stop(deltaTime);
 
 		/*if (isKeyDown('t')) std::cout << "down\n";
 		if (isKeyHold('t')) std::cout << "hold\n";

@@ -21,15 +21,13 @@ public:
 		const std::string& tag
 	);
 
-	virtual ~PhysicObject();
+	virtual ~PhysicObject() = default;
 
 	void render(Tmpl8::Surface& screen) override;
 
 	virtual void move(float deltaTime);
 
 	virtual void stop(float deltaTime);
-
-	static std::vector<PhysicObject*> physicObjects;
 
 protected:
 	Tmpl8::vec2 velocity;

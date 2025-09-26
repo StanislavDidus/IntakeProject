@@ -4,6 +4,7 @@
 #include "surface.h"
 #include <iostream>
 #include <vector>
+#include <memory>
 
 struct CollisionEvent;
 

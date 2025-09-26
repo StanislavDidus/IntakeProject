@@ -14,7 +14,7 @@ int randomRange(int min, int max)
     return dist(rng);
 }
 
-GameManager::GameManager(std::shared_ptr<CollisionManager> colManager, Tmpl8::Sprite& bulletSprite) : colManager(colManager), bulletSprite(bulletSprite), spawnRate(2.5f), spawnTimer(0.f)
+GameManager::GameManager(Tmpl8::Sprite& bulletSprite, Tmpl8::Sprite& playerSprite) : bulletSprite(bulletSprite), spawnRate(2.5f), spawnTimer(0.f), playerSprite(playerSprite)
 {
     EventBus::Get().AddListener<event::createBullet>(this, [&](const event::createBullet& event) 
         {
@@ -32,13 +32,26 @@ GameManager::GameManager(std::shared_ptr<CollisionManager> colManager, Tmpl8::Sp
                     event.angle
                 );
 
-            bullets.push_back(bullet);
+            objects.push_back(bullet);
         });
+
+    player = std::make_shared<Player>
+        (
+            &playerSprite,
+            static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
+            static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
+            64,
+            64,
+            Tmpl8::vec2{ 0.f, 0.f },
+            Tmpl8::vec2{ 150.f, 150.f },
+            Tmpl8::vec2{ 550.f, 550.f },
+            Tmpl8::vec2{ 0.f, -1.f }
+        );
 }
 
 GameManager::~GameManager()
 {
-    EventBus::Get().RemovedListener<event::createBullet>(this);
+    EventBus::Get().RemoveListener<event::createBullet>(this);
 }
 
 void GameManager::update(float deltaTime)
@@ -53,67 +66,75 @@ void GameManager::update(float deltaTime)
     }
 
 
-    updateBullets(deltaTime);
-    updateAsteroids(deltaTime);
+    updatePlayer(deltaTime);
+    updateObjects(deltaTime);
 }
 
-void GameManager::updateBullets(float deltaTime)
+void GameManager::updatePlayer(float deltaTime)
 {
-    for (const auto& bullet : bullets)
-    {
-        bullet->update(deltaTime);
-    }
+    player->update(deltaTime);
+}
 
-    for (auto it = bullets.begin(); it != bullets.end(); )
+void GameManager::updateObjects(float deltaTime)
+{
+    for (auto it = objects.begin(); it != objects.end();)
     {
-        auto& bullet = *it;
+        auto& obj = *it;
 
-        if (bullet->destroy)
+        if (obj->destroy)
         {
-            it = bullets.erase(it);
-
-            colManager->destroyObject(bullet.get());
+            it = objects.erase(it);
         }
         else
             ++it;
     }
-}
 
-void GameManager::updateAsteroids(float deltaTime)
-{
-    for (const auto& asteroid : asteroids)
+    for (const auto& obj : objects)
     {
-        asteroid->update(deltaTime);
+        obj->update(deltaTime);
     }
 
-    for (auto it = asteroids.begin(); it != asteroids.end();)
+    for (const auto& obj : objects)
     {
-        auto& asteroid = *it;
-        if (asteroid->getPosition().x < -asteroid->getSize().x ||
-            asteroid->getPosition().x + asteroid->getSize().x >= ScreenWidth + asteroid->getSize().x ||
-            asteroid->getPosition().y < -asteroid->getSize().y ||
-            asteroid->getSize().y + asteroid->getSize().y >= ScreenHeight + asteroid->getSize().y)
-        {
-            it = asteroids.erase(it);
+        auto& pos = obj->getPosition();
+        auto& size = obj->getSize();
 
-            colManager->destroyObject(asteroid.get());
+        if (pos.x < -size.x ||
+            pos.x + size.x >= ScreenWidth + size.x ||
+            pos.y < -size.y ||
+            pos.y + size.y >= ScreenHeight + size.y)
+        {
+            obj->destroy = true;
         }
-        else
-            ++it;
     }
 }
 
 void GameManager::render(Tmpl8::Surface& screen)
 {
-    for (const auto& bullet : bullets)
+    player->render(screen);
+
+    for (const auto& obj : objects)
     {
-        bullet->render(screen);
+        obj->render(screen);
     }
-    
-    for (const auto& asteroid : asteroids)
-    {
-        asteroid->render(screen);
-    }
+
+}
+
+std::shared_ptr<Player> GameManager::getPlayer() const
+{
+    return player;
+}
+
+std::vector<std::shared_ptr<Object>> GameManager::getObjects() const
+{
+    int vectorSize = 1 + objects.size();
+    std::vector<std::shared_ptr<Object>> vec;
+    vec.reserve(vectorSize);
+
+    vec.push_back(player);
+    vec.insert(vec.end(), objects.begin(), objects.end());
+
+    return vec;
 }
 
 void GameManager::spawnAsteroid()
@@ -150,5 +171,5 @@ void GameManager::spawnAsteroid()
             direction
         );
 
-    asteroids.push_back(asteroid);
+    objects.push_back(asteroid);
 }

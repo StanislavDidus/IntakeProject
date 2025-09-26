@@ -4,7 +4,7 @@
 
 struct CollisionHelper
 {
-	static bool AABB(Object* target, Object* col)
+	static bool AABB(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col)
 	{
 		auto& pos1 = target->getPosition();
 		auto& size1 = target->getSize();
@@ -24,7 +24,7 @@ struct CollisionHelper
 	/*
 	Inspiration: https://dyn4j.org/2010/01/sat/#sat-axes
 	*/
-	static bool SAT(Object* target, Object* col) //Separating Axis Theorem
+	static bool SAT(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col) //Separating Axis Theorem
 	{
 		//Get separated axes for each collider
 		std::vector<Tmpl8::vec2> axes;

@@ -6,7 +6,7 @@
 #include <optional>
 #include <set>
 
-#include "Grid.h"
+#include "GameManager.h"
 
 struct CollisionEvent
 {
@@ -28,25 +28,28 @@ struct unordered_pair
 class CollisionManager
 {
 public:
-	CollisionManager(std::shared_ptr<Grid> grid);
+	CollisionManager(std::shared_ptr<GameManager> gameManager);
+	virtual ~CollisionManager();
 
 	void checkCollision();
-	void destroyObject(Object* object);
 	void render(Tmpl8::Surface& screen);
 	void renderDEBUG(Tmpl8::Surface& screen);
 
+	//void deleteObject(std::shared_ptr<Object> obj);
+
 private:
-	bool PointRectangle(Tmpl8::vec2 target, Object* col);
-	bool PixelPerfectCheck(Object* target, Object* col, const Tmpl8::int4& overlap);
-	bool PixelPerfectCheck(Object* target, Object* col, const Tmpl8::vec4& overlap);
+	bool PointRectangle(Tmpl8::vec2 target, std::shared_ptr<Object> col);
+	bool PixelPerfectCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col, const Tmpl8::int4& overlap);
+	bool PixelPerfectCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object> col, const Tmpl8::vec4& overlap);
 	void LineLineIntersection(Tmpl8::vec4 target, Tmpl8::vec4 col, std::vector<Tmpl8::vec2>& points);
 
-	Tmpl8::vec4 getIntersection(Object* target, Object* col);
+	Tmpl8::vec4 getIntersection(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col);
 
-	void CheckCollisionStatus(Object* A, Object* B, bool isCollision);
+	void CheckCollisionStatus(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision);
 
-	std::vector<unordered_pair<Object*>> collisions; // All collision in current frame
+	std::vector<unordered_pair<std::shared_ptr<Object>>> collisions; // All collision in current frame
 
-	std::shared_ptr<Grid> grid;
+	std::shared_ptr<GameManager> gameManager;
+
 };
 
