@@ -1,7 +1,22 @@
 #include "Object.h"
 #include "CollisionManager.h"
 
-Object::Object(Tmpl8::Sprite* sprite, float x, float y, int width, int height, float angle, const std::string& tag) : sprite(sprite), x(x), y(y), width(width), height(height), angle(angle), tag(tag), destroy(false), lastPosition(x, y)
+Object::Object
+(
+	Tmpl8::Sprite* sprite,
+	float x,
+	float y,
+	int width,
+	int height,
+	Tmpl8::vec2 velocity,
+	Tmpl8::vec2 maxVelocity,
+	Tmpl8::vec2 acceleration,
+	Tmpl8::vec2 direction,
+	float angle,
+	const std::string& tag
+) : sprite(sprite), x(x), y(y), width(width), height(height), angle(angle),
+	tag(tag), destroy(false), velocity(velocity), maxVelocity(maxVelocity),
+	acceleration(acceleration), direction(direction)
 {
 	
 }
@@ -13,11 +28,8 @@ Object::~Object()
 
 void Object::update(float deltaTime)
 {
-	lastPosition = { x, y };
-	
-	//Move
-
-	
+	x += velocity.x * direction.x * deltaTime;
+	y += velocity.y * direction.y * deltaTime;
 }
 
 void Object::render(Tmpl8::Surface& screen)
@@ -33,6 +45,23 @@ const Tmpl8::vec2 Object::getPosition() const
 const Tmpl8::vec2 Object::getSize() const
 {
 	return Tmpl8::vec2(static_cast<float>(width), static_cast<float>(height));
+}
+
+void Object::move(float deltaTime)
+{
+	velocity += acceleration * deltaTime;
+
+	velocity.x = clamp(velocity.x, -maxVelocity.x, maxVelocity.x);
+	velocity.y = clamp(velocity.y, -maxVelocity.y, maxVelocity.y);
+}
+
+void Object::stop(float deltaTime)
+{
+	velocity.x -= velocity.x * deltaTime;
+	velocity.y -= velocity.y * deltaTime;
+
+	if (std::abs(velocity.x) <= 0.01f) velocity.x = 0.f;
+	if (std::abs(velocity.y) <= 0.01f) velocity.y = 0.f;
 }
 
 const std::vector<Tmpl8::vec2> Object::getAxes() const
@@ -99,7 +128,7 @@ const std::vector<Tmpl8::vec2> Object::getVerticies() const
 
 const Tmpl8::vec2 Object::getRotatedPoint(Tmpl8::vec2 pos, float dir) const
 {
-	float radians = angle * dir * 3.1415f / 180.f;
+	float radians = angle * dir * Tmpl8::PI / 180.f;
 	float sin = std::sin(radians);
 	float cos = std::cos(radians);
 
@@ -112,9 +141,9 @@ const Tmpl8::vec2 Object::getRotatedPoint(Tmpl8::vec2 pos, float dir) const
 	return { sx * cos - sy * sin + cx, sx * sin + sy * cos + cy };
 }
 
-Tmpl8::Pixel Object::getPixelRotatedToPosition(int pixelX, int pixelY) const
+Tmpl8::Pixel Object::getPixelAtRotatedPosition(int pixelX, int pixelY) const
 {
-	return sprite->getPixelRotatedToPosition(static_cast<int>(x), static_cast<int>(y), pixelX, pixelY , width, height, angle);
+	return sprite->getPixelAtRotatedPosition(static_cast<int>(x), static_cast<int>(y), pixelX, pixelY , width, height, angle);
 }
 
 float Object::getAngle() const
@@ -132,20 +161,17 @@ const std::string& Object::getTag() const
 	return tag;
 }
 
-const Tmpl8::vec2 Object::getLastPosition() const
+void Object::onCollisionEnter(std::shared_ptr<Object> object)
 {
-	return lastPosition;
+	//Enter
 }
 
-void Object::onCollisionEnter(const CollisionEvent& event)
+void Object::onCollisionStay(std::shared_ptr<Object> object)
 {
-	
+	//Stay
 }
 
-void Object::onCollisionStay(const CollisionEvent& event)
+void Object::onCollisionExit(std::shared_ptr<Object> object)
 {
-}
-
-void Object::onCollisionExit(const CollisionEvent& event)
-{
+	//Exit
 }

@@ -11,20 +11,31 @@ namespace Tmpl8
 
 	void Game::initSprites()
 	{
-		sprites["ship"] = new Sprite(new Surface("assets/airship.png"), 1);
-		sprites["space"] = new Sprite(new Surface("assets/space.png"), 1);
-		sprites["bullet"] = new Sprite(new Surface("assets/bullet.png"), 1);
-		sprites["asteroid"] = new Sprite(new Surface("assets/asteroid1.png"), 3);
+		//Ship
+		sprites["ship"] = std::make_shared<Sprite>(new Surface("assets/airship.png"), 1);
+		sprites["shipEngine"] = std::make_shared<Sprite>(new Surface("assets/engine.png"), 1);
+		sprites["engineEffect"] = std::make_shared<Sprite>(new Surface("assets/engineEffect.png"), 7);
+		sprites["weapon"] = std::make_shared<Sprite>(new Surface("assets/weapon.png"), 7);
+		sprites["bullet"] = std::make_shared<Sprite>(new Surface("assets/bullet.png"), 4);
+
+		sprites["space"] = std::make_shared<Sprite>(new Surface("assets/space.png"), 2);
+		//sprites["asteroid"] = new Sprite(new Surface("assets/asteroid.png"), 3);
 	}
 
 	void Game::initGameManager()
 	{
-		gameManager = std::make_shared<GameManager>(*sprites["bullet"], *sprites["ship"]);
+		gameManager = std::make_shared<GameManager>(sprites);
 	}
 
 	void Game::initCollisionManager()
 	{
 		colManager = std::make_shared<CollisionManager>(gameManager);
+	}
+
+	void Game::initAnimators()
+	{
+		bgAnimator = std::make_unique<Animator>();
+		bgAnimator->addFrameAnimation(sprites["space"].get(), 1.f, 0, sprites["space"]->Frames() - 1, []() {return true; });
 	}
 
 	/*void Game::initPlayer()
@@ -37,6 +48,7 @@ namespace Tmpl8
 		initSprites();
 		initGameManager();
 		initCollisionManager();
+		initAnimators();
 		//initPlayer();
 	}
 	
@@ -45,11 +57,6 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::Shutdown()
 	{
-		for (auto& [name, sprite] : sprites)
-		{
-			delete sprite;
-		}
-		sprites.clear();
 	}
 
 	// -----------------------------------------------------------
@@ -83,7 +90,7 @@ namespace Tmpl8
 
 		colManager->checkCollision();
 
-		EventBus::Get().process();
+		bgAnimator->update(deltaTime);
 
 		//Update buttons
 		for (const auto& key : downButtons)
@@ -98,8 +105,7 @@ namespace Tmpl8
 	{
 		screen.Clear(0);
 
-		sprites["space"]->Draw(&screen, 0, 0);
-		//player->render(screen);
+		sprites["space"]->DrawScaled(0, 0, ScreenWidth, ScreenHeight, &screen);
 
 		gameManager->render(screen);
 	}

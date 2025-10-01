@@ -12,6 +12,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+#include "CollisionHelper.h"
 #include "Functions.h"
 
 namespace Tmpl8 {
@@ -212,15 +213,11 @@ namespace Tmpl8 {
 		Line((float)x1, (float)y1, (float)x1, (float)y2, c);
 	}
 
+	/*template<bool BoundsCheck>
 	void Surface::Bar(int x1, int y1, int x2, int y2, Pixel c)
 	{
-		Pixel* a = x1 + y1 * m_Pitch + m_Buffer;
-		for (int y = y1; y <= y2; y++)
-		{
-			for (int x = 0; x <= (x2 - x1); x++) a[x] = c;
-			a += m_Pitch;
-		}
-	}
+		
+	}*/
 
 	void Surface::CopyTo(Surface* a_Dst, int a_X, int a_Y)
 	{
@@ -445,7 +442,7 @@ namespace Tmpl8 {
 		{
 			int u = (int)((float)x * ((float)m_Width / (float)a_Width));
 			int v = (int)((float)y * ((float)m_Height / (float)a_Height));
-			Pixel color = GetBuffer()[u + v * m_Pitch];
+			Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
 			if (color & 0xffffff) a_Target->GetBuffer()[a_X + x + ((a_Y + y) * a_Target->GetPitch())] = color;
 		}
 	}
@@ -453,6 +450,8 @@ namespace Tmpl8 {
 	void Sprite::DrawScaledRotated(int px, int py, int width, int height, float angle, Surface* screen)
 	{
 		if ((width == 0) || (height == 0)) return;
+
+		AABB dst = AABB{ 0, 0, ScreenWidth, ScreenHeight };
 
 		Tmpl8::vec2i min = { px, py };
 		Tmpl8::vec2i max = { px + width, py + height };
@@ -472,7 +471,7 @@ namespace Tmpl8 {
 
 		for (int x = posOffset.x; x < width - sizeOffset.x; x++) for (int y = posOffset.y; y < height - sizeOffset.y; y++)
 		{
-			float radians = angle * 3.1415f / 180.f;
+			float radians = angle * PI / 180.f;
 			float sin = std::sin(radians);
 			float cos = std::cos(radians);
 
@@ -501,9 +500,9 @@ namespace Tmpl8 {
 		DrawScaledRotated(static_cast<int>(px), static_cast<int>(py), width, height, angle, screen);
 	}
 
-	Pixel Sprite::getPixelRotatedToPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle)
+	Pixel Sprite::getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle)
 	{
-		float radians = angle * 3.1415f / 180.f;
+		float radians = angle * PI / 180.f;
 		float sin = std::sin(radians);
 		float cos = std::cos(radians);
 

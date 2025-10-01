@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "Functions.h"
+
 namespace Tmpl8 {
 
 constexpr int RedMask = 0xff0000;
@@ -64,7 +66,26 @@ public:
 	void BlendCopyTo( Surface* a_Dst, int a_X, int a_Y );
 	void ScaleColor( unsigned int a_Scale );
 	void Box( int x1, int y1, int x2, int y2, Pixel color );
-	void Bar( int x1, int y1, int x2, int y2, Pixel color );
+	template<bool BoundsCheck = false>
+	void Bar(int x1, int y1, int x2, int y2, Pixel color)
+	{
+		if constexpr (BoundsCheck)
+		{
+			if ((x1 < 0 || x1 >= 800 || y1 < 0 || y1 >= 512) && (x2 < 0 || x2 >= 800 || y2 < 0 || y2 >= 512)) return;
+
+			x1 = clamp(x1, 0, 799);
+			y1 = clamp(y1, 0, 511);
+			x2 = clamp(x2, 0, 799);
+			y2 = clamp(y2, 0, 511);
+		}
+
+		Pixel* a = x1 + y1 * m_Pitch + m_Buffer;
+		for (int y = y1; y <= y2; y++)
+		{
+			for (int x = 0; x <= (x2 - x1); x++) a[x] = color;
+			a += m_Pitch;
+		}
+	}
 	void Resize( Surface* a_Orig );
 private:
 	// Attributes
@@ -104,7 +125,7 @@ public:
 	void DrawScaled( int a_X, int a_Y, int a_Width, int a_Height, Surface* a_Target );
 	void DrawScaledRotated(int px, int py, int width, int height, float angle, Surface* screen);
 	void DrawScaledRotated(float px, float py, int width, int height, float angle, Surface* screen);
-	Pixel getPixelRotatedToPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle);
+	Pixel getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle);
 	void SetFlags( unsigned int a_Flags ) { m_Flags = a_Flags; }
 	void SetFrame( unsigned int a_Index ) { m_CurrentFrame = a_Index; }
 	unsigned int GetFlags() const { return m_Flags; }
@@ -112,6 +133,7 @@ public:
 	int GetHeight() { return m_Height; }
 	Pixel* GetBuffer() { return m_Surface->GetBuffer(); }	
 	unsigned int Frames() { return m_NumFrames; }
+	unsigned int getCurrentFrame() { return m_CurrentFrame; }
 	Surface* GetSurface() { return m_Surface; }
 private:
 	// Methods

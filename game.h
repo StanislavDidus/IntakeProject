@@ -10,7 +10,6 @@
 #include "Player.h"
 #include "GameManager.h"
 #include "CollisionManager.h"
-#include "EventBus.h"
 
 namespace Tmpl8 {
 
@@ -37,11 +36,14 @@ private:
 	std::set<int> holdButtons;
 	std::set<int> upButtons;
 
-	std::unordered_map<std::string, Tmpl8::Sprite*> sprites;
+	std::unordered_map<std::string, std::shared_ptr<Sprite>> sprites;
+
+	std::unique_ptr<Animator> bgAnimator;
 
 	void initSprites();
 	void initGameManager();
 	void initCollisionManager();
+	void initAnimators();
 	//void initPlayer();
 
 	void update(float deltaTime);

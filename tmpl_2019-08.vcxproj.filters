@@ -10,9 +10,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicObject.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -20,9 +17,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="game.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="EventBus.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="CollisionManager.cpp">
@@ -34,7 +28,10 @@
     <ClCompile Include="Asteroid.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="Grid.cpp">
+    <ClCompile Include="FillBar.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,9 +51,6 @@
     <ClInclude Include="CollisionManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="EventBus.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -69,16 +63,19 @@
     <ClInclude Include="Functions.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicObject.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="GameManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Grid.h">
+    <ClInclude Include="CollisionHelper.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionHelper.h">
+    <ClInclude Include="UIElement.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="FillBar.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -97,5 +94,8 @@
     <Text Include="_readme.txt">
       <Filter>template code</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

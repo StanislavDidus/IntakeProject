@@ -14,44 +14,37 @@ int randomRange(int min, int max)
     return dist(rng);
 }
 
-GameManager::GameManager(Tmpl8::Sprite& bulletSprite, Tmpl8::Sprite& playerSprite) : bulletSprite(bulletSprite), spawnRate(2.5f), spawnTimer(0.f), playerSprite(playerSprite)
+GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites) :
+    sprites(sprites), spawnRate(2.5f), spawnTimer(0.f)
 {
-    EventBus::Get().AddListener<event::createBullet>(this, [&](const event::createBullet& event) 
-        {
-            auto  bullet = std::make_shared<Bullet>
-                (
-                    &bulletSprite,
-                    event.pos.x,
-                    event.pos.y,
-                    event.size.x,
-                    event.size.y,
-                    Tmpl8::vec2{ 0.f, 0.f },
-                    Tmpl8::vec2{ 1500.f, 1500.f },
-                    Tmpl8::vec2{ 5000.f, 5000.f },
-                    event.direction,
-                    event.angle
-                );
-
-            objects.push_back(bullet);
-        });
-
     player = std::make_shared<Player>
         (
-            &playerSprite,
+            sprites["ship"].get(),
+            sprites["shipEngine"].get(),
+            sprites["engineEffect"].get(),
+            sprites["weapon"].get(),
+            sprites["bullet"].get(),
             static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
             static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
-            64,
-            64,
+            96,
+            96,
             Tmpl8::vec2{ 0.f, 0.f },
             Tmpl8::vec2{ 150.f, 150.f },
             Tmpl8::vec2{ 550.f, 550.f },
             Tmpl8::vec2{ 0.f, -1.f }
         );
+
+    //Init asteroid frame sprites
+    for (int i = 0; i < 3; i++)
+    {
+        auto sprite = std::make_shared<Tmpl8::Sprite>(new Tmpl8::Surface("assets/asteroid.png"), 3);
+        sprite->SetFrame(i);
+        asteroidSprites.push_back(sprite);
+    }
 }
 
 GameManager::~GameManager()
 {
-    EventBus::Get().RemoveListener<event::createBullet>(this);
 }
 
 void GameManager::update(float deltaTime)
@@ -127,12 +120,15 @@ std::shared_ptr<Player> GameManager::getPlayer() const
 
 std::vector<std::shared_ptr<Object>> GameManager::getObjects() const
 {
-    int vectorSize = 1 + objects.size();
+    std::vector<std::shared_ptr<Bullet>> bullets = player->getBullets();
+
+    size_t vectorSize = 1 + objects.size() + bullets.size();
     std::vector<std::shared_ptr<Object>> vec;
     vec.reserve(vectorSize);
 
     vec.push_back(player);
     vec.insert(vec.end(), objects.begin(), objects.end());
+    vec.insert(vec.end(), bullets.begin(), bullets.end());
 
     return vec;
 }
@@ -151,16 +147,15 @@ void GameManager::spawnAsteroid()
     Tmpl8::vec2 direction = randomTarget - Tmpl8::vec2{ x , y };
     direction.normalize();
 
-    Tmpl8::Surface* surface = new Tmpl8::Surface("assets/asteroid.png");
-    surfaces.push_back(surface);
+    int health = 0;
 
-    Tmpl8::Sprite* sprite = new Tmpl8::Sprite(surface, 3);
-    sprite->SetFrame(randomRange(0, 2));
-    sprites.push_back(sprite);
+    if (width < 128) health = 1;
+    else if (width < 192) health = 2;
+    else health = 3;
 
     auto asteroid = std::make_shared<Asteroid>
         (
-            sprite,
+            asteroidSprites[randomRange(0, 2)].get(),
             x,
             y,
             width,
@@ -168,7 +163,8 @@ void GameManager::spawnAsteroid()
             Tmpl8::vec2{ 0.f, 0.f },
             Tmpl8::vec2{ 100.f, 100.f },
             Tmpl8::vec2{ 500.f, 500.f },
-            direction
+            direction,
+            health
         );
 
     objects.push_back(asteroid);

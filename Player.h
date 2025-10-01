@@ -6,16 +6,20 @@
 #include <algorithm>
 #include <vector>
 
-#include "PhysicObject.h"
+#include "Object.h"
+#include "Animator.h"
 #include "Bullet.h"
-#include "EventBus.h"
 
-class Player : public PhysicObject
+class Player : public Object
 {
 public:
 	Player
 	(
-		Tmpl8::Sprite* sprite,
+		Tmpl8::Sprite* playerSprite,
+		Tmpl8::Sprite* engineSprite,
+		Tmpl8::Sprite* engineEffectSprite,
+		Tmpl8::Sprite* weaponSprite,
+		Tmpl8::Sprite* bulletSprite,
 		float x,
 		float y,
 		int width,
@@ -29,16 +33,36 @@ public:
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;
 
+	const std::vector<std::shared_ptr<Bullet>>& getBullets() const;
+
 	void rotate(float angle, float deltaTime);
 
 	void shoot();
 
-	void onCollisionEnter(const CollisionEvent& event) override;
-	void onCollisionStay(const CollisionEvent& event) override;
-	void onCollisionExit(const CollisionEvent& event) override;
+	void onCollisionEnter(std::shared_ptr<Object> object) override;
+	void onCollisionStay(std::shared_ptr<Object> object) override;
+	void onCollisionExit(std::shared_ptr<Object> object) override;
 private:
+	void initAnimator();
+
+	void updateBullets(float deltaTime);
+
+	void renderShipPart(Tmpl8::Sprite* sprite, Tmpl8::Surface& screen);
+
+	std::vector<std::shared_ptr<Bullet>> bullets;
+
+	Tmpl8::Sprite* engineSprite;
+	Tmpl8::Sprite* engineEffectSprite;
+	Tmpl8::Sprite* weaponSprite;
+
+	Tmpl8::Sprite* bulletSprite;
+
+	std::unique_ptr<Animator> animator;
+
 	float shootSpeed;
 	float shootTimer;
+	bool shootLeft;
+
 	float rotationSpeed;
 };
 

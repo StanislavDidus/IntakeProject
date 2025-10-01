@@ -1,18 +1,12 @@
 #pragma once
 
-#include "PhysicObject.h"
+#include "Object.h"
 #include <memory>
 #include <vector>
 #include <optional>
 #include <set>
 
 #include "GameManager.h"
-
-struct CollisionEvent
-{
-	Object* collider;
-	//other data
-};
 
 template<typename T>
 struct unordered_pair
@@ -45,7 +39,7 @@ private:
 
 	Tmpl8::vec4 getIntersection(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col);
 
-	void CheckCollisionStatus(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision);
+	void SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision);
 
 	std::vector<unordered_pair<std::shared_ptr<Object>>> collisions; // All collision in current frame
 

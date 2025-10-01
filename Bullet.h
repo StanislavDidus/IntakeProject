@@ -1,8 +1,9 @@
 #pragma once
 
-#include "PhysicObject.h"
+#include "Object.h"
+#include "Animator.h"
 
-class Bullet : public PhysicObject
+class Bullet : public Object
 {
 public:
 	Bullet
@@ -17,22 +18,15 @@ public:
 		Tmpl8::vec2 acceleration,
 		Tmpl8::vec2 direction,
 		float angle
-	) : PhysicObject(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, angle, "bullet") {
-	}
+	);
 
-	void update(float deltaTime) override
-	{
-		lastPosition = { x, y };
-		
-		move(deltaTime);
+	void update(float deltaTime) override;
 
-		x += velocity.x * direction.x * deltaTime;
-		y += velocity.y * direction.y * deltaTime;
-	}
-
-	void onCollisionEnter(const CollisionEvent& event) override;
+	void onCollisionEnter(std::shared_ptr<Object> object) override;
 
 private:
-	
+	void initAnimator();
+
+	std::unique_ptr<Animator> animator;
 };
 	

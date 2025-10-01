@@ -4,7 +4,7 @@
 
 struct CollisionHelper
 {
-	static bool AABB(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col)
+	static bool AABBCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col)
 	{
 		auto& pos1 = target->getPosition();
 		auto& size1 = target->getSize();
@@ -21,10 +21,11 @@ struct CollisionHelper
 			return true;
 		return false;
 	}
+
 	/*
 	Inspiration: https://dyn4j.org/2010/01/sat/#sat-axes
 	*/
-	static bool SAT(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col) //Separating Axis Theorem
+	static bool SATCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col) //Separating Axis Theorem
 	{
 		//Get separated axes for each collider
 		std::vector<Tmpl8::vec2> axes;
@@ -70,4 +71,49 @@ struct CollisionHelper
 		return true;
 	}
 
+};
+
+struct AABB
+{
+	AABB(int x, int y, int width, int height) : x(x), y(y), width(width), height(height)
+	{
+
+	}
+
+	AABB(Tmpl8::vec2i p0, Tmpl8::vec2i p1, Tmpl8::vec2i p2, Tmpl8::vec2 p3)
+	{
+		int minX = 0, minY = 0, maxX = 0, maxY = 0;
+		
+		if (p0.x < minX) minX = p0.x;
+		if (p0.y < minY) minY = p0.y;
+		if (p0.x > maxX) maxX = p0.x;
+		if (p0.y > maxY) maxY = p0.y;
+
+		if (p1.x < minX) minX = p1.x;
+		if (p1.y < minY) minY = p1.y;
+		if (p1.x > maxX) maxX = p1.x;
+		if (p1.y > maxY) maxY = p1.y;
+
+		if (p2.x < minX) minX = p2.x;
+		if (p2.y < minY) minY = p2.y;
+		if (p2.x > maxX) maxX = p2.x;
+		if (p2.y > maxY) maxY = p2.y;
+
+		if (p3.x < minX) minX = p3.x;
+		if (p3.y < minY) minY = p3.y;
+		if (p3.x > maxX) maxX = p3.x;
+		if (p3.y > maxY) maxY = p3.y;
+
+		x = minX, y = minY, width = maxX - minX, height = maxY - minY;
+	}
+
+	bool intersects(const AABB& col)
+	{
+		return !(x + width <= col.x ||
+			col.x + col.width <= x ||
+			y + height <= col.y ||
+			col.y + col.height <= y);
+	}
+
+	int x, y, width, height;
 };

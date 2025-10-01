@@ -1,8 +1,9 @@
 #pragma once
 
-#include "PhysicObject.h"
+#include "Object.h"
+#include "FillBar.h"
 
-class Asteroid : public PhysicObject
+class Asteroid : public Object
 {
 public:
 	Asteroid
@@ -15,13 +16,19 @@ public:
 		Tmpl8::vec2 velocity,
 		Tmpl8::vec2 maxVelocity,
 		Tmpl8::vec2 acceleration,
-		Tmpl8::vec2 direction
-	) : PhysicObject(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, 0.f, "asteroid"), rotationSpeed(10.f) {
-	}
+		Tmpl8::vec2 direction,
+		int maxHealth
+	);
 
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;
+
+	void onCollisionEnter(std::shared_ptr<Object> object) override;
 private:
+	std::unique_ptr<FillBar> hpBar;
+	int barWidth, barHeight;
+
 	float rotationSpeed;
+	int maxHealth, currentHealth;
 };
 

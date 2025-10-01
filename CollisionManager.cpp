@@ -15,15 +15,16 @@ CollisionManager::~CollisionManager()
 void CollisionManager::checkCollision()
 {
 	//Reset grid
-	for (const auto& col : gameManager->getObjects())
+	std::vector<std::shared_ptr<Object>> objects = gameManager->getObjects();
+	for (const auto& col : objects)
 	{
-		for (const auto& col1 : gameManager->getObjects())
+		for (const auto& col1 : objects)
 		{
 			if (col == col1) continue;
 
 			bool isCollision = false;
 
-			if (CollisionHelper::SAT(col, col1))
+			if (CollisionHelper::SATCheck(col, col1))
 			{
 				Tmpl8::vec4 overlap = getIntersection(col, col1);
 
@@ -33,7 +34,7 @@ void CollisionManager::checkCollision()
 				}
 			}
 
-			CheckCollisionStatus(col, col1, isCollision);
+			SendCollisionEvents(col, col1, isCollision);
 		}
 	}
 }
@@ -51,7 +52,7 @@ void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 		{
 			if (col == col1) continue;
 
-			if (CollisionHelper::SAT(col, col1))
+			if (CollisionHelper::SATCheck(col, col1))
 			{
 				Tmpl8::vec4 overlap = getIntersection(col, col1);
 
@@ -85,14 +86,14 @@ bool CollisionManager::PointRectangle(Tmpl8::vec2 target, std::shared_ptr<Object
 	return false;
 }
 
-bool CollisionManager::PixelPerfectCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col, const Tmpl8::int4& overlap)
+bool CollisionManager::PixelPerfectCheck(std::shared_ptr<Object> target, std::shared_ptr<Object>  col, const Tmpl8::int4& overlap)
 {
 	for (int x = overlap.x; x < overlap.x + overlap.z; x++)
 	{
 		for (int y = overlap.y; y < overlap.y + overlap.w; y++)
 		{
-			Tmpl8::Pixel color1 = target->getPixelRotatedToPosition(x, y);
-			Tmpl8::Pixel color2 = col->getPixelRotatedToPosition(x, y);
+			Tmpl8::Pixel color1 = target->getPixelAtRotatedPosition(x, y);
+			Tmpl8::Pixel color2 = col->getPixelAtRotatedPosition(x, y);
 
 			if (color1 & 0xffffff && color2 & 0xffffff)
 				return true;
@@ -192,7 +193,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 	return { min.x, min.y, width, height };
 }
 
-void CollisionManager::CheckCollisionStatus(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision)
+void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision)
 {
 	unordered_pair<std::shared_ptr<Object> > pair{ A,B };
 	auto it = std::find(collisions.begin(), collisions.end(), pair);
@@ -204,14 +205,14 @@ void CollisionManager::CheckCollisionStatus(std::shared_ptr<Object>  A, std::sha
 			collisions.push_back(pair);
 
 			//OnCollisionEnter
-			A->onCollisionEnter(CollisionEvent{ B.get() });
-			B->onCollisionEnter(CollisionEvent{ A.get() });
+			A->onCollisionEnter(B);
+			B->onCollisionEnter(A);
 		}
 		else if (it != collisions.end())
 		{
 			//OnCollisionStay
-			A->onCollisionStay(CollisionEvent{ B.get() });
-			B->onCollisionStay(CollisionEvent{ A.get() });
+			A->onCollisionStay(B);
+			B->onCollisionStay(A);
 		}
 	}
 	else
@@ -221,8 +222,8 @@ void CollisionManager::CheckCollisionStatus(std::shared_ptr<Object>  A, std::sha
 			collisions.erase(it);
 
 			//OnCollisionExit
-			A->onCollisionExit(CollisionEvent{ B.get() });
-			B->onCollisionExit(CollisionEvent{ A.get() });
+			A->onCollisionExit(B);
+			B->onCollisionExit(A);
 		}
 	}
 }

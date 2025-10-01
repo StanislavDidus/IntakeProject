@@ -5,14 +5,15 @@
 #include <string>
 #include <stdlib.h>
 #include <time.h>
+#include <unordered_map>
 
 #include "Asteroid.h"
 #include "Player.h"
 
-class GameManager : public Listener
+class GameManager
 {
 public:
-	GameManager(Tmpl8::Sprite& bulletSprite, Tmpl8::Sprite& playerSprite);
+	GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites);
 	virtual ~GameManager();
 
 	void update(float deltaTime);
@@ -32,10 +33,8 @@ private:
 	std::shared_ptr<Player> player;
 	std::vector<std::shared_ptr<Object>> objects;
 
-	Tmpl8::Sprite bulletSprite;
-	Tmpl8::Sprite playerSprite;
+	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> sprites;
 
-	std::vector<Tmpl8::Surface*> surfaces;
-	std::vector<Tmpl8::Sprite*> sprites;
+	std::vector<std::shared_ptr<Tmpl8::Sprite>> asteroidSprites;
 };
 
