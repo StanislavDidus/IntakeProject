@@ -44,7 +44,7 @@ void FrameCycledAnimation::play(float deltaTime)
 
 		sprite->SetFrame(currentFrame);
 
-		std::cout << currentFrame << "\n";
+		//std::cout << currentFrame << "\n";
 
 		currentFrame++;
 

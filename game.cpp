@@ -12,7 +12,7 @@ namespace Tmpl8
 	void Game::initSprites()
 	{
 		//Ship
-		sprites["ship"] = std::make_shared<Sprite>(new Surface("assets/airship.png"), 1);
+		sprites["ship"] = std::make_shared<Sprite>(new Surface("assets/ship.png"), 1);
 		sprites["shipEngine"] = std::make_shared<Sprite>(new Surface("assets/engine.png"), 1);
 		sprites["engineEffect"] = std::make_shared<Sprite>(new Surface("assets/engineEffect.png"), 7);
 		sprites["weapon"] = std::make_shared<Sprite>(new Surface("assets/weapon.png"), 7);

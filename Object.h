@@ -8,6 +8,11 @@
 
 #include "Functions.h"
 
+enum Side
+{
+	LEFT, RIGHT, UP, DOWN
+};
+
 struct CollisionEvent;
 
 class Object
@@ -31,6 +36,7 @@ public:
 
 	virtual void update(float deltaTime); // = 0; Pure virtual.
 	virtual void render(Tmpl8::Surface& screen);
+	void renderAt(Tmpl8::Sprite& sprite, float x, float y, Tmpl8::Surface & screen);
 
 	const Tmpl8::vec2 getPosition() const;
 	const Tmpl8::vec2 getSize() const;
@@ -41,7 +47,8 @@ public:
 	const std::vector<Tmpl8::vec2>        getAxes                  ()                                               const;
 	const Tmpl8::vec2                     getEdgeVector            (Tmpl8::vec2 min, Tmpl8::vec2 max)               const;
 	const std::vector<Tmpl8::vec4>        getEdges                 ()                                               const;
-	const Tmpl8::vec4                     getEdge                  (Tmpl8::vec2 min, Tmpl8::vec2 max)               const;
+	const Tmpl8::vec4                     getEdge                  (Side s)               const;
+	const std::vector<Tmpl8::vec2>        getVerticies             (Tmpl8::vec2 pos)                                const;
 	const std::vector<Tmpl8::vec2>        getVerticies             ()                                               const;
 	const Tmpl8::vec2                     getRotatedPoint          (Tmpl8::vec2 pos, float dir = 1.f)               const;
 	Tmpl8::Pixel                          getPixelAtRotatedPosition(int pixelX, int pixelY)                         const;

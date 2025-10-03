@@ -41,6 +41,8 @@ void Player::initAnimator()
 
 	animator->addFrameCycledAnimation(weaponSprite, shootSpeed / 2.f, 1, 2, "LeftShoot");
 	animator->addFrameCycledAnimation(weaponSprite, shootSpeed / 2.f, 3, 4, "RightShoot");
+
+	//animator->addFrameAnimation(sprite, 1.f, 0, 3, [this]() {return true; });
 }
 
 void Player::update(float deltaTime)
@@ -66,27 +68,35 @@ void Player::render(Tmpl8::Surface& screen)
 	}
 
 	// Draw engine
-	renderShipPart(engineSprite, screen);
+	renderShipPart(*engineSprite, screen);
 
 	// Draw weapon
-	renderShipPart(weaponSprite, screen);
+	renderShipPart(*weaponSprite, screen);
 
 	//// Draw engine effect
-	renderShipPart(engineEffectSprite, screen);
+	renderShipPart(*engineEffectSprite, screen);
 
 	// Draw main ship
-	renderShipPart(sprite, screen);
+	renderShipPart(*sprite, screen);
 
 }
 
 
-void Player::renderShipPart(Tmpl8::Sprite* sprite, Tmpl8::Surface& screen)
+void Player::renderShipPart(Tmpl8::Sprite& sprite, Tmpl8::Surface& screen)
 {
-	sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
+	//sprite.DrawScaledRotated(*this, screen);
+
+	renderAt(sprite, x + 100, y, screen);
+	
+	/*sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
 
 	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);
 	sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + ScreenHeight, ScreenHeight), width, height, angle, &screen);
-	sprite->DrawScaledRotated(fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);
+	sprite->DrawScaledRotated(fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);*/
+
+	/*renderAt(sprite, fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, screen);
+	renderAt(sprite, fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + ScreenHeight, ScreenHeight), screen);
+	renderAt(sprite, fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + height + ScreenHeight, ScreenHeight) - height, screen);*/
 }
 
 
@@ -134,8 +144,8 @@ void Player::shoot()
 	auto  bullet = std::make_shared<Bullet>
 		(
 			bulletSprite,
-			bulletPosition.x - width / 4,
-			bulletPosition.y - width / 4,
+			bulletPosition.x - static_cast<float>(width) / 4.f,
+			bulletPosition.y - static_cast<float>(width) / 4.f,
 			width / 2,
 			width / 2,
 			Tmpl8::vec2{ 0.f, 0.f },

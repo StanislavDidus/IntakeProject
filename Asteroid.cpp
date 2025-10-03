@@ -38,7 +38,9 @@ void Asteroid::update(float deltaTime)
 
 void Asteroid::render(Tmpl8::Surface& screen)
 {
-	sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
+	//sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
+	sprite->DrawScaledRotated(*this, screen);
+
 	hpBar->render(screen, currentHealth);
 
 	//sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);

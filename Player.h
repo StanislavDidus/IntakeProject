@@ -47,7 +47,7 @@ private:
 
 	void updateBullets(float deltaTime);
 
-	void renderShipPart(Tmpl8::Sprite* sprite, Tmpl8::Surface& screen);
+	void renderShipPart(Tmpl8::Sprite& sprite, Tmpl8::Surface& screen);
 
 	std::vector<std::shared_ptr<Bullet>> bullets;
 

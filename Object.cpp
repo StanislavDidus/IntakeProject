@@ -34,7 +34,13 @@ void Object::update(float deltaTime)
 
 void Object::render(Tmpl8::Surface& screen)
 {
-	sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
+	sprite->DrawScaledRotated(*this, screen);
+}
+
+void Object::renderAt(Tmpl8::Sprite& sprite, float x, float y, Tmpl8::Surface& screen)
+{
+	const auto& verticies = getVerticies({x, y});
+	sprite.DrawScaledRotated(verticies, x, y, width, height, angle, screen);
 }
 
 const Tmpl8::vec2 Object::getPosition() const
@@ -113,17 +119,22 @@ const Tmpl8::vec4 Object::getEdge(Tmpl8::vec2 min, Tmpl8::vec2 max) const
 	return Tmpl8::vec4{ A.x, A.y, B.x, B.y };
 }
 
-const std::vector<Tmpl8::vec2> Object::getVerticies() const
+const std::vector<Tmpl8::vec2> Object::getVerticies(Tmpl8::vec2 pos) const
 {
 	std::vector<Tmpl8::vec2> verticies;
 	verticies.reserve(4);
 
-	verticies.push_back(getRotatedPoint({ x, y }));
-	verticies.push_back(getRotatedPoint({ x + width, y }));
-	verticies.push_back(getRotatedPoint({ x + width , y + height }));
-	verticies.push_back(getRotatedPoint({ x, y + height }));
+	verticies.push_back(getRotatedPoint(pos));
+	verticies.push_back(getRotatedPoint({ pos.x + width, pos.y }));
+	verticies.push_back(getRotatedPoint({ pos.x + width , pos.y + height }));
+	verticies.push_back(getRotatedPoint({ pos.x, pos.y + height }));
 
 	return verticies;
+}
+
+const std::vector<Tmpl8::vec2> Object::getVerticies() const
+{
+	return getVerticies({ x, y });
 }
 
 const Tmpl8::vec2 Object::getRotatedPoint(Tmpl8::vec2 pos, float dir) const

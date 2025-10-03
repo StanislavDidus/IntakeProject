@@ -75,14 +75,15 @@ struct CollisionHelper
 
 struct AABB
 {
-	AABB(int x, int y, int width, int height) : x(x), y(y), width(width), height(height)
+	AABB(float x, float y, float width, float height) : x(x), y(y), width(width), height(height)
 	{
 
 	}
 
-	AABB(Tmpl8::vec2i p0, Tmpl8::vec2i p1, Tmpl8::vec2i p2, Tmpl8::vec2 p3)
+	AABB(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p3)
 	{
-		int minX = 0, minY = 0, maxX = 0, maxY = 0;
+		constexpr float inf = std::numeric_limits<float>().infinity();
+		float minX = inf, minY = inf, maxX = -inf, maxY = -inf;
 		
 		if (p0.x < minX) minX = p0.x;
 		if (p0.y < minY) minY = p0.y;
@@ -115,5 +116,18 @@ struct AABB
 			col.y + col.height <= y);
 	}
 
-	int x, y, width, height;
+	void clamp(const AABB& col)
+	{
+		float minX = 0.f, minY = 0.f, maxX = 0.f, maxY = 0.f;
+		
+		minX = std::max(x, col.x);
+		minY = std::max(y, col.y);
+
+		maxX = std::min(x + width, col.x + col.width);
+		maxY = std::min(y + height, col.y + col.height);
+
+		x = minX, y = minY, width = maxX - minX, height = maxY - minY;
+	}
+
+	float x, y, width, height;
 };

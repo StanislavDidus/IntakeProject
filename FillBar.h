@@ -12,6 +12,6 @@ private:
 	Tmpl8::Pixel color;
 	bool horizontal; //true-horizontal, false-vertical
 	int minValue, maxValue;
-	float barWidth, barHeight;
+	int barWidth, barHeight;
 };
 
