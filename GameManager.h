@@ -9,11 +9,17 @@
 
 #include "Asteroid.h"
 #include "Player.h"
+#include "Sheep.h"
+
+namespace Tmpl8
+{
+	class Game;
+}
 
 class GameManager
 {
 public:
-	GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites);
+	GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, Tmpl8::Game* game);
 	virtual ~GameManager();
 
 	void update(float deltaTime);
@@ -27,14 +33,25 @@ private:
 	void updateObjects(float deltaTime);
 
 	void spawnAsteroid();
+	void spawnUpgrade();
+	void spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 direction, float angle);
 		
 	float spawnRate, spawnTimer;
 
 	std::shared_ptr<Player> player;
 	std::vector<std::shared_ptr<Object>> objects;
 
+	//Temp object vector
+	std::vector<std::shared_ptr<Object>> tempObjects;
+
 	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> sprites;
 
 	std::vector<std::shared_ptr<Tmpl8::Sprite>> asteroidSprites;
+
+	Tmpl8::Game* game;
+
+	float upgradeSpawnTime, upgradeSpawnTimer;
+	bool isUpgradeOnMap;
+	bool isUpgradeUsed;
 };
 

@@ -1,8 +1,8 @@
 #include "Bullet.h"
 #include "CollisionManager.h"
 
-Bullet::Bullet(Tmpl8::Sprite* sprite, float x, float y, int width, int height, Tmpl8::vec2 velocity, Tmpl8::vec2 maxVelocity, Tmpl8::vec2 acceleration, Tmpl8::vec2 direction, float angle) :
-	Object(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, angle, "bullet")
+Bullet::Bullet(std::shared_ptr<Tmpl8::Sprite> sprite, float x, float y, int width, int height, Tmpl8::vec2 velocity, float maxSpeed, Tmpl8::vec2 acceleration, Tmpl8::vec2 direction, float angle) :
+	Object(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, angle, "bullet")
 {
 	initAnimator();
 }
@@ -17,11 +17,10 @@ void Bullet::update(float deltaTime)
 {
 	move(deltaTime);
 
-	x += velocity.x * direction.x * deltaTime;
-	y += velocity.y * direction.y * deltaTime;
+	applyVelocity(deltaTime);
 
 	animator->update(deltaTime);
-}
+}	
 
 void Bullet::onCollisionEnter(std::shared_ptr<Object> object)
 {

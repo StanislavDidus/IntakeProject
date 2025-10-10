@@ -41,8 +41,8 @@ struct CollisionHelper
 		for (const auto& axis : axes)
 		{
 			//Go through each of the verticies
-			std::vector<Tmpl8::vec2> objVerticies = target->getVerticies();
-			std::vector<Tmpl8::vec2> colVerticies = col->getVerticies();
+			std::vector<Tmpl8::vec2> objVerticies = target->getVertices();
+			std::vector<Tmpl8::vec2> colVerticies = col->getVertices();
 
 			float min = objVerticies[0].dot(axis), max = min;
 			for (int i = 1; i < 4; i++)

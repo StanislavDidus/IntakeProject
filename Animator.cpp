@@ -1,6 +1,6 @@
 #include "Animator.h"
 
-FrameAnimation::FrameAnimation(Tmpl8::Sprite* sprite, float animationSpeed, int firstFrame, int lastFrame, const std::function<bool()>& condition) :
+FrameAnimation::FrameAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float animationSpeed, int firstFrame, int lastFrame, const std::function<bool()>& condition) :
 	 sprite(sprite), animationSpeed(animationSpeed), firstFrame(firstFrame), lastFrame(lastFrame), condition(condition), currentFrame(firstFrame), timer(0.f)
 {
 }
@@ -27,8 +27,8 @@ const std::function<bool()>& FrameAnimation::getCondition() const
 	return condition;
 }
 
-FrameCycledAnimation::FrameCycledAnimation(Tmpl8::Sprite* sprite, float animationSpeed, int firstFrame, int lastFrame) :
-	sprite(sprite), animationSpeed(animationSpeed), firstFrame(firstFrame), lastFrame(lastFrame), currentFrame(firstFrame), active(false), timer(0.f)
+FrameCycledAnimation::FrameCycledAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float animationSpeed, int firstFrame, int lastFrame, bool returnToBaseFrame) :
+	sprite(sprite), animationSpeed(animationSpeed), firstFrame(firstFrame), lastFrame(lastFrame), currentFrame(firstFrame), active(false), timer(0.f), returnToBaseFrame(returnToBaseFrame)
 
 {
 
@@ -51,10 +51,21 @@ void FrameCycledAnimation::play(float deltaTime)
 		if (currentFrame > lastFrame)
 		{
 			active = false; 
-			sprite->SetFrame(0);
+
+			if(returnToBaseFrame)
+				sprite->SetFrame(0);
+
 			return;
 		}
 	}
+}
+
+void FrameCycledAnimation::stop()
+{
+	active = false;
+
+	if(returnToBaseFrame)
+		sprite->SetFrame(0);
 }
 
 void FrameCycledAnimation::setBaseFrame()
@@ -95,12 +106,17 @@ void Animator::playAnimation(const std::string& name)
 	frameCycledAnimations[name]->active = true;
 }
 
-void Animator::addFrameAnimation(Tmpl8::Sprite* sprite, float animationSpeed, int firstFrame, int lastFrame, const std::function<bool()>& condition)
+void Animator::stopAnimation(const std::string& name)
+{
+	frameCycledAnimations[name]->stop();
+}
+
+void Animator::addFrameAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float animationSpeed, int firstFrame, int lastFrame, const std::function<bool()>& condition)
 {
 	frameAnimations.push_back(std::make_shared<FrameAnimation>(sprite, animationSpeed, firstFrame, lastFrame, condition));
 }
 
-void Animator::addFrameCycledAnimation(Tmpl8::Sprite* sprite, float animationSpeed, int firstFrame, int lastFrame, const std::string& name)
+void Animator::addFrameCycledAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float animationSpeed, int firstFrame, int lastFrame, const std::string& name, bool returnToBaseFrame)
 {
-	frameCycledAnimations[name] = std::make_shared<FrameCycledAnimation>(sprite, animationSpeed, firstFrame, lastFrame);
+	frameCycledAnimations[name] = std::make_shared<FrameCycledAnimation>(sprite, animationSpeed, firstFrame, lastFrame, returnToBaseFrame);
 }

@@ -34,6 +34,22 @@
     <ClCompile Include="Animator.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Sheep.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Upgrade.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="EventBus.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SuperBullet.cpp" />
+    <ClCompile Include="PlayerStates.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">
@@ -78,6 +94,22 @@
     <ClInclude Include="Animator.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="Sheep.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="EventBus.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Upgrade.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="SuperBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

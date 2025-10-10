@@ -3,29 +3,28 @@
 
 Asteroid::Asteroid
 (
-	Tmpl8::Sprite* sprite,
+	std::shared_ptr<Tmpl8::Sprite> sprite,
 	float x,
 	float y,
 	int width,
 	int height,
 	Tmpl8::vec2 velocity,
-	Tmpl8::vec2 maxVelocity,
+	float maxSpeed,
 	Tmpl8::vec2 acceleration,
 	Tmpl8::vec2 direction,
 	int maxHealth
-) : Object(sprite, x, y, width, height, velocity, maxVelocity, acceleration, direction, 0.f, "asteroid"), rotationSpeed(10.f), maxHealth(maxHealth), currentHealth(maxHealth), barWidth(75), barHeight(height)
+) : Object(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, 0.f, "asteroid"), rotationSpeed(10.f), maxHealth(maxHealth), currentHealth(maxHealth), barWidth(75), barHeight(height)
 {
 	hpBar = std::make_unique<FillBar>(Tmpl8::GreenMask, x , y, barWidth, 5, 0, maxHealth);
 }
 
 void Asteroid::update(float deltaTime)
 {
-	angle += rotationSpeed * deltaTime;
+	angle += rotationSpeed * deltaTime;	
 
 	move(deltaTime);
 
-	x += velocity.x * direction.x * deltaTime;
-	y += velocity.y * direction.y * deltaTime;
+	applyVelocity(deltaTime);
 
 	hpBar->setPosition({x + static_cast<float>(width) / 2.f - static_cast<float>(barWidth) / 2.f, y - 5.f});
 
@@ -58,5 +57,9 @@ void Asteroid::onCollisionEnter(std::shared_ptr<Object> object)
 		{
 			destroy = true;
 		}
+	}
+	else if (object->getTag() == "sheep")
+	{
+		destroy = true;
 	}
 }

@@ -1,4 +1,6 @@
 #include "GameManager.h"
+#include "game.h"
+#include "Upgrade.h"
 
 #include <random>
 
@@ -8,28 +10,24 @@ namespace
     std::minstd_rand rng(rd());
 }
 
-int randomRange(int min, int max)
+static int randomRange(int min, int max)
 {
     std::uniform_int_distribution dist(min, max);
     return dist(rng);
 }
 
-GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites) :
-    sprites(sprites), spawnRate(2.5f), spawnTimer(0.f)
+GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, Tmpl8::Game* game) :
+    sprites(sprites), game(game), spawnRate(2.5f), spawnTimer(0.f), upgradeSpawnTime(3.f), upgradeSpawnTimer(upgradeSpawnTime), isUpgradeOnMap(false), isUpgradeUsed(false)
 {
     player = std::make_shared<Player>
         (
-            sprites["ship"].get(),
-            sprites["shipEngine"].get(),
-            sprites["engineEffect"].get(),
-            sprites["weapon"].get(),
-            sprites["bullet"].get(),
+            sprites,
             static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
             static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
             96,
             96,
             Tmpl8::vec2{ 0.f, 0.f },
-            Tmpl8::vec2{ 150.f, 150.f },
+            150.f,
             Tmpl8::vec2{ 550.f, 550.f },
             Tmpl8::vec2{ 0.f, -1.f }
         );
@@ -55,9 +53,24 @@ void GameManager::update(float deltaTime)
     {
         spawnTimer = 0.f;
 
-       spawnAsteroid();
+        spawnAsteroid();
     }
 
+    upgradeSpawnTimer -= deltaTime;
+
+    if (isUpgradeUsed && !player->isUpgraded())
+    {
+        isUpgradeUsed = false;
+        upgradeSpawnTimer = upgradeSpawnTime;
+    }
+
+    if (upgradeSpawnTimer <= 0.f && !isUpgradeOnMap && !isUpgradeUsed)
+    {
+        spawnUpgrade();
+        upgradeSpawnTimer = upgradeSpawnTime;
+        isUpgradeOnMap = true;
+
+    }
 
     updatePlayer(deltaTime);
     updateObjects(deltaTime);
@@ -76,11 +89,28 @@ void GameManager::updateObjects(float deltaTime)
 
         if (obj->destroy)
         {
+            //If deleted objects is asteroid
+            //Spawn a sheep
+            if (obj->getTag() == "asteroid")
+            {
+                spawnSheep(obj->getPosition(), obj->getSize(), obj->getDirection(), obj->getAngle());
+            }
+           
+            else if (obj->getTag() == "upgrade")
+            {
+                isUpgradeOnMap = false;
+                isUpgradeUsed = true;
+            }
+            
             it = objects.erase(it);
         }
         else
             ++it;
     }
+
+    objects.reserve(tempObjects.size());
+    objects.insert(objects.end(), tempObjects.begin(), tempObjects.end());
+    tempObjects.clear();
 
     for (const auto& obj : objects)
     {
@@ -100,16 +130,21 @@ void GameManager::updateObjects(float deltaTime)
             obj->destroy = true;
         }
     }
+
+    if (player->destroy)
+    {
+        game->Init();
+    }
 }
 
 void GameManager::render(Tmpl8::Surface& screen)
 {
-    player->render(screen);
-
     for (const auto& obj : objects)
     {
         obj->render(screen);
     }
+
+    player->render(screen);
 
 }
 
@@ -155,17 +190,49 @@ void GameManager::spawnAsteroid()
 
     auto asteroid = std::make_shared<Asteroid>
         (
-            asteroidSprites[randomRange(0, 2)].get(),
+            asteroidSprites[randomRange(0, 2)],
             x,
             y,
             width,
             height,
             Tmpl8::vec2{ 0.f, 0.f },
-            Tmpl8::vec2{ 100.f, 100.f },
-            Tmpl8::vec2{ 500.f, 500.f },
+            100.f,
+            Tmpl8::vec2{ 500.f * direction.x, 500.f * direction.y },
             direction,
             health
         );
 
     objects.push_back(asteroid);
+}
+
+void GameManager::spawnUpgrade()
+{
+    int w = 70, h = 70;
+
+    float x = static_cast<float>(randomRange(0,ScreenWidth - w));
+    float y = static_cast<float>(randomRange(0, ScreenHeight - h));
+
+    auto upgrd = std::make_shared<Upgrade>(sprites["upgrade"], x, y, w, h, Tmpl8::vec2{}, 0.f, Tmpl8::vec2{}, Tmpl8::vec2{}, randomRange(0, 360));
+
+    objects.push_back(upgrd);
+
+}
+
+void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 direction, float angle)
+{
+    auto sheep = std::make_shared<Sheep>
+        (
+            sprites["sheep"],
+            pos.x,
+            pos.y,
+            size.x,
+            size.y,
+            Tmpl8::vec2{ 0.f, 0.f },
+            150.f,
+            Tmpl8::vec2{ 600.f * -direction.x, 600.f * -direction.y },
+            -direction,
+            angle
+        );
+
+    tempObjects.push_back(sheep);
 }

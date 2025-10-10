@@ -43,7 +43,7 @@ void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 {
 	for (const auto& col : gameManager->getObjects())
 	{
-		auto& objVerticies = col->getVerticies();
+		auto& objVerticies = col->getVertices();
 		screen.Line(objVerticies[0].x, objVerticies[0].y, objVerticies[1].x, objVerticies[1].y, Tmpl8::RedMask);
 		screen.Line(objVerticies[1].x, objVerticies[1].y, objVerticies[2].x, objVerticies[2].y, Tmpl8::RedMask);
 		screen.Line(objVerticies[2].x, objVerticies[2].y, objVerticies[3].x, objVerticies[3].y, Tmpl8::RedMask);
@@ -153,14 +153,14 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 	}
 
 	//Add verticies that are inside of a rectangle
-	for (const auto& tVerticy : target->getVerticies())
+	for (const auto& tVerticy : target->getVertices())
 	{
 		if (PointRectangle(tVerticy, col))
 		{
 			intersectionPoints.push_back(tVerticy);
 		}
 	}
-	for (const auto& cVerticy : col->getVerticies())
+	for (const auto& cVerticy : col->getVertices())
 	{
 		if (PointRectangle(cVerticy, target))
 		{

@@ -436,7 +436,7 @@ namespace Tmpl8 {
 		}
 	}
 
-	void Sprite::DrawScaled(int a_X, int a_Y, int a_Width, int a_Height, Surface* a_Target)
+	void Sprite::DrawScaled(int a_X, int a_Y, int a_Width, int a_Height, Surface& a_Target)
 	{
 		if ((a_Width == 0) || (a_Height == 0)) return;
 		for (int x = 0; x < a_Width; x++) for (int y = 0; y < a_Height; y++)
@@ -444,7 +444,7 @@ namespace Tmpl8 {
 			int u = (int)((float)x * ((float)m_Width / (float)a_Width));
 			int v = (int)((float)y * ((float)m_Height / (float)a_Height));
 			Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
-			if (color & 0xffffff) a_Target->GetBuffer()[a_X + x + ((a_Y + y) * a_Target->GetPitch())] = color;
+			if (color & 0xffffff) a_Target.GetBuffer()[a_X + x + ((a_Y + y) * a_Target.GetPitch())] = color;
 		}
 	}
 
@@ -503,7 +503,7 @@ namespace Tmpl8 {
 		const auto& pos = obj.getPosition();
 		const auto& size = obj.getSize();
 
-		DrawScaledRotated(obj.getVerticies(pos), pos.x, pos.y, static_cast<int>(size.x), static_cast<int>(size.y), obj.getAngle(), screen);
+		DrawScaledRotated(obj.getVertices(pos), pos.x, pos.y, static_cast<int>(size.x), static_cast<int>(size.y), obj.getAngle(), screen);
 	}
 
 	//void Sprite::DrawScaledRotated(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p3, int width, int height, float angle, Surface* screen)

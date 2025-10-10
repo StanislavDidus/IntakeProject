@@ -8,13 +8,13 @@ class Asteroid : public Object
 public:
 	Asteroid
 	(
-		Tmpl8::Sprite* sprite,
+		std::shared_ptr<Tmpl8::Sprite> sprite,
 		float x,
 		float y,
 		int width,
 		int height,
 		Tmpl8::vec2 velocity,
-		Tmpl8::vec2 maxVelocity,
+		float maxSpeed,
 		Tmpl8::vec2 acceleration,
 		Tmpl8::vec2 direction,
 		int maxHealth
