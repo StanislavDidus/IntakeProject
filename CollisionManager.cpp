@@ -12,7 +12,7 @@ CollisionManager::~CollisionManager()
 	
 }
 
-void CollisionManager::checkCollision()
+void CollisionManager::checkCollision(float deltaTime)
 {
 	//Reset grid
 	std::vector<std::shared_ptr<Object>> objects = gameManager->getObjects();
@@ -26,15 +26,24 @@ void CollisionManager::checkCollision()
 
 			if (CollisionHelper::SATCheck(col, col1))
 			{
-				Tmpl8::vec4 overlap = getIntersection(col, col1);
+				//Objects require pixel perfect collision then check it
+				if (col->checkPixelPerfectCollision && col1->checkPixelPerfectCollision)
+				{
+					Tmpl8::vec4 overlap = getIntersection(col, col1);
 
-				if (PixelPerfectCheck(col, col1, overlap))
+					if (PixelPerfectCheck(col, col1, overlap))
+					{
+						isCollision = true;
+					}
+				}
+				//Else the collision is already occured between two bounding boxes, so we return true
+				else
 				{
 					isCollision = true;
 				}
 			}
 
-			SendCollisionEvents(col, col1, isCollision);
+			SendCollisionEvents(col, col1, isCollision, deltaTime);
 		}
 	}
 }
@@ -193,7 +202,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 	return { min.x, min.y, width, height };
 }
 
-void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision)
+void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision, float deltaTime)
 {
 	unordered_pair<std::shared_ptr<Object> > pair{ A,B };
 	auto it = std::find(collisions.begin(), collisions.end(), pair);
@@ -211,8 +220,8 @@ void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shar
 		else if (it != collisions.end())
 		{
 			//OnCollisionStay
-			A->onCollisionStay(B);
-			B->onCollisionStay(A);
+			A->onCollisionStay(B, deltaTime);
+			B->onCollisionStay(A, deltaTime);
 		}
 	}
 	else

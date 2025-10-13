@@ -46,8 +46,10 @@
     <ClCompile Include="EventBus.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="SuperBullet.cpp" />
     <ClCompile Include="PlayerStates.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SuperBullet.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -109,7 +111,9 @@
     <ClInclude Include="TimerManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="SuperBullet.h" />
+    <ClInclude Include="SuperBullet.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

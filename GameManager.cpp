@@ -16,12 +16,13 @@ static int randomRange(int min, int max)
     return dist(rng);
 }
 
-GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, Tmpl8::Game* game) :
-    sprites(sprites), game(game), spawnRate(2.5f), spawnTimer(0.f), upgradeSpawnTime(3.f), upgradeSpawnTimer(upgradeSpawnTime), isUpgradeOnMap(false), isUpgradeUsed(false)
+GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, const std::unordered_map<std::string, Audio::Sound>&  sounds, Tmpl8::Game* game) :
+    sprites(sprites), game(game), spawnRate(2.5f), spawnTimer(0.f), upgradeSpawnTime(3.f), upgradeSpawnTimer(upgradeSpawnTime), isUpgradeOnMap(false), isUpgradeUsed(false), sounds(sounds)
 {
     player = std::make_shared<Player>
         (
             sprites,
+            sounds,
             static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
             static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
             96,
@@ -93,7 +94,14 @@ void GameManager::updateObjects(float deltaTime)
             //Spawn a sheep
             if (obj->getTag() == "asteroid")
             {
-                spawnSheep(obj->getPosition(), obj->getSize(), obj->getDirection(), obj->getAngle());
+                auto asteroid = std::static_pointer_cast<Asteroid>(obj);
+                
+                if(asteroid->turnToSheep)
+                    spawnSheep(obj->getPosition(), obj->getSize(), obj->getDirection(), obj->getAngle());
+                else if (asteroid->divide)
+                {
+                    //spawnAsteroid();
+                }
             }
            
             else if (obj->getTag() == "upgrade")
@@ -133,7 +141,9 @@ void GameManager::updateObjects(float deltaTime)
 
     if (player->destroy)
     {
-        game->Init();
+        sounds["gameOver"].replay();
+
+        game->restart = true;
     }
 }
 
@@ -155,7 +165,7 @@ std::shared_ptr<Player> GameManager::getPlayer() const
 
 std::vector<std::shared_ptr<Object>> GameManager::getObjects() const
 {
-    std::vector<std::shared_ptr<Bullet>> bullets = player->getBullets();
+   auto& bullets = player->getBullets();
 
     size_t vectorSize = 1 + objects.size() + bullets.size();
     std::vector<std::shared_ptr<Object>> vec;
@@ -182,11 +192,11 @@ void GameManager::spawnAsteroid()
     Tmpl8::vec2 direction = randomTarget - Tmpl8::vec2{ x , y };
     direction.normalize();
 
-    int health = 0;
+    float health = 0.f;
 
-    if (width < 128) health = 1;
-    else if (width < 192) health = 2;
-    else health = 3;
+    if (width < 128) health = 1.f;
+    else if (width < 192) health = 2.f;
+    else health = 3.f;
 
     auto asteroid = std::make_shared<Asteroid>
         (

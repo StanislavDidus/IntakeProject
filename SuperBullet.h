@@ -2,7 +2,7 @@
 
 #include "Bullet.h"
 
-class SuperBullet : public Bullet
+class SuperBullet : public IBullet
 {
 public:
 	SuperBullet
@@ -12,6 +12,7 @@ public:
 		float y,
 		int width,
 		int height,
+		float areaMultiplier,
 		Tmpl8::vec2 velocity,
 		float maxSpeed, 
 		Tmpl8::vec2 acceleration,
@@ -26,6 +27,11 @@ public:
 
 	void onCollisionEnter(std::shared_ptr<Object> object) override;
 protected:
+	void initAnimator();
+
+	std::shared_ptr<Tmpl8::Sprite> bulletSprite;
+	float areaMultiplier;
+	float bulletWidth, bulletHeight;
 	float deathTime, deathTimer;
 };
 

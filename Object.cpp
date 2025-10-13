@@ -16,7 +16,7 @@ Object::Object
 	const std::string& tag
 ) : sprite(sprite), x(x), y(y), width(width), height(height), angle(angle),
 	tag(tag), destroy(false), velocity(velocity), maxSpeed(maxSpeed),
-	acceleration(acceleration), direction(direction)
+	acceleration(acceleration), direction(direction), checkPixelPerfectCollision(true)
 {
 	
 }
@@ -39,7 +39,7 @@ void Object::render(Tmpl8::Surface& screen)
 void Object::renderAt(Tmpl8::Sprite& sprite, float x, float y, Tmpl8::Surface& screen)
 {
 	const auto& verticies = getVertices({x, y});
-	sprite.DrawScaledRotated(verticies, x, y, width, height, angle, screen);
+	sprite.DrawScaledRotated(verticies, x, y, width * scaleX, height * scaleY, angle, screen);
 }
 
 const Tmpl8::vec2 Object::getPosition() const
@@ -300,7 +300,7 @@ void Object::onCollisionEnter(std::shared_ptr<Object> object)
 	//Enter
 }
 
-void Object::onCollisionStay(std::shared_ptr<Object> object)
+void Object::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 {
 	//Stay
 }

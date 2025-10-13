@@ -1,8 +1,9 @@
 #include "Bullet.h"
 #include "CollisionManager.h"
+#include "Audio/Device.hpp"
 
 Bullet::Bullet(std::shared_ptr<Tmpl8::Sprite> sprite, float x, float y, int width, int height, Tmpl8::vec2 velocity, float maxSpeed, Tmpl8::vec2 acceleration, Tmpl8::vec2 direction, float angle) :
-	Object(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, angle, "bullet")
+	IBullet(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, angle, "bullet")
 {
 	initAnimator();
 }
@@ -26,6 +27,8 @@ void Bullet::onCollisionEnter(std::shared_ptr<Object> object)
 {
 	if (object->getTag() == "asteroid")
 	{
+		Audio::Device::playSound("assets/Sounds/hitEffect.mp3");
+		
 		destroy = true;
 	}
 }

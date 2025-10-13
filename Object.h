@@ -15,6 +15,8 @@ enum Side
 
 struct CollisionEvent;
 
+//Add seters
+//Simplify the constructor
 class Object
 {
 public:
@@ -58,10 +60,11 @@ public:
 	const std::string& getTag() const;
 
 	virtual void onCollisionEnter(std::shared_ptr<Object> object);
-	virtual void onCollisionStay(std::shared_ptr<Object> object);
+	virtual void onCollisionStay(std::shared_ptr<Object> object, float deltaTime);
 	virtual void onCollisionExit(std::shared_ptr<Object> object);
 
 	bool destroy; // Destroy as soon as possible
+	bool checkPixelPerfectCollision;
 protected:
 	const Tmpl8::vec2                     getEdgeVector            (Side s)                                               const;
 	const Tmpl8::vec4                     getEdge                  (Side s)                                               const;
@@ -72,6 +75,7 @@ protected:
 	std::shared_ptr<Tmpl8::Sprite> sprite;
 	float x, y;
 	int width, height;
+	float scaleX = 1.f, scaleY = 1.f;
 	float angle;
 	std::string tag;
 

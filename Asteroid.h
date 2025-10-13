@@ -17,18 +17,22 @@ public:
 		float maxSpeed,
 		Tmpl8::vec2 acceleration,
 		Tmpl8::vec2 direction,
-		int maxHealth
+		float maxHealth
 	);
 
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;
 
 	void onCollisionEnter(std::shared_ptr<Object> object) override;
+	void onCollisionStay(std::shared_ptr<Object> object, float deltaTime) override;
+
+	bool divide;
+	bool turnToSheep;
 private:
 	std::unique_ptr<FillBar> hpBar;
 	int barWidth, barHeight;
 
 	float rotationSpeed;
-	int maxHealth, currentHealth;
+	float maxHealth, currentHealth;
 };
 

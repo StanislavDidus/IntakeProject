@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "game.h"
+#include <Audio/Device.hpp>
 
 void Player::setState(PlayerState state)
 {
@@ -35,6 +36,8 @@ void Player::enterState(PlayerState state)
 	{
 	case PlayerState::SUPERSHOOT:
 
+		soundMap["charge"].replay();
+		
 		animator->playAnimation("Charge");
 
 		chargeTimer = chargeTime;
@@ -52,20 +55,26 @@ void Player::exitState(PlayerState state)
 		animator->stopAnimation("Charge");
 		animator->playAnimation("ChargeShoot");
 
+		soundMap["shoot1"].replay();
+
 		canShoot = false;
 		timerManager->addTimer(shootSpeed / 2.f * 5.f, [&] {upgraded = false; canShoot = true; shootTimer = .5f; });
 
 		chargeTimer = std::max(chargeTimer, 0.f);
 		float bulletForce = -300.f * chargeTimer + 400.f;
-		std::cout << bulletForce << "\n";
+		//std::cout << bulletForce << "\n";
+
+		float bulletWidth = width / 2.f, bulletHeight = height / 2.f;
+		float areaMultiplier = 6.f;
 
 		auto  bullet = std::make_shared<SuperBullet>
 			(
-				sprites["bullet1"],
-				x + static_cast<float>(width) / 2.f - static_cast<float>(width) / 4.f,
-				y + static_cast<float>(height) / 2.f - static_cast<float>(height) / 4.f,
-				width / 2,
-				width / 2,
+				spriteMap["bullet1"],
+				x + static_cast<float>(width) / 2.f - bulletWidth * areaMultiplier / 2.f,
+				y + static_cast<float>(height) / 2.f - bulletHeight * areaMultiplier / 2.f,
+				bulletWidth * areaMultiplier,
+				bulletHeight * areaMultiplier,
+				areaMultiplier,
 				// velocity should be in range (100.f - 400.f)
 				Tmpl8::vec2{ direction.x * bulletForce, direction.y * bulletForce },
 				1000.f,
@@ -87,11 +96,11 @@ void Player::exitState(PlayerState state)
 
 void Player::updateIdle(float deltaTime)
 {
-	if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && !upgraded)
+	if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && !upgraded && canShoot)
 	{
 		setState(PlayerState::SHOOT);
 	}
-	else if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && upgraded)
+	else if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && upgraded && canShoot)
 	{
 		setState(PlayerState::SUPERSHOOT);
 	}
@@ -132,7 +141,7 @@ void Player::updateShoot(float deltaTime)
 
 	auto  bullet = std::make_shared<Bullet>
 		(
-			sprites["bullet"],
+			spriteMap["bullet"],
 			bulletPosition.x - static_cast<float>(width) / 4.f,
 			bulletPosition.y - static_cast<float>(width) / 4.f,
 			width / 2,
@@ -146,7 +155,9 @@ void Player::updateShoot(float deltaTime)
 
 	bullets.push_back(bullet);
 
-	velocity += -Tmpl8::vec2{ direction.x, direction.y } *10.f;
+	velocity += -Tmpl8::vec2{ direction.x, direction.y } * 10.f;
+
+	soundMap["shoot"].replay();
 }
 
 void Player::updateSuperShoot(float deltaTime)
@@ -154,8 +165,12 @@ void Player::updateSuperShoot(float deltaTime)
 	if (!Tmpl8::Game::isKeyHold('e') && !Tmpl8::Game::isKeyHold(' '))
 	{
 		setState(PlayerState::IDLE);
+
+		soundMap["charge"].stop();
 	}
 
 	chargeTimer -= deltaTime;
+
+	if (chargeTimer <= 0.f) soundMap["charge"].stop();
 }
 

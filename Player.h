@@ -11,6 +11,7 @@
 #include "Bullet.h"
 #include "SuperBullet.h"
 #include "TimerManager.h"
+#include "Audio/Device.hpp"
 
 enum class PlayerState
 {
@@ -26,6 +27,7 @@ public:
 	Player
 	(
 		std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
+		const std::unordered_map<std::string, Audio::Sound>& soundMap,
 		float x,
 		float y,
 		int width,
@@ -39,13 +41,13 @@ public:
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;
 
-	const std::vector<std::shared_ptr<Bullet>>& getBullets() const;
+	const std::vector<std::shared_ptr<IBullet>>& getBullets() const;
 
 	void move(float deltaTime) override;
 	void rotate(float angle, float deltaTime);
 
 	void onCollisionEnter(std::shared_ptr<Object> object) override;
-	void onCollisionStay(std::shared_ptr<Object> object) override;
+	void onCollisionStay(std::shared_ptr<Object> object, float deltaTime) override;
 	void onCollisionExit(std::shared_ptr<Object> object) override;
 
 	bool isUpgraded() const;
@@ -69,9 +71,10 @@ private:
 
 	void renderShipPart(Tmpl8::Sprite& sprite, Tmpl8::Surface& screen);
 
-	std::vector<std::shared_ptr<Bullet>> bullets;
+	std::vector<std::shared_ptr<IBullet>> bullets;
 
-	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> sprites;
+	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> spriteMap;
+	std::unordered_map<std::string, Audio::Sound> soundMap;
 
 	std::unique_ptr<Animator> animator;
 

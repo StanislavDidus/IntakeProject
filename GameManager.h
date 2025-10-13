@@ -19,7 +19,7 @@ namespace Tmpl8
 class GameManager
 {
 public:
-	GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, Tmpl8::Game* game);
+	GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, const std::unordered_map<std::string, Audio::Sound>& sounds,  Tmpl8::Game* game);
 	virtual ~GameManager();
 
 	void update(float deltaTime);
@@ -45,6 +45,7 @@ private:
 	std::vector<std::shared_ptr<Object>> tempObjects;
 
 	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> sprites;
+	std::unordered_map<std::string, Audio::Sound> sounds;
 
 	std::vector<std::shared_ptr<Tmpl8::Sprite>> asteroidSprites;
 

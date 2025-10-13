@@ -2,10 +2,12 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include "Audio/Device.hpp"
 
 Player::Player
 (
 	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
+	const std::unordered_map<std::string, Audio::Sound>& soundMap,
 	float x,
 	float y,
 	int width,
@@ -15,23 +17,24 @@ Player::Player
 	Tmpl8::vec2 acceleration,
 	Tmpl8::vec2 direction
 ) : Object(sprites["ship"], x, y, width, height, velocity, maxSpeed, acceleration, direction, 0.f, "player"),
-	sprites(sprites),
-	rotationSpeed(200.f),
-	shootSpeed(.25f),
-	shootTimer(0.f),	
-	canShoot(true),
-	shootLeft(true),
-	maxHealth(4),
-	currentHealth(maxHealth),
-	invulnerableTime(2.5f),
-	isHit(false),
-	blinkTimer(0.30f),
-	blinkTime(blinkTimer),
-	blink(false),
-	upgraded(false),
-	chargeTime(1.f),
-	isChargedStarted(false),
-	chargeTimer(chargeTime)
+spriteMap(sprites),
+soundMap(soundMap),
+rotationSpeed(200.f),
+shootSpeed(.25f),
+shootTimer(0.f),
+canShoot(true),
+shootLeft(true),
+maxHealth(4),
+currentHealth(maxHealth),
+invulnerableTime(2.5f),
+isHit(false),
+blinkTimer(0.30f),
+blinkTime(blinkTimer),
+blink(false),
+upgraded(false),
+chargeTime(1.f),
+isChargedStarted(false),
+chargeTimer(chargeTime)
 {
 	setState(PlayerState::IDLE);
 
@@ -43,17 +46,17 @@ void Player::initAnimator()
 {
 	animator = std::make_unique<Animator>();
 
-	animator->addFrameAnimation(sprites["engineEffect"], 0.1f, 0, 2, [this]() {return abs(velocity.length()) <= 75.f; });
+	animator->addFrameAnimation(spriteMap["engineEffect"], 0.1f, 0, 2, [this]() {return abs(velocity.length()) <= 75.f; });
 
-	animator->addFrameAnimation(sprites["engineEffect"], 0.1f, 3, 6, [this]() {return abs(velocity.length()) > 75.f; });
+	animator->addFrameAnimation(spriteMap["engineEffect"], 0.1f, 3, 6, [this]() {return abs(velocity.length()) > 75.f; });
 
 	//Common weapon shooting
-	animator->addFrameCycledAnimation(sprites["weapon"], shootSpeed / 2.f, 1, 2, "LeftShoot");
-	animator->addFrameCycledAnimation(sprites["weapon"], shootSpeed / 2.f, 3, 4, "RightShoot");
+	animator->addFrameCycledAnimation(spriteMap["weapon"], shootSpeed / 2.f, 1, 2, "LeftShoot");
+	animator->addFrameCycledAnimation(spriteMap["weapon"], shootSpeed / 2.f, 3, 4, "RightShoot");
 
 	//Upgraded weapon charge and shooting
-	animator->addFrameCycledAnimation(sprites["weapon1"], chargeTime / 6.f, 1, 6, "Charge", false);
-	animator->addFrameCycledAnimation(sprites["weapon1"], shootSpeed / 2.f, 7, 11, "ChargeShoot", true);
+	animator->addFrameCycledAnimation(spriteMap["weapon1"], chargeTime / 6.f, 1, 6, "Charge", false);
+	animator->addFrameCycledAnimation(spriteMap["weapon1"], shootSpeed / 2.f, 7, 11, "ChargeShoot", true);
 
 	//animator->addFrameAnimation(sprite, 1.f, 0, 3, [this]() {return true; });
 }
@@ -78,7 +81,7 @@ void Player::update(float deltaTime)
 			blinkTimer = blinkTime;
 		}
 	}
-	
+
 	checkMove(deltaTime);
 	checkRotation(deltaTime);
 
@@ -116,16 +119,16 @@ void Player::render(Tmpl8::Surface& screen)
 	}
 
 	// Draw engine
-	renderShipPart(*sprites["shipEngine"].get(), screen);
+	renderShipPart(*spriteMap["shipEngine"].get(), screen);
 
 	// Draw weapon
-	if(!upgraded)
-		renderShipPart(*sprites["weapon"].get(), screen);
+	if (!upgraded)
+		renderShipPart(*spriteMap["weapon"].get(), screen);
 	else
-		renderShipPart(*sprites["weapon1"].get(), screen);
+		renderShipPart(*spriteMap["weapon1"].get(), screen);
 
 	//// Draw engine effect
-	renderShipPart(*sprites["engineEffect"].get(), screen);
+	renderShipPart(*spriteMap["engineEffect"].get(), screen);
 
 	// Draw main ship
 	renderShipPart(*sprite, screen);
@@ -148,7 +151,7 @@ void Player::renderShipPart(Tmpl8::Sprite& sprite, Tmpl8::Surface& screen)
 
 
 
-const std::vector<std::shared_ptr<Bullet>>& Player::getBullets() const
+const std::vector<std::shared_ptr<IBullet>>& Player::getBullets() const
 {
 	return bullets;
 }
@@ -179,7 +182,7 @@ void Player::rotate(float angle, float deltaTime)
 
 	direction.normalize();
 }
-	
+
 void Player::onCollisionEnter(std::shared_ptr<Object> object)
 {
 	//Enter
@@ -190,12 +193,14 @@ void Player::onCollisionEnter(std::shared_ptr<Object> object)
 
 	if (object->getTag() == "upgrade")
 	{
+		soundMap["upgrade"].replay();
+
 		object->destroy = true;
 		upgraded = true;
 	}
 }
 
-void Player::onCollisionStay(std::shared_ptr<Object> object)
+void Player::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 {
 	//Stay
 	if (object->getTag() == "asteroid" && !isHit)
@@ -203,8 +208,10 @@ void Player::onCollisionStay(std::shared_ptr<Object> object)
 		currentHealth--;
 		isHit = true;
 
+		soundMap["shipDamaged"].replay();
+
 		//Disable invulnerability after some time
-		timerManager->addTimer(invulnerableTime, [this] 
+		timerManager->addTimer(invulnerableTime, [this]
 			{
 				isHit = false;
 				blink = false;

@@ -5,13 +5,13 @@
 class FillBar : public UIElement
 {
 public:
-	FillBar(Tmpl8::Pixel color, float x, float y, int width, int height, int minValue, int maxValue);
+	FillBar(Tmpl8::Pixel color, float x, float y, int width, int height, float minValue, float maxValue);
 
-	void render(Tmpl8::Surface& screen, int value);
+	void render(Tmpl8::Surface& screen, float value);
 private:
 	Tmpl8::Pixel color;
 	bool horizontal; //true-horizontal, false-vertical
-	int minValue, maxValue;
-	int barWidth, barHeight;
+	float minValue, maxValue;
+	float barWidth, barHeight;
 };
 

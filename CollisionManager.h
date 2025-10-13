@@ -25,7 +25,7 @@ public:
 	CollisionManager(std::shared_ptr<GameManager> gameManager);
 	virtual ~CollisionManager();
 
-	void checkCollision();
+	void checkCollision(float deltaTime);
 	void render(Tmpl8::Surface& screen);
 	void renderDEBUG(Tmpl8::Surface& screen);
 
@@ -39,7 +39,7 @@ private:
 
 	Tmpl8::vec4 getIntersection(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col);
 
-	void SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision);
+	void SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision, float deltaTime);
 
 	std::vector<unordered_pair<std::shared_ptr<Object>>> collisions; // All collision in current frame
 

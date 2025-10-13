@@ -12,8 +12,9 @@
 #include "GameManager.h"
 #include "CollisionManager.h"
 #include "Button.h"
+#include <Audio/Device.hpp>
 
-enum GameState
+enum class GameState
 {
 	MENU, GAME
 };
@@ -26,17 +27,20 @@ class Game
 public:
 	void SetTarget( Surface* surface ) { screen = surface; }
 	void Init();
+	void Restart();
 	void Shutdown();
 	void Tick( float deltaTime );
 	void MouseUp(int button) { wasMouseUp = true; }
 	void MouseDown(int button) { wasMouseDown = true; }
 	void MouseMove(int x, int y) { mousePosition = { x, y }; }
-	void KeyUp(int key) { /*upButtons.insert(key); holdButtons.erase(key); */ if (key >= 256) return; keys.reset(key); }
-	void KeyDown(int key) { /*if(!isKeyHold(key)) downButtons.insert(key);*/ if (key >= 256) return; keys.set(key); }
+	void KeyUp(int key) { /*upButtons.insert(key); holdButtons.erase(key); */ if (key < 256) keys.reset(key); }
+	void KeyDown(int key) { /*if(!isKeyHold(key)) downButtons.insert(key);*/ if (key < 256) keys.set(key); }
 
 	static bool isKeyDown(int key);
 	static bool isKeyHold(int key);
 	static bool isKeyUp(int key);
+
+	bool restart;
 
 	
 private:
@@ -48,20 +52,22 @@ private:
 
 	Surface* screen;
 
-	GameState state;
+	GameState currentGameState;
 
 	std::shared_ptr<GameManager> gameManager;
-	std::shared_ptr<CollisionManager> colManager;
+	std::shared_ptr<CollisionManager> collisionManager;
 
-	std::unordered_map<std::string, std::shared_ptr<Sprite>> sprites;
+	std::unordered_map<std::string, std::shared_ptr<Sprite>> spriteMap;
+	std::unordered_map<std::string, Audio::Sound> soundMap;
 
-	std::unique_ptr<Animator> bgAnimator;
+	std::unique_ptr<Animator> backgroundAnimator;
 
 	std::vector<std::shared_ptr<Button>> buttons;
 	Tmpl8::vec2i mousePosition;
 	bool wasMouseDown, wasMouseUp;
 
 	void initSprites();
+	void initSounds();
 	void initGameManager();
 	void initCollisionManager();
 	void initAnimators();
@@ -71,7 +77,7 @@ private:
 	void update(float deltaTime);
 	void render(Tmpl8::Surface& screen);
 
-	void updateControls(float deltaTime);
+	void DebugContol(float deltaTime);
 };
 
 }; // namespace Tmpl8

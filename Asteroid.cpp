@@ -1,5 +1,6 @@
 #include "Asteroid.h"
 #include "CollisionManager.h"
+#include <Audio/Device.hpp>
 
 Asteroid::Asteroid
 (
@@ -12,10 +13,11 @@ Asteroid::Asteroid
 	float maxSpeed,
 	Tmpl8::vec2 acceleration,
 	Tmpl8::vec2 direction,
-	int maxHealth
-) : Object(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, 0.f, "asteroid"), rotationSpeed(10.f), maxHealth(maxHealth), currentHealth(maxHealth), barWidth(75), barHeight(height)
+	float maxHealth
+) : Object(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, 0.f, "asteroid"), rotationSpeed(10.f), maxHealth(maxHealth), currentHealth(maxHealth), barWidth(75),
+	barHeight(height), divide(false), turnToSheep(false)
 {
-	hpBar = std::make_unique<FillBar>(Tmpl8::GreenMask, x , y, barWidth, 5, 0, maxHealth);
+	hpBar = std::make_unique<FillBar>(Tmpl8::GreenMask, x , y, barWidth, 5, 0.f, maxHealth);
 }
 
 void Asteroid::update(float deltaTime)
@@ -51,15 +53,42 @@ void Asteroid::onCollisionEnter(std::shared_ptr<Object> object)
 {
 	if (object->getTag() == "bullet")
 	{
-		currentHealth--;
+		currentHealth -= 1.f;
 
-		if (currentHealth <= 0)
+		if (currentHealth <= 0.f)
 		{
 			destroy = true;
+			divide = true;
+
+			Audio::Device::playSound("assets/Sounds/asteroidDestroyed.mp3");
 		}
 	}
 	else if (object->getTag() == "sheep")
 	{
 		destroy = true;
+
+		Audio::Device::playSound("assets/Sounds/asteroidDestroyed.mp3");
+
+		turnToSheep = true;
+	}
+}
+
+void Asteroid::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
+{
+	if (object->getTag() == "superBullet")
+	{
+		currentHealth -= 0.75f * deltaTime;
+
+		
+		
+
+		if (currentHealth <= 0.f)
+		{
+			destroy = true;
+
+			Audio::Device::playSound("assets/Sounds/asteroidDestroyed.mp3");
+
+			turnToSheep = true;
+		}
 	}
 }
