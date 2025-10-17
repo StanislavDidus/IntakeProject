@@ -2,8 +2,8 @@
 #include "CollisionManager.h"
 #include "Audio/Device.hpp"
 
-Bullet::Bullet(std::shared_ptr<Tmpl8::Sprite> sprite, float x, float y, int width, int height, Tmpl8::vec2 velocity, float maxSpeed, Tmpl8::vec2 acceleration, Tmpl8::vec2 direction, float angle) :
-	IBullet(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, angle, "bullet")
+Bullet::Bullet(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::vec2 position, Tmpl8::vec2 size) :
+	IBullet(sprite, position, size)
 {
 	initAnimator();
 }

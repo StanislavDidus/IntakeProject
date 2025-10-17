@@ -1,23 +1,18 @@
 #include "Asteroid.h"
 #include "CollisionManager.h"
+#include "CollisionHelper.h"
 #include <Audio/Device.hpp>
 
 Asteroid::Asteroid
 (
 	std::shared_ptr<Tmpl8::Sprite> sprite,
-	float x,
-	float y,
-	int width,
-	int height,
-	Tmpl8::vec2 velocity,
-	float maxSpeed,
-	Tmpl8::vec2 acceleration,
-	Tmpl8::vec2 direction,
+	Tmpl8::vec2 position,
+	Tmpl8::vec2 size,
 	float maxHealth
-) : Object(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, 0.f, "asteroid"), rotationSpeed(10.f), maxHealth(maxHealth), currentHealth(maxHealth), barWidth(75),
-	barHeight(height), divide(false), turnToSheep(false)
+) : Object(sprite, position, size), rotationSpeed(10.f), maxHealth(maxHealth), currentHealth(maxHealth), barWidth(75),
+	barHeight(5), divide(false), turnToSheep(false)
 {
-	hpBar = std::make_unique<FillBar>(Tmpl8::GreenMask, x , y, barWidth, 5, 0.f, maxHealth);
+	hpBar = std::make_unique<FillBar>(Tmpl8::GreenMask, position, Tmpl8::vec2{static_cast<float>(barWidth), 5.f}, 0.f, maxHealth);
 }
 
 void Asteroid::update(float deltaTime)
@@ -28,7 +23,7 @@ void Asteroid::update(float deltaTime)
 
 	applyVelocity(deltaTime);
 
-	hpBar->setPosition({x + static_cast<float>(width) / 2.f - static_cast<float>(barWidth) / 2.f, y - 5.f});
+	hpBar->setPosition({position.x + size.x / 2.f - static_cast<float>(barWidth) / 2.f, position.y - 5.f});
 
 	//if (x >= ScreenWidth) x = 0;
 	//if (y >= ScreenHeight) y = 0;
@@ -40,7 +35,8 @@ void Asteroid::update(float deltaTime)
 void Asteroid::render(Tmpl8::Surface& screen)
 {
 	//sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
-	sprite->DrawScaledRotated(*this, screen);
+	std::vector<Vertex> v = getVertices();
+	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 
 	hpBar->render(screen, currentHealth);
 

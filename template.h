@@ -80,7 +80,7 @@ class vec2 // adapted from https://github.com/dcow/RayTracer
 {
 public:
 	union { struct { float x, y; }; float cell[2]; };
-	vec2() {}
+	vec2() : x(0.f), y(0.f) {}
 	vec2( float v ) : x( v ), y( v ) {}
 	vec2( float x, float y ) : x( x ), y( y ) {}
 	vec2 operator - () const { return vec2( -x, -y ); }

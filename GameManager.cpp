@@ -23,15 +23,15 @@ GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::
         (
             sprites,
             sounds,
-            static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
-            static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f,
-            96,
-            96,
-            Tmpl8::vec2{ 0.f, 0.f },
-            150.f,
-            Tmpl8::vec2{ 550.f, 550.f },
-            Tmpl8::vec2{ 0.f, -1.f }
+            Tmpl8::vec2{ static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
+            static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f },
+            Tmpl8::vec2{96.f, 96.f}
         );
+
+    player->setMaxSpeed(150.f);
+    player->setAcceleration({550.f, 550.f});
+    player->setDirection({0.f, -1.f});
+    player->setTag("player");
 
     //Init asteroid frame sprites
     for (int i = 0; i < 3; i++)
@@ -127,8 +127,8 @@ void GameManager::updateObjects(float deltaTime)
 
     for (const auto& obj : objects)
     {
-        auto& pos = obj->getPosition();
-        auto& size = obj->getSize();
+        auto pos = obj->getPosition();
+        auto size = obj->getSize();
 
         if (pos.x < -size.x ||
             pos.x + size.x >= ScreenWidth + size.x ||
@@ -201,16 +201,15 @@ void GameManager::spawnAsteroid()
     auto asteroid = std::make_shared<Asteroid>
         (
             asteroidSprites[randomRange(0, 2)],
-            x,
-            y,
-            width,
-            height,
-            Tmpl8::vec2{ 0.f, 0.f },
-            100.f,
-            Tmpl8::vec2{ 500.f * direction.x, 500.f * direction.y },
-            direction,
+            Tmpl8::vec2{x ,y},
+            Tmpl8::vec2{static_cast<float>(width), static_cast<float>(height)},
             health
         );
+
+    asteroid->setMaxSpeed(100.f);
+    asteroid->setAcceleration({ 500.f * direction.x, 500.f * direction.y });
+    asteroid->setDirection(direction);
+    asteroid->setTag("asteroid");
 
     objects.push_back(asteroid);
 }
@@ -222,7 +221,14 @@ void GameManager::spawnUpgrade()
     float x = static_cast<float>(randomRange(0,ScreenWidth - w));
     float y = static_cast<float>(randomRange(0, ScreenHeight - h));
 
-    auto upgrd = std::make_shared<Upgrade>(sprites["upgrade"], x, y, w, h, Tmpl8::vec2{}, 0.f, Tmpl8::vec2{}, Tmpl8::vec2{}, randomRange(0, 360));
+    auto upgrd = std::make_shared<Upgrade>(
+        sprites["upgrade"],
+        Tmpl8::vec2{x, y},
+        Tmpl8::vec2{static_cast<float>(w), static_cast<float>(h)}
+    );
+
+    upgrd->setAngle(randomRange(0, 360));
+    upgrd->setTag("upgrade");
 
     objects.push_back(upgrd);
 
@@ -233,16 +239,15 @@ void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 dire
     auto sheep = std::make_shared<Sheep>
         (
             sprites["sheep"],
-            pos.x,
-            pos.y,
-            size.x,
-            size.y,
-            Tmpl8::vec2{ 0.f, 0.f },
-            150.f,
-            Tmpl8::vec2{ 600.f * -direction.x, 600.f * -direction.y },
-            -direction,
-            angle
+            pos,
+            size
         );
+
+    sheep->setMaxSpeed(150.f);
+    sheep->setAcceleration({ 600.f * -direction.x, 600.f * -direction.y });
+    sheep->setDirection(-direction);
+    sheep->setAngle(angle);
+    sheep->setTag("sheep");
 
     tempObjects.push_back(sheep);
 }

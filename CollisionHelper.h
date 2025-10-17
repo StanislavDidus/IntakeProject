@@ -2,15 +2,21 @@
 
 #include "Object.h"
 
+struct Vertex
+{
+	Tmpl8::vec2 position;
+	Tmpl8::vec2 textureCoordinate;
+};
+
 struct CollisionHelper
 {
 	static bool AABBCheck(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col)
 	{
-		auto& pos1 = target->getPosition();
-		auto& size1 = target->getSize();
+		auto pos1 = target->getPosition();
+		auto size1 = target->getSize();
 
-		auto& pos2 = col->getPosition();
-		auto& size2 = col->getSize();
+		auto pos2 = col->getPosition();
+		auto size2 = col->getSize();
 
 		if (!(
 			pos1.x + size1.x <= pos2.x ||
@@ -29,7 +35,7 @@ struct CollisionHelper
 	{
 		//Get separated axes for each collider
 		std::vector<Tmpl8::vec2> axes;
-		axes.reserve(2);
+		axes.reserve(4);
 
 		std::vector<Tmpl8::vec2> objAxes = target->getAxes();
 		std::vector<Tmpl8::vec2> colAxes = col->getAxes();
@@ -41,21 +47,21 @@ struct CollisionHelper
 		for (const auto& axis : axes)
 		{
 			//Go through each of the verticies
-			std::vector<Tmpl8::vec2> objVerticies = target->getVertices();
-			std::vector<Tmpl8::vec2> colVerticies = col->getVertices();
+			auto objVerticies = target->getVertices();
+			auto colVerticies = col->getVertices();
 
-			float min = objVerticies[0].dot(axis), max = min;
+			float min = objVerticies[0].position.dot(axis), max = min;
 			for (int i = 1; i < 4; i++)
 			{
-				float proj = objVerticies[i].dot(axis);
+				float proj = objVerticies[i].position.dot(axis);
 				if (proj < min) min = proj;
 				if (proj > max) max = proj;
 			}
 
-			float min1 = colVerticies[0].dot(axis), max1 = min1;
+			float min1 = colVerticies[0].position.dot(axis), max1 = min1;
 			for (int i = 1; i < 4; i++)
 			{
-				float proj = colVerticies[i].dot(axis);
+				float proj = colVerticies[i].position.dot(axis);
 				if (proj < min1) min1 = proj;
 				if (proj > max1) max1 = proj;
 			}
@@ -63,6 +69,7 @@ struct CollisionHelper
 			//Check instersection
 			if (max < min1 || max1 < min)
 			{
+				//Early exit
 				return false;
 			}
 		}
@@ -71,6 +78,71 @@ struct CollisionHelper
 		return true;
 	}
 
+};
+
+//Area formula 
+// ||(B - A) * (C - A)|| / 2
+
+struct Edge
+{
+	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2) : p0(p0), p1(p1), p2(p2) 
+	{ 
+		//Calculate an area of main triangle
+		const Tmpl8::vec2 a1 = p1 - p0;
+		const Tmpl8::vec2 a2 = p0 - p2;
+		float cross = a1.x * a2.y - a1.y * a2.x;
+		area = abs(cross) / 2.f;
+	}
+
+	bool intersect(const Tmpl8::vec2& p) const
+	{
+		//Calculate w
+		const Tmpl8::vec2 w1 = p1 - p0;
+		const Tmpl8::vec2 w2 = p - p0;
+		float wcross = w1.x * w2.y - w1.y * w2.x;
+		float warea = abs(wcross) / 2.f;
+
+		//Calculate v
+		const Tmpl8::vec2 v1 = p0 - p2;
+		const Tmpl8::vec2 v2 = p - p2;
+		float vcross = v1.x * v2.y - v1.y * v2.x;
+		float varea = abs(vcross) / 2.f;
+
+		//Calculate u
+		const Tmpl8::vec2 u1 = p2 - p1;
+		const Tmpl8::vec2 u2 = p - p1;
+		float ucross = u1.x * u2.y - u1.y * u2.x;
+		float uarea = abs(ucross) / 2.f;
+
+		float areasum = warea + varea + uarea;
+
+		if (abs(area - areasum) < 0.01f) return true;
+		return false;
+	}
+
+	Tmpl8::vec3 barycentric(const Tmpl8::vec2& p) const
+	{
+		//Calculate w
+		const Tmpl8::vec2 w1 = p1 - p0;
+		const Tmpl8::vec2 w2 = p - p0;
+		float wcross = w1.x * w2.y - w1.y * w2.x;
+		float w = abs(wcross) / 2.f / area;
+
+		//Calculate v
+		const Tmpl8::vec2 v1 = p0 - p2;
+		const Tmpl8::vec2 v2 = p - p2;
+		float vcross = v1.x * v2.y - v1.y * v2.x;
+		float v = abs(vcross) / 2.f / area;
+
+		//Calculate u
+		//w + u + v = 1
+		float u = 1.f - w - v;
+
+		return Tmpl8::vec3{u ,v ,w};
+	}
+
+	float area;
+	Tmpl8::vec2 p0, p1, p2;
 };
 
 struct AABB

@@ -5,8 +5,12 @@
 
 #include "Functions.h"
 #include <vector>
+#include "glm.hpp"
+
 
 class Object;
+struct Vertex;
+
 
 namespace Tmpl8 {
 
@@ -126,8 +130,7 @@ public:
 	// Methods
 	void Draw( Surface* a_Target, int a_X, int a_Y );
 	void DrawScaled( int a_X, int a_Y, int a_Width, int a_Height, Surface& a_Target );
-	void DrawScaledRotated(const std::vector<Tmpl8::vec2>& verticies, float x, float y, int width, int height, float angle, Surface& screen);
-	void DrawScaledRotated(const Object& obj, Surface& screen);
+	void DrawScaledRotated(const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3, Surface& screen);
 	Pixel getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle);
 	void SetFlags( unsigned int a_Flags ) { m_Flags = a_Flags; }
 	void SetFrame( unsigned int a_Index ) { m_CurrentFrame = a_Index; }

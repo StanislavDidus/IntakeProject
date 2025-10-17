@@ -9,14 +9,8 @@ public:
 	Asteroid
 	(
 		std::shared_ptr<Tmpl8::Sprite> sprite,
-		float x,
-		float y,
-		int width,
-		int height,
-		Tmpl8::vec2 velocity,
-		float maxSpeed,
-		Tmpl8::vec2 acceleration,
-		Tmpl8::vec2 direction,
+		Tmpl8::vec2 position,
+		Tmpl8::vec2 size,
 		float maxHealth
 	);
 

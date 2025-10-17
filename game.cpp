@@ -1,5 +1,6 @@
 #include "game.h"
 #include "surface.h"
+#include "CollisionHelper.h"
 #include <cassert>
 
 #include <cstdio> //printf
@@ -52,7 +53,7 @@ namespace Tmpl8
 
 	void Game::initSounds()
 	{
-		auto music = Audio::Sound{"assets/Sounds/music.mp3", Audio::Sound::Type::Stream};
+		auto music = Audio::Sound{ "assets/Sounds/music.mp3", Audio::Sound::Type::Stream };
 		music.setLooping(true);
 		music.replay();
 
@@ -90,32 +91,38 @@ namespace Tmpl8
 
 	void Game::initButtons()
 	{
-		int sizeX = 150;
-		int sizeY = 75;
-		int posY = 25;
+		float sizeX = 150;
+		float sizeY = 75;
+		float posY = 25;
 
-		buttons.push_back(std::make_shared<Button>(spriteMap["startButton"], soundMap, ScreenWidth / 2 - sizeX / 2, ScreenHeight / 2 - sizeY / 2 + posY, sizeX, sizeY, [this] { initGame(); }));
-		buttons.push_back(std::make_shared<Button>(spriteMap["scoreButton"], soundMap, ScreenWidth / 2 - sizeX / 2, ScreenHeight / 2 - sizeY / 2 + sizeY + posY, sizeX, sizeY, [this] {}));
-		buttons.push_back(std::make_shared<Button>(spriteMap["exitButton"], soundMap, ScreenWidth / 2 - sizeX / 2, ScreenHeight / 2 - sizeY / 2 + sizeY * 2 + posY, sizeX, sizeY, [this] {std::exit(0); }));
+		float ScreenW = static_cast<float>(ScreenWidth);
+		float ScreenH = static_cast<float>(ScreenHeight);
+
+		buttons.push_back(std::make_shared<Button>(spriteMap["startButton"], soundMap, Tmpl8::vec2{ ScreenW / 2.f - sizeX / 2, ScreenH / 2 - sizeY / 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { initGame(); }));
+		buttons.push_back(std::make_shared<Button>(spriteMap["scoreButton"], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] {}));
+		buttons.push_back(std::make_shared<Button>(spriteMap["exitButton"], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY * 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] {std::exit(0); }));
 		//buttons.push_back(std::make_shared<Button>(spriteMap["creditButton"], ScreenWidth / 2 - sizeX / 2 + 125, ScreenHeight / 2 - sizeY / 2 + sizeY * 2 + posY, 100, 75, [this] { }));
 	}
 
 	void Game::initGame()
 	{
 		currentGameState = GameState::GAME;
-		
+
 		initGameManager();
 		initCollisionManager();
 		initAnimators();
 
-		
+
 	}
-	
+
 	void Game::Init()
 	{
+		//Edge edge = Edge{ {0.f, 0.f}, {1.f, 0.f}, {0.f, 1.f} };
+		//glm::vec3 br = edge.barycentric({ 0.5f, 0.5f });
+		//std::cout << "u: " << br.x << " v: " << br.y << " w: " << br.z << "\n";
 
 		restart = false;
-		
+
 		currentGameState = GameState::MENU;
 
 		initSprites();
@@ -135,7 +142,7 @@ namespace Tmpl8
 		collisionManager = nullptr;
 		backgroundAnimator = nullptr;
 	}
-	
+
 	// -----------------------------------------------------------
 	// Close down application
 	// -----------------------------------------------------------
@@ -157,7 +164,7 @@ namespace Tmpl8
 #ifdef _DEBUG
 		DebugContol(deltaTime);
 
-		if(currentGameState == GameState::GAME)
+		if (currentGameState == GameState::GAME)
 			collisionManager->renderDEBUG(*screen);
 
 		//FPS Counter
@@ -177,7 +184,7 @@ namespace Tmpl8
 		{
 		case GameState::MENU:
 			for (const auto& button : buttons) button->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
-				break;
+			break;
 		case GameState::GAME:
 			gameManager->update(deltaTime);
 
@@ -186,7 +193,7 @@ namespace Tmpl8
 			backgroundAnimator->update(deltaTime);
 			break;
 		}
-		
+
 		//Update buttons
 		wasMouseDown = false;
 		wasMouseUp = false;

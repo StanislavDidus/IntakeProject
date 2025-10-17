@@ -50,7 +50,7 @@ void CollisionManager::checkCollision(float deltaTime)
 
 void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 {
-	for (const auto& col : gameManager->getObjects())
+	/*for (const auto& col : gameManager->getObjects())
 	{
 		auto& objVerticies = col->getVertices();
 		screen.Line(objVerticies[0].x, objVerticies[0].y, objVerticies[1].x, objVerticies[1].y, Tmpl8::RedMask);
@@ -71,7 +71,7 @@ void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 				screen.Line(overlap.x, overlap.y + overlap.w, overlap.x, overlap.y, Tmpl8::GreenMask);
 			}
 		}
-	}
+	}*/
 }
 
 void CollisionManager::render(Tmpl8::Surface& screen)
@@ -164,16 +164,16 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 	//Add verticies that are inside of a rectangle
 	for (const auto& tVerticy : target->getVertices())
 	{
-		if (PointRectangle(tVerticy, col))
+		if (PointRectangle(tVerticy.position, col))
 		{
-			intersectionPoints.push_back(tVerticy);
+			intersectionPoints.push_back(tVerticy.position);
 		}
 	}
 	for (const auto& cVerticy : col->getVertices())
 	{
-		if (PointRectangle(cVerticy, target))
+		if (PointRectangle(cVerticy.position, target))
 		{
-			intersectionPoints.push_back(cVerticy);
+			intersectionPoints.push_back(cVerticy.position);
 		}
 	}
 
@@ -224,7 +224,7 @@ void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shar
 			B->onCollisionStay(A, deltaTime);
 		}
 	}
-	else
+	else if(!isCollision)
 	{
 		if (it != collisions.end())
 		{

@@ -58,34 +58,32 @@ void Player::exitState(PlayerState state)
 		soundMap["shoot1"].replay();
 
 		canShoot = false;
-		timerManager->addTimer(shootSpeed / 2.f * 5.f, [&] {upgraded = false; canShoot = true; shootTimer = .5f; });
+		timerManager->addTimer(shootTime / 2.f * 5.f, [&] {upgraded = false; canShoot = true; shootTimer = .5f; });
 
 		chargeTimer = std::max(chargeTimer, 0.f);
 		float bulletForce = -300.f * chargeTimer + 400.f;
 		//std::cout << bulletForce << "\n";
 
-		float bulletWidth = width / 2.f, bulletHeight = height / 2.f;
+		float bulletWidth = size.x / 2.f, bulletHeight = size.y / 2.f;
 		float areaMultiplier = 6.f;
 
 		auto  bullet = std::make_shared<SuperBullet>
 			(
 				spriteMap["bullet1"],
-				x + static_cast<float>(width) / 2.f - bulletWidth * areaMultiplier / 2.f,
-				y + static_cast<float>(height) / 2.f - bulletHeight * areaMultiplier / 2.f,
-				bulletWidth * areaMultiplier,
-				bulletHeight * areaMultiplier,
-				areaMultiplier,
-				// velocity should be in range (100.f - 400.f)
-				Tmpl8::vec2{ direction.x * bulletForce, direction.y * bulletForce },
-				1000.f,
-				Tmpl8::vec2{ 0.f, 0.f },
-				direction,
-				angle
+				Tmpl8::vec2{ position.x + size.x / 2.f - bulletWidth * areaMultiplier / 2.f, position.y + size.y / 2.f - bulletHeight * areaMultiplier / 2.f },
+				Tmpl8::vec2{ bulletWidth * areaMultiplier, bulletHeight * areaMultiplier},
+				areaMultiplier
 			);
+
+		bullet->setVelocity(Tmpl8::vec2{ direction.x * bulletForce, direction.y * bulletForce });
+		bullet->setMaxSpeed(1000.f);
+		bullet->setDirection(direction);
+		bullet->setAngle(angle);
+		bullet->setTag("superBullet");
 
 		bullets.push_back(bullet);
 
-		velocity += -Tmpl8::vec2{ direction.x, direction.y } *bulletForce;
+		velocity += -Tmpl8::vec2{ direction.x, direction.y } * bulletForce;
 
 		isChargedStarted = false;
 
@@ -121,7 +119,7 @@ void Player::updateShoot(float deltaTime)
 	if (shootTimer > 0.f) return;
 	else
 	{
-		shootTimer = shootSpeed;
+		shootTimer = shootTime;
 	}
 
 
@@ -129,29 +127,28 @@ void Player::updateShoot(float deltaTime)
 	if (shootLeft)
 	{
 		shootLeft = false;
-		bulletPosition = getRotatedPoint({ x + static_cast<float>(width) / 3.f, y + static_cast<float>(height) / 3.f });
+		bulletPosition = getRotatedPoint({ position.x + size.x / 3.f, position.y + size.y / 3.f });
 		animator->playAnimation("LeftShoot");
 	}
 	else
 	{
 		shootLeft = true;
-		bulletPosition = getRotatedPoint({ x + static_cast<float>(width) / 3.f * 2.f, y + static_cast<float>(height) / 3.f });
+		bulletPosition = getRotatedPoint({ position.x + size.x / 3.f * 2.f, position.y + size.y / 3.f });
 		animator->playAnimation("RightShoot");
 	}
 
 	auto  bullet = std::make_shared<Bullet>
 		(
 			spriteMap["bullet"],
-			bulletPosition.x - static_cast<float>(width) / 4.f,
-			bulletPosition.y - static_cast<float>(width) / 4.f,
-			width / 2,
-			width / 2,
-			Tmpl8::vec2{ 0.f, 0.f },
-			1500.f,
-			Tmpl8::vec2{ 5000.f * direction.x, 5000.f * direction.y },
-			direction,
-			angle
+			Tmpl8::vec2{ bulletPosition.x - size.x / 4.f, bulletPosition.y - size.y / 4.f },
+			Tmpl8::vec2{size.x / 2.f, size.y / 2.f}
 		);
+
+	bullet->setMaxSpeed(1500.f);
+	bullet->setAcceleration({ 5000.f * direction.x, 5000.f * direction.y });
+	bullet->setDirection(direction);
+	bullet->setAngle(angle);
+	bullet->setTag("bullet");
 
 	bullets.push_back(bullet);
 

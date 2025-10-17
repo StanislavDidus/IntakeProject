@@ -217,7 +217,7 @@ namespace Tmpl8 {
 	/*template<bool BoundsCheck>
 	void Surface::Bar(int x1, int y1, int x2, int y2, Pixel c)
 	{
-		
+
 	}*/
 
 	void Surface::CopyTo(Surface* a_Dst, int a_X, int a_Y)
@@ -448,14 +448,10 @@ namespace Tmpl8 {
 		}
 	}
 
-	void Sprite::DrawScaledRotated(const std::vector<Tmpl8::vec2>& verticies, float x, float y, int width, int height, float angle, Surface& screen)
+	void Sprite::DrawScaledRotated(const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3, Surface& screen)
 	{
-		const Tmpl8::vec2& pos = { x, y };
-		const Tmpl8::vec2& size = { static_cast<float>(width), static_cast<float>(height) };
-		const auto& v = verticies;
-
 		AABB dst = AABB{ 0, 0, ScreenWidth - 1, ScreenHeight - 1 };
-		AABB src = AABB{ v[0], v[1], v[2], v[3] };
+		AABB src = AABB{ v0.position, v1.position, v2.position, v3.position };
 
 		if (!dst.intersects(src)) return;
 
@@ -466,55 +462,56 @@ namespace Tmpl8 {
 		int maxX = static_cast<int>(dst.x + dst.width);
 		int maxY = static_cast<int>(dst.y + dst.height);
 
-		float radians = angle * PI / 180.f;
-		float sin = std::sin(radians);
-		float cos = std::cos(radians);
+		Edge edges[2]
+		{
+			{v0.position, v1.position, v2.position},
+			{v2.position, v3.position, v0.position}
+		};
 
-		float cx = pos.x + size.x / 2.f;
-		float cy = pos.y + size.y / 2.f;
+		Vertex verts[4]
+		{
+			v0, v1, v2, v3
+		};
+
+		uint32_t indicies[6]
+		{
+			0, 1, 2,
+			2, 3, 0
+		};
 
 		for (int x = minX; x <= maxX; x++)
 		{
 			for (int y = minY; y <= maxY; y++)
 			{
-				float sx = static_cast<float>(x) - cx;
-				float sy = static_cast<float>(y) - cy;
+				for (int i = 0; i < 2; i++)
+				{
+					const Edge& e = edges[i];
+					if (e.intersect({ static_cast<float>(x), static_cast<float>(y) }))
+					{
+						uint32_t i0 = indicies[i * 3 + 0];
+						uint32_t i1 = indicies[i * 3 + 1];
+						uint32_t i2 = indicies[i * 3 + 2];
 
-				float rx = float(sx) * cos + float(sy) * sin + float(cx);
-				float ry = float(-sx) * sin + float(sy) * cos + float(cy);
+						const Vertex& a = verts[i0];
+						const Vertex& b = verts[i1];
+						const Vertex& c = verts[i2];
 
-				float localX = rx - pos.x;
-				float localY = ry - pos.y;
+						Tmpl8::vec3 bc = e.barycentric({ static_cast<float>(x), static_cast<float>(y) });
+						Tmpl8::vec2 textureCoordinate = interpolate(a.textureCoordinate, b.textureCoordinate, c.textureCoordinate, bc);
+						Tmpl8::vec2i textureCoordinatei = { static_cast<int>(textureCoordinate.x), static_cast<int>(textureCoordinate.y) };
 
-				int u = (int)(localX * ((float)m_Width / size.x));
-				int v = (int)(localY * ((float)m_Height / size.y));
+						int u = textureCoordinatei.x, v = textureCoordinatei.y;
 
-				if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) continue;
+						if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) continue;
 
-				Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
+						Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
 
-				if (color & 0xffffff) screen.Plot<false>(x, y, color);
+						if (color & 0xffffff) screen.Plot<false>(x, y, color);
+					}
+				}
 			}
 		}
 	}
-
-	void Sprite::DrawScaledRotated(const Object& obj, Surface& screen)
-	{
-		const auto& pos = obj.getPosition();
-		const auto& size = obj.getSize();
-
-		DrawScaledRotated(obj.getVertices(pos), pos.x, pos.y, static_cast<int>(size.x), static_cast<int>(size.y), obj.getAngle(), screen);
-	}
-
-	//void Sprite::DrawScaledRotated(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p3, int width, int height, float angle, Surface* screen)
-	//{
-	//	Tmpl8::vec2i p0_ = { static_cast<int>(p0.x), static_cast<int>(p0.y) };
-	//	Tmpl8::vec2i p1_ = { static_cast<int>(p1.x), static_cast<int>(p1.y) };
-	//	Tmpl8::vec2i p2_ = { static_cast<int>(p2.x), static_cast<int>(p2.y) };
-	//	Tmpl8::vec2i p3_ = { static_cast<int>(p3.x), static_cast<int>(p3.y) };
-	//	
-	//	DrawScaledRotated(p0_, p1_, p2_, p3_, width, height, angle, screen);
-	//}
 
 	Pixel Sprite::getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle)
 	{

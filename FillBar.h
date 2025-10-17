@@ -5,7 +5,7 @@
 class FillBar : public UIElement
 {
 public:
-	FillBar(Tmpl8::Pixel color, float x, float y, int width, int height, float minValue, float maxValue);
+	FillBar(Tmpl8::Pixel color, Tmpl8::vec2 position, Tmpl8::vec2 size, float minValue, float maxValue);
 
 	void render(Tmpl8::Surface& screen, float value);
 private:

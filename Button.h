@@ -7,7 +7,7 @@
 class Button : public UIElement
 {
 public:
-	Button(std::shared_ptr<Tmpl8::Sprite> sprite, const std::unordered_map<std::string, Audio::Sound>& sounds, float x, float y, int width, int height, const std::function<void()>& func);
+	Button(std::shared_ptr<Tmpl8::Sprite> sprite, const std::unordered_map<std::string, Audio::Sound>& sounds, Tmpl8::vec2 position, Tmpl8::vec2 size, const std::function<void()>& func);
 	virtual ~Button();
 
 	void render(Tmpl8::Surface& screen) override;

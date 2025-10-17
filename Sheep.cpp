@@ -1,7 +1,8 @@
 #include "Sheep.h"
+#include "CollisionHelper.h"
 
-Sheep::Sheep(std::shared_ptr<Tmpl8::Sprite> sprite, float x, float y, int width, int height, Tmpl8::vec2 velocity, float maxSpeed, Tmpl8::vec2 acceleration, Tmpl8::vec2 direction, float angle) :
-	Object(sprite, x, y, width, height, velocity, maxSpeed, acceleration, direction, angle, "sheep"), rotationSpeed(50.f)
+Sheep::Sheep(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::vec2 position, Tmpl8::vec2 size) :
+	Object(sprite, position, size), rotationSpeed(50.f)
 {
 
 }
@@ -18,5 +19,6 @@ void Sheep::update(float deltaTime)
 
 void Sheep::render(Tmpl8::Surface& screen)
 {
-	sprite->DrawScaledRotated(*this, screen);
+	std::vector<Vertex> v = getVertices();
+	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 }

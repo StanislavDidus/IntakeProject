@@ -2,39 +2,16 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include "CollisionHelper.h"
 #include "Audio/Device.hpp"
 
 Player::Player
 (
 	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
 	const std::unordered_map<std::string, Audio::Sound>& soundMap,
-	float x,
-	float y,
-	int width,
-	int height,
-	Tmpl8::vec2 velocity,
-	float maxSpeed,
-	Tmpl8::vec2 acceleration,
-	Tmpl8::vec2 direction
-) : Object(sprites["ship"], x, y, width, height, velocity, maxSpeed, acceleration, direction, 0.f, "player"),
-spriteMap(sprites),
-soundMap(soundMap),
-rotationSpeed(200.f),
-shootSpeed(.25f),
-shootTimer(0.f),
-canShoot(true),
-shootLeft(true),
-maxHealth(4),
-currentHealth(maxHealth),
-invulnerableTime(2.5f),
-isHit(false),
-blinkTimer(0.30f),
-blinkTime(blinkTimer),
-blink(false),
-upgraded(false),
-chargeTime(1.f),
-isChargedStarted(false),
-chargeTimer(chargeTime)
+	Tmpl8::vec2 position,
+	Tmpl8::vec2 size
+) : Object(sprites["ship"], position, size), spriteMap(sprites), soundMap(soundMap)
 {
 	setState(PlayerState::IDLE);
 
@@ -51,12 +28,12 @@ void Player::initAnimator()
 	animator->addFrameAnimation(spriteMap["engineEffect"], 0.1f, 3, 6, [this]() {return abs(velocity.length()) > 75.f; });
 
 	//Common weapon shooting
-	animator->addFrameCycledAnimation(spriteMap["weapon"], shootSpeed / 2.f, 1, 2, "LeftShoot");
-	animator->addFrameCycledAnimation(spriteMap["weapon"], shootSpeed / 2.f, 3, 4, "RightShoot");
+	animator->addFrameCycledAnimation(spriteMap["weapon"], shootTime / 2.f, 1, 2, "LeftShoot");
+	animator->addFrameCycledAnimation(spriteMap["weapon"], shootTime / 2.f, 3, 4, "RightShoot");
 
 	//Upgraded weapon charge and shooting
 	animator->addFrameCycledAnimation(spriteMap["weapon1"], chargeTime / 6.f, 1, 6, "Charge", false);
-	animator->addFrameCycledAnimation(spriteMap["weapon1"], shootSpeed / 2.f, 7, 11, "ChargeShoot", true);
+	animator->addFrameCycledAnimation(spriteMap["weapon1"], shootTime / 2.f, 7, 11, "ChargeShoot", true);
 
 	//animator->addFrameAnimation(sprite, 1.f, 0, 3, [this]() {return true; });
 }
@@ -107,8 +84,8 @@ void Player::update(float deltaTime)
 
 	applyVelocity(deltaTime);
 
-	x = fmodf(x + ScreenWidth, ScreenWidth);
-	y = fmodf(y + ScreenHeight, ScreenHeight);
+	position.x = fmodf(static_cast<float>(position.x) + ScreenWidth, ScreenWidth);
+	position.y = fmodf(static_cast<float>(position.y) + ScreenHeight, ScreenHeight);
 }
 
 void Player::render(Tmpl8::Surface& screen)
@@ -119,19 +96,22 @@ void Player::render(Tmpl8::Surface& screen)
 	}
 
 	// Draw engine
-	renderShipPart(*spriteMap["shipEngine"].get(), screen);
+	//renderShipPart(*spriteMap["shipEngine"].get(), screen);
 
-	// Draw weapon
-	if (!upgraded)
-		renderShipPart(*spriteMap["weapon"].get(), screen);
-	else
-		renderShipPart(*spriteMap["weapon1"].get(), screen);
+	//// Draw weapon
+	//if (!upgraded)
+	//	renderShipPart(*spriteMap["weapon"].get(), screen);
+	//else
+	//	renderShipPart(*spriteMap["weapon1"].get(), screen);
 
-	//// Draw engine effect
-	renderShipPart(*spriteMap["engineEffect"].get(), screen);
+	////// Draw engine effect
+	//renderShipPart(*spriteMap["engineEffect"].get(), screen);
 
-	// Draw main ship
-	renderShipPart(*sprite, screen);
+	//// Draw main ship
+	//renderShipPart(*sprite, screen);
+
+	std::vector<Vertex> v = getVertices();
+	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 
 }
 
@@ -142,11 +122,16 @@ void Player::renderShipPart(Tmpl8::Sprite& sprite, Tmpl8::Surface& screen)
 
 	if (blink) return;
 
-	renderAt(sprite, x, y, screen);
+	renderAt(sprite, position, screen);
 
-	renderAt(sprite, fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, screen);
-	renderAt(sprite, fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + ScreenHeight, ScreenHeight), screen);
-	renderAt(sprite, fmodf(x + ScreenWidth, ScreenWidth), fmodf(y + height + ScreenHeight, ScreenHeight) - height, screen);
+	int x = static_cast<int>(position.x);
+	int y = static_cast<int>(position.y);
+	int width = static_cast<int>(size.x);
+	int height = static_cast<int>(size.y);
+
+	renderAt(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) }, screen);
+	renderAt(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + ScreenHeight, ScreenHeight)) },                                        screen);
+	renderAt(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + ScreenWidth, ScreenWidth)),                 static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) }, screen);
 }
 
 
@@ -160,7 +145,7 @@ void Player::move(float deltaTime)
 {
 	velocity += acceleration * direction * deltaTime;
 
-	float speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+	float speed =  velocity.length();
 	if (speed > maxSpeed)
 	{
 		velocity.x = (velocity.x / speed) * maxSpeed;
@@ -181,6 +166,8 @@ void Player::rotate(float angle, float deltaTime)
 	direction.y = -cos;
 
 	direction.normalize();
+
+	//std::cout << direction.x << ", " << direction.y << "\n";
 }
 
 void Player::onCollisionEnter(std::shared_ptr<Object> object)
@@ -250,8 +237,8 @@ void Player::updateBullets(float deltaTime)
 
 	for (const auto& bullet : bullets)
 	{
-		auto& pos = bullet->getPosition();
-		auto& size = bullet->getSize();
+		auto pos = bullet->getPosition();
+		auto size = bullet->getSize();
 
 		if (pos.x < -size.x ||
 			pos.x + size.x >= ScreenWidth + size.x ||

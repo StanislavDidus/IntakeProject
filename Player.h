@@ -28,14 +28,8 @@ public:
 	(
 		std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
 		const std::unordered_map<std::string, Audio::Sound>& soundMap,
-		float x,
-		float y,
-		int width,
-		int height,
-		Tmpl8::vec2 velocity,
-		float maxSpeed,
-		Tmpl8::vec2 acceleration,
-		Tmpl8::vec2 direction
+		Tmpl8::vec2 position,
+		Tmpl8::vec2 size
 	);
 
 	void update(float deltaTime) override;
@@ -84,25 +78,24 @@ private:
 	PlayerState state = PlayerState::NONE;
 
 	//Health Component
-	int maxHealth, currentHealth;
-	float invulnerableTime;
-	bool isHit;
+	int maxHealth = 4, currentHealth = maxHealth;
+	float invulnerableTime = 2.5f;
+	bool isHit = false;
 
 	//Blinking after getting hit
-	float blinkTimer, blinkTime;
-	bool blink;
+	float blinkTime = 0.3f, blinkTimer = blinkTime;
+	bool blink = false;
 
 	//Shooting
-	float shootSpeed;
-	float shootTimer;
-	bool shootLeft;
-	bool canShoot;
+	float shootTime = 0.25f, shootTimer = shootTime;
+	bool shootLeft = true;
+	bool canShoot = true;
 
-	float rotationSpeed;
+	float rotationSpeed = 200.f;
 
 	//Upgrade
-	bool upgraded;
-	bool isChargedStarted;
-	float chargeTimer, chargeTime;
+	bool upgraded = false;
+	bool isChargedStarted = false;
+	float chargeTime = 1.f, chargeTimer = chargeTime;
 };
 
