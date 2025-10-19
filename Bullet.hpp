@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Object.h"
-#include "Animator.h"
+#include "Object.hpp"
+#include "Animator.hpp"
 
 class IBullet : public Object
 {

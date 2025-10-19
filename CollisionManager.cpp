@@ -1,6 +1,6 @@
-#include "CollisionManager.h"
-#include "Functions.h"
-#include "CollisionHelper.h"
+#include "CollisionManager.hpp"
+#include "Functions.hpp"
+#include "CollisionHelper.hpp"
 
 CollisionManager::CollisionManager(std::shared_ptr<GameManager> gameManager) : gameManager(gameManager)
 {
@@ -50,9 +50,9 @@ void CollisionManager::checkCollision(float deltaTime)
 
 void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 {
-	/*for (const auto& col : gameManager->getObjects())
+	for (const auto& col : gameManager->getObjects())
 	{
-		auto& objVerticies = col->getVertices();
+		auto objVerticies = col->getVerticesPosition();
 		screen.Line(objVerticies[0].x, objVerticies[0].y, objVerticies[1].x, objVerticies[1].y, Tmpl8::RedMask);
 		screen.Line(objVerticies[1].x, objVerticies[1].y, objVerticies[2].x, objVerticies[2].y, Tmpl8::RedMask);
 		screen.Line(objVerticies[2].x, objVerticies[2].y, objVerticies[3].x, objVerticies[3].y, Tmpl8::RedMask);
@@ -71,7 +71,7 @@ void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 				screen.Line(overlap.x, overlap.y + overlap.w, overlap.x, overlap.y, Tmpl8::GreenMask);
 			}
 		}
-	}*/
+	}
 }
 
 void CollisionManager::render(Tmpl8::Surface& screen)
@@ -162,18 +162,18 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 	}
 
 	//Add verticies that are inside of a rectangle
-	for (const auto& tVerticy : target->getVertices())
+	for (const auto& tVerticy : target->getVerticesPosition())
 	{
-		if (PointRectangle(tVerticy.position, col))
+		if (PointRectangle(tVerticy, col))
 		{
-			intersectionPoints.push_back(tVerticy.position);
+			intersectionPoints.push_back(tVerticy);
 		}
 	}
-	for (const auto& cVerticy : col->getVertices())
+	for (const auto& cVerticy : col->getVerticesPosition())
 	{
-		if (PointRectangle(cVerticy.position, target))
+		if (PointRectangle(cVerticy, target))
 		{
-			intersectionPoints.push_back(cVerticy.position);
+			intersectionPoints.push_back(cVerticy);
 		}
 	}
 

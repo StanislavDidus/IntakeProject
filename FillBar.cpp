@@ -1,4 +1,4 @@
-#include "FillBar.h"
+#include "FillBar.hpp"
 
 FillBar::FillBar(Tmpl8::Pixel color, Tmpl8::vec2 position, Tmpl8::vec2 size, float minValue, float  maxValue) :
 	UIElement(nullptr, position, size), color(color), horizontal(true), minValue(minValue), maxValue(maxValue), barWidth(size.x / (maxValue - minValue)), barHeight(size.y / (maxValue - minValue))

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Object.h"
+#include "Object.hpp"
 #include <memory>
 #include <vector>
 #include <optional>
 #include <set>
 
-#include "GameManager.h"
+#include "GameManager.hpp"
 
 template<typename T>
 struct unordered_pair

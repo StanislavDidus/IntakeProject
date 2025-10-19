@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "Functions.h"
+#include "Functions.hpp"
 #include <vector>
 #include "glm.hpp"
 

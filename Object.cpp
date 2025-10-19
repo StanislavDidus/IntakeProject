@@ -1,6 +1,6 @@
-#include "Object.h"
-#include "CollisionManager.h"
-#include "CollisionHelper.h"
+#include "Object.hpp"
+#include "CollisionManager.hpp"
+#include "CollisionHelper.hpp"
 
 Object::Object
 (
@@ -26,12 +26,6 @@ void Object::render(Tmpl8::Surface& screen)
 {
 	std::vector<Vertex> v = getVertices();
 	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
-}
-
-void Object::renderAt(Tmpl8::Sprite& sprite, Tmpl8::vec2 position, Tmpl8::Surface& screen)
-{
-	std::vector<Vertex> v = getVertices(position);
-	sprite.DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 }
 
 void Object::setPosition(Tmpl8::vec2 position)
@@ -145,7 +139,16 @@ void Object::stop(float deltaTime)
 	if (std::abs(velocity.y) <= 0.01f) velocity.y = 0.f;
 }
 
-const std::vector<Tmpl8::vec2> Object::getAxes() const
+void Object::resize(float scale)
+{
+	Tmpl8::vec2 center = Tmpl8::vec2{ position.x + size.x / 2.f, position.y + size.y / 2.f };
+
+	size = size * scale;
+
+	position = Tmpl8::vec2{center.x - size.x / 2.f, center.y - size.y / 2.f};
+}
+
+std::vector<Tmpl8::vec2> Object::getAxes() const
 {
 	std::vector<Tmpl8::vec2> axes;
 	axes.reserve(2);
@@ -165,7 +168,7 @@ const std::vector<Tmpl8::vec2> Object::getAxes() const
 	return axes;
 }
 
-const Tmpl8::vec2 Object::getEdgeVector(Side s) const
+Tmpl8::vec2 Object::getEdgeVector(Side s) const
 {
 	Tmpl8::vec2 A;
 	Tmpl8::vec2 B;
@@ -193,7 +196,7 @@ const Tmpl8::vec2 Object::getEdgeVector(Side s) const
 	return Tmpl8::vec2{ A - B };
 }
 
-const std::vector<Tmpl8::vec4> Object::getEdges() const
+std::vector<Tmpl8::vec4> Object::getEdges() const
 {
 	std::vector<Tmpl8::vec4> lines;
 	lines.reserve(4);
@@ -206,7 +209,7 @@ const std::vector<Tmpl8::vec4> Object::getEdges() const
 	return lines;
 }
 
-const Tmpl8::vec4 Object::getEdge(Side s) const
+Tmpl8::vec4 Object::getEdge(Side s) const
 {
 	Tmpl8::vec2 A;
 	Tmpl8::vec2 B;
@@ -234,7 +237,21 @@ const Tmpl8::vec4 Object::getEdge(Side s) const
 	return Tmpl8::vec4{ A.x, A.y, B.x, B.y };
 }
 
-const std::vector<Vertex> Object::getVertices(Tmpl8::vec2 pos) const
+
+std::vector<Tmpl8::vec2> Object::getVerticesPosition() const
+{
+	std::vector<Tmpl8::vec2> verticies;
+	verticies.reserve(4);
+
+	verticies.emplace_back(getVertexAtPos(UP, LEFT, position));
+	verticies.emplace_back(getVertexAtPos(UP, RIGHT, position));
+	verticies.emplace_back(getVertexAtPos(DOWN, RIGHT, position));
+	verticies.emplace_back(getVertexAtPos(DOWN, LEFT, position));
+
+	return verticies;
+}
+
+std::vector<Vertex> Object::getVertices(std::shared_ptr<Tmpl8::Sprite> sprite, const Tmpl8::vec2& pos) const
 {
 	std::vector<Vertex> verticies;
 	verticies.reserve(4);
@@ -250,12 +267,12 @@ const std::vector<Vertex> Object::getVertices(Tmpl8::vec2 pos) const
 	return verticies;
 }
 
-const std::vector<Vertex> Object::getVertices() const
+std::vector<Vertex> Object::getVertices() const
 {
-	return getVertices(position);
+	return getVertices(sprite, position);
 }
 
-const Tmpl8::vec2 Object::getVertex(Side v, Side h) const
+Tmpl8::vec2 Object::getVertex(Side v, Side h) const
 {
 	float px = 0.f, py = 0.f;
 	
@@ -282,7 +299,7 @@ const Tmpl8::vec2 Object::getVertex(Side v, Side h) const
 	return getRotatedPoint({ px, py });
 }
 
-const Tmpl8::vec2 Object::getVertexAtPos(Side v, Side h, Tmpl8::vec2 pos) const
+Tmpl8::vec2 Object::getVertexAtPos(Side v, Side h, const Tmpl8::vec2& pos) const
 {
 	float px = 0.f, py = 0.f;
 
@@ -309,7 +326,7 @@ const Tmpl8::vec2 Object::getVertexAtPos(Side v, Side h, Tmpl8::vec2 pos) const
 	return getRotatedPointWithCenter({ px, py }, {pos.x, pos.y});
 }
 
-const Tmpl8::vec2 Object::getRotatedPoint(Tmpl8::vec2 pos, float dir) const
+Tmpl8::vec2 Object::getRotatedPoint(const Tmpl8::vec2& pos, float dir) const
 {
 	float radians = angle * dir * Tmpl8::PI / 180.f;
 	float sin = std::sin(radians);
@@ -323,7 +340,7 @@ const Tmpl8::vec2 Object::getRotatedPoint(Tmpl8::vec2 pos, float dir) const
 	return { sx * cos - sy * sin + center.x, sx * sin + sy * cos + center.y };
 }
 
-const Tmpl8::vec2 Object::getRotatedPointWithCenter(Tmpl8::vec2 pos, Tmpl8::vec2 center, float dir) const
+Tmpl8::vec2 Object::getRotatedPointWithCenter(const Tmpl8::vec2& pos, const Tmpl8::vec2& center, float dir) const
 {
 	float radians = angle * dir * Tmpl8::PI / 180.f;
 	float sin = std::sin(radians);
@@ -339,7 +356,7 @@ const Tmpl8::vec2 Object::getRotatedPointWithCenter(Tmpl8::vec2 pos, Tmpl8::vec2
 
 Tmpl8::Pixel Object::getPixelAtRotatedPosition(int pixelX, int pixelY) const
 {
-	return sprite->getPixelAtRotatedPosition(static_cast<int>(position.x), static_cast<int>(position.y), pixelX, pixelY , size.x, size.y, angle);
+	return sprite->getPixelAtRotatedPosition(static_cast<int>(position.x), static_cast<int>(position.y), pixelX, pixelY , static_cast<int>(size.x), static_cast<int>(size.y), angle);
 }
 
 void Object::onCollisionEnter(std::shared_ptr<Object> object)

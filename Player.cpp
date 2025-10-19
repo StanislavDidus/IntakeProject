@@ -1,8 +1,8 @@
-#include "Player.h"
+#include "Player.hpp"
 #include <cmath>
 #include <algorithm>
 #include <iostream>
-#include "CollisionHelper.h"
+#include "CollisionHelper.hpp"
 #include "Audio/Device.hpp"
 
 Player::Player
@@ -96,42 +96,42 @@ void Player::render(Tmpl8::Surface& screen)
 	}
 
 	// Draw engine
-	//renderShipPart(*spriteMap["shipEngine"].get(), screen);
+	renderShipPart(spriteMap["shipEngine"], screen);
 
-	//// Draw weapon
-	//if (!upgraded)
-	//	renderShipPart(*spriteMap["weapon"].get(), screen);
-	//else
-	//	renderShipPart(*spriteMap["weapon1"].get(), screen);
+	// Draw weapon
+	if (!upgraded)
+		renderShipPart(spriteMap["weapon"], screen);
+	else
+		renderShipPart(spriteMap["weapon1"], screen);
 
-	////// Draw engine effect
-	//renderShipPart(*spriteMap["engineEffect"].get(), screen);
+	//// Draw engine effect
+	renderShipPart(spriteMap["engineEffect"], screen);
 
-	//// Draw main ship
-	//renderShipPart(*sprite, screen);
+	// Draw main ship
+	renderShipPart(sprite, screen);
 
-	std::vector<Vertex> v = getVertices();
-	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 
 }
 
 
-void Player::renderShipPart(Tmpl8::Sprite& sprite, Tmpl8::Surface& screen)
+void Player::renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surface& screen)
 {
-	//sprite.DrawScaledRotated(*this, screen);
-
 	if (blink) return;
-
-	renderAt(sprite, position, screen);
 
 	int x = static_cast<int>(position.x);
 	int y = static_cast<int>(position.y);
 	int width = static_cast<int>(size.x);
 	int height = static_cast<int>(size.y);
 
-	renderAt(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) }, screen);
-	renderAt(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + ScreenHeight, ScreenHeight)) },                                        screen);
-	renderAt(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + ScreenWidth, ScreenWidth)),                 static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) }, screen);
+	auto v1 = getVertices(sprite, position);
+	auto v2 = getVertices(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) });
+	auto v3 = getVertices(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + ScreenHeight, ScreenHeight)) });
+	auto v4 = getVertices(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + ScreenWidth, ScreenWidth)),                 static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) });
+
+	sprite->DrawScaledRotated(v1[0], v1[1], v1[2], v1[3], screen);
+	sprite->DrawScaledRotated(v2[0], v2[1], v2[2], v2[3], screen);
+	sprite->DrawScaledRotated(v3[0], v3[1], v3[2], v3[3], screen);
+	sprite->DrawScaledRotated(v4[0], v4[1], v4[2], v4[3], screen);
 }
 
 

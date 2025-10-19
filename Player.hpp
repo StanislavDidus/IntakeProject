@@ -6,11 +6,11 @@
 #include <algorithm>
 #include <vector>
 
-#include "Object.h"
-#include "Animator.h"
-#include "Bullet.h"
-#include "SuperBullet.h"
-#include "TimerManager.h"
+#include "Object.hpp"
+#include "Animator.hpp"
+#include "Bullet.hpp"
+#include "SuperBullet.hpp"
+#include "TimerManager.hpp"
 #include "Audio/Device.hpp"
 
 enum class PlayerState
@@ -49,6 +49,8 @@ private:
 	void initAnimator();
 	void initTimerManager();
 
+	//void generateSprite();
+
 	void setState(PlayerState state);
 
 	void checkMove(float deltaTime);
@@ -63,7 +65,7 @@ private:
 	void updateShoot(float deltaTime);
 	void updateSuperShoot(float deltaTime);
 
-	void renderShipPart(Tmpl8::Sprite& sprite, Tmpl8::Surface& screen);
+	void renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surface& screen);
 
 	std::vector<std::shared_ptr<IBullet>> bullets;
 

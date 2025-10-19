@@ -245,26 +245,26 @@
     <ClCompile Include="Upgrade.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animator.h" />
-    <ClInclude Include="Asteroid.h" />
-    <ClInclude Include="Bullet.h" />
-    <ClInclude Include="Button.h" />
-    <ClInclude Include="CollisionHelper.h" />
-    <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="EventBus.h" />
-    <ClInclude Include="FillBar.h" />
-    <ClInclude Include="Functions.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Sheep.h" />
-    <ClInclude Include="SuperBullet.h" />
+    <ClInclude Include="Animator.hpp" />
+    <ClInclude Include="Asteroid.hpp" />
+    <ClInclude Include="Bullet.hpp" />
+    <ClInclude Include="Button.hpp" />
+    <ClInclude Include="CollisionHelper.hpp" />
+    <ClInclude Include="CollisionManager.hpp" />
+    <ClInclude Include="EventBus.hpp" />
+    <ClInclude Include="FillBar.hpp" />
+    <ClInclude Include="Functions.hpp" />
+    <ClInclude Include="game.hpp" />
+    <ClInclude Include="GameManager.hpp" />
+    <ClInclude Include="Object.hpp" />
+    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Sheep.hpp" />
+    <ClInclude Include="SuperBullet.hpp" />
     <ClInclude Include="surface.h" />
     <ClInclude Include="template.h" />
-    <ClInclude Include="TimerManager.h" />
-    <ClInclude Include="UIElement.h" />
-    <ClInclude Include="Upgrade.h" />
+    <ClInclude Include="TimerManager.hpp" />
+    <ClInclude Include="UIElement.hpp" />
+    <ClInclude Include="Upgrade.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="_readme.txt" />

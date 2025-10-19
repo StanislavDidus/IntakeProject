@@ -8,10 +8,10 @@
 #include <sstream>
 #include <bitset>
 
-#include "Player.h"
-#include "GameManager.h"
-#include "CollisionManager.h"
-#include "Button.h"
+#include "Player.hpp"
+#include "GameManager.hpp"
+#include "CollisionManager.hpp"
+#include "Button.hpp"
 #include <Audio/Device.hpp>
 
 enum class GameState
@@ -38,9 +38,9 @@ public:
 
 	static bool isKeyDown(int key);
 	static bool isKeyHold(int key);
-	static bool isKeyUp(int key);
+	static bool isKeyUp(int key);	
 
-	bool restart;
+	bool restart = false;
 
 	
 private:
@@ -52,7 +52,7 @@ private:
 
 	Surface* screen;
 
-	GameState currentGameState;
+	GameState currentGameState = GameState::MENU;
 
 	std::shared_ptr<GameManager> gameManager;
 	std::shared_ptr<CollisionManager> collisionManager;

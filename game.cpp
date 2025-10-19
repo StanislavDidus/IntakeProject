@@ -1,6 +1,6 @@
-#include "game.h"
+#include "game.hpp"
 #include "surface.h"
-#include "CollisionHelper.h"
+#include "CollisionHelper.hpp"
 #include <cassert>
 
 #include <cstdio> //printf

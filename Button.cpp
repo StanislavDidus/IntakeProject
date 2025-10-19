@@ -1,4 +1,4 @@
-#include "Button.h"
+#include "Button.hpp"
 
 Button::Button(std::shared_ptr<Tmpl8::Sprite> sprite, const std::unordered_map<std::string, Audio::Sound>& sounds, Tmpl8::vec2 position, Tmpl8::vec2 size, const std::function<void()>& func) : 
 	UIElement(sprite, position, size), func(func), isHeld(false), sounds(sounds), wasCovered(false)

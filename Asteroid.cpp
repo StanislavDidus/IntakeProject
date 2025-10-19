@@ -1,6 +1,6 @@
-#include "Asteroid.h"
-#include "CollisionManager.h"
-#include "CollisionHelper.h"
+#include "Asteroid.hpp"
+#include "CollisionManager.hpp"
+#include "CollisionHelper.hpp"
 #include <Audio/Device.hpp>
 
 Asteroid::Asteroid

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bullet.h"
+#include "Bullet.hpp"
 
 class SuperBullet : public IBullet
 {
@@ -24,7 +24,6 @@ protected:
 
 	std::shared_ptr<Tmpl8::Sprite> bulletSprite;
 	float areaMultiplier;
-	float bulletWidth, bulletHeight;
 	float deathTime, deathTimer;
 };
 

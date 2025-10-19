@@ -12,9 +12,9 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "CollisionHelper.h"
-#include "Functions.h"
-#include "Object.h"
+#include "CollisionHelper.hpp"
+#include "Functions.hpp"
+#include "Object.hpp"
 
 namespace Tmpl8 {
 

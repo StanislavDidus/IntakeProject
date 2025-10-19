@@ -60,58 +60,58 @@
     <ClInclude Include="template.h">
       <Filter>template code</Filter>
     </ClInclude>
-    <ClInclude Include="Asteroid.h">
+    <ClInclude Include="Animator.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
+    <ClInclude Include="Asteroid.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionManager.h">
+    <ClInclude Include="Bullet.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="Button.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
+    <ClInclude Include="CollisionHelper.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
+    <ClInclude Include="CollisionManager.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Functions.h">
+    <ClInclude Include="EventBus.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
+    <ClInclude Include="FillBar.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionHelper.h">
+    <ClInclude Include="Functions.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="UIElement.h">
+    <ClInclude Include="game.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="FillBar.h">
+    <ClInclude Include="GameManager.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Animator.h">
+    <ClInclude Include="Object.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Sheep.h">
+    <ClInclude Include="Player.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="Sheep.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="EventBus.h">
+    <ClInclude Include="SuperBullet.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Upgrade.h">
+    <ClInclude Include="TimerManager.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="TimerManager.h">
+    <ClInclude Include="UIElement.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="SuperBullet.h">
+    <ClInclude Include="Upgrade.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

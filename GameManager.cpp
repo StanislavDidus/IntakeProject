@@ -1,6 +1,6 @@
-#include "GameManager.h"
-#include "game.h"
-#include "Upgrade.h"
+#include "GameManager.hpp"
+#include "game.hpp"
+#include "Upgrade.hpp"
 
 #include <random>
 

@@ -1,4 +1,4 @@
-#include "EventBus.h"
+#include "EventBus.hpp"
 
 void EventBus::AddListener(IListener& l, EventTypes type, const std::function<void()>& func)
 {

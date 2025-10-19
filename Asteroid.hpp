@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Object.h"
-#include "FillBar.h"
+#include "Object.hpp"
+#include "FillBar.hpp"
 
 class Asteroid : public Object
 {

@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 
-#include "Functions.h"
+#include "Functions.hpp"
 
 enum Side
 {
@@ -30,7 +30,6 @@ public:
 
 	virtual void update(float deltaTime); // = 0; Pure virtual.
 	virtual void render(Tmpl8::Surface& screen);
-	void renderAt(Tmpl8::Sprite& sprite, Tmpl8::vec2 position, Tmpl8::Surface& screen);
 
 	//Setters
 	void setPosition(Tmpl8::vec2 position);
@@ -56,13 +55,15 @@ public:
 	virtual void move(float deltaTime);
 	virtual void applyVelocity(float deltaTime);
 	virtual void stop(float deltaTime);
+	void resize(float scale);
 
-	const std::vector<Tmpl8::vec2>        getAxes                  ()                                                     const;
-	const std::vector<Tmpl8::vec4>        getEdges                 ()                                                     const;
-	const std::vector<Vertex>             getVertices              (Tmpl8::vec2 pos)                                      const;
-	const std::vector<Vertex>             getVertices              ()                                                     const;
-	const Tmpl8::vec2                     getRotatedPoint          (Tmpl8::vec2 pos, float dir = 1.f)                     const;
-	Tmpl8::Pixel                          getPixelAtRotatedPosition(int pixelX, int pixelY)                               const;
+	std::vector<Tmpl8::vec2> getAxes                   ()                                                              const;
+	std::vector<Tmpl8::vec4> getEdges                  ()                                                              const;
+	std::vector<Tmpl8::vec2> getVerticesPosition       ()                                                              const;
+	std::vector<Vertex>      getVertices               (std::shared_ptr<Tmpl8::Sprite> sprite, const Tmpl8::vec2& pos) const;
+	std::vector<Vertex>      getVertices               ()                                                              const;
+	Tmpl8::vec2              getRotatedPoint           (const Tmpl8::vec2& pos, float dir = 1.f)                       const;
+	Tmpl8::Pixel             getPixelAtRotatedPosition (int pixelX, int pixelY)                                        const;
 
 	virtual void onCollisionEnter(std::shared_ptr<Object> object);
 	virtual void onCollisionStay(std::shared_ptr<Object> object, float deltaTime);
@@ -71,16 +72,15 @@ public:
 	bool destroy = false; // Destroy as soon as possible
 	bool checkPixelPerfectCollision = true;
 protected:
-	const Tmpl8::vec2                     getEdgeVector            (Side s)                                               const;
-	const Tmpl8::vec4                     getEdge                  (Side s)                                               const;
-	const Tmpl8::vec2                     getVertex                (Side v, Side h)                                       const;
-	const Tmpl8::vec2                     getVertexAtPos           (Side v, Side h, Tmpl8::vec2 pos)                      const;
-	const Tmpl8::vec2                     getRotatedPointWithCenter(Tmpl8::vec2 pos, Tmpl8::vec2 center, float dir = 1.f) const;
+	Tmpl8::vec2 getEdgeVector             (Side s)                                                              const;
+	Tmpl8::vec4 getEdge                   (Side s)                                                              const;
+	Tmpl8::vec2 getVertex                 (Side v, Side h)                                                      const;
+	Tmpl8::vec2 getVertexAtPos            (Side v, Side h, const Tmpl8::vec2& pos)                              const;
+	Tmpl8::vec2 getRotatedPointWithCenter (const Tmpl8::vec2& pos, const Tmpl8::vec2& center, float dir = 1.f)  const;
 
 	std::shared_ptr<Tmpl8::Sprite> sprite;
 	Tmpl8::vec2 position{};
 	Tmpl8::vec2 size{};
-	Tmpl8::vec2 scale = {1.f, 1.f};
 	float angle = 0.f;
 	std::string tag = "default";
 

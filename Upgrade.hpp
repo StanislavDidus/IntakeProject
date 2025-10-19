@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.h"
+#include "Object.hpp"
 
 class Upgrade : public Object
 {

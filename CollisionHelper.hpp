@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.h"
+#include "Object.hpp"
 
 struct Vertex
 {
@@ -47,21 +47,21 @@ struct CollisionHelper
 		for (const auto& axis : axes)
 		{
 			//Go through each of the verticies
-			auto objVerticies = target->getVertices();
-			auto colVerticies = col->getVertices();
+			auto objVerticies = target->getVerticesPosition();
+			auto colVerticies = col->getVerticesPosition();
 
-			float min = objVerticies[0].position.dot(axis), max = min;
+			float min = objVerticies[0].dot(axis), max = min;
 			for (int i = 1; i < 4; i++)
 			{
-				float proj = objVerticies[i].position.dot(axis);
+				float proj = objVerticies[i].dot(axis);
 				if (proj < min) min = proj;
 				if (proj > max) max = proj;
 			}
 
-			float min1 = colVerticies[0].position.dot(axis), max1 = min1;
+			float min1 = colVerticies[0].dot(axis), max1 = min1;
 			for (int i = 1; i < 4; i++)
 			{
-				float proj = colVerticies[i].position.dot(axis);
+				float proj = colVerticies[i].dot(axis);
 				if (proj < min1) min1 = proj;
 				if (proj > max1) max1 = proj;
 			}
@@ -120,6 +120,7 @@ struct Edge
 		return false;
 	}
 
+	//Implementation: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
 	Tmpl8::vec3 barycentric(const Tmpl8::vec2& p) const
 	{
 		//Calculate w

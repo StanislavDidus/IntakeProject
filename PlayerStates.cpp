@@ -1,5 +1,5 @@
-#include "Player.h"
-#include "game.h"
+#include "Player.hpp"
+#include "game.hpp"
 #include <Audio/Device.hpp>
 
 void Player::setState(PlayerState state)

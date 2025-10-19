@@ -7,9 +7,9 @@
 #include <time.h>
 #include <unordered_map>
 
-#include "Asteroid.h"
-#include "Player.h"
-#include "Sheep.h"
+#include "Asteroid.hpp"
+#include "Player.hpp"
+#include "Sheep.hpp"
 
 namespace Tmpl8
 {

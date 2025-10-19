@@ -1,5 +1,5 @@
-#include "Sheep.h"
-#include "CollisionHelper.h"
+#include "Sheep.hpp"
+#include "CollisionHelper.hpp"
 
 Sheep::Sheep(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::vec2 position, Tmpl8::vec2 size) :
 	Object(sprite, position, size), rotationSpeed(50.f)
