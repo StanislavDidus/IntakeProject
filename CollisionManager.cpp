@@ -46,6 +46,9 @@ void CollisionManager::checkCollision(float deltaTime)
 			SendCollisionEvents(col, col1, isCollision, deltaTime);
 		}
 	}
+
+	//It is crucial to ensure that onCollisionExit() gets called even if one of the colliding objects gets destroyed during the collision
+	checkForDestroyedObjects();
 }
 
 void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
@@ -204,7 +207,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 
 void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision, float deltaTime)
 {
-	unordered_pair<std::shared_ptr<Object> > pair{ A,B };
+	unordered_pair<std::shared_ptr<Object>> pair{ A,B };
 	auto it = std::find(collisions.begin(), collisions.end(), pair);
 
 	if (isCollision)
@@ -234,5 +237,35 @@ void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shar
 			A->onCollisionExit(B);
 			B->onCollisionExit(A);
 		}
+	}
+}
+
+void CollisionManager::checkForDestroyedObjects()
+{
+	for (auto it = collisions.begin(); it != collisions.end();)
+	{
+		auto& pair = *it;
+		auto& A = pair.a;
+		auto& B = pair.b;
+
+		bool remove = false;
+
+		if (A->destroy)
+		{
+			B->onCollisionExit(A);
+			remove = true;
+		}
+		if (B->destroy)
+		{
+			A->onCollisionExit(B);
+			remove = true;
+		}
+
+		if (remove)
+		{
+			it = collisions.erase(it);
+		}
+		else
+			++it;
 	}
 }

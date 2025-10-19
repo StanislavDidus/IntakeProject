@@ -40,6 +40,7 @@ private:
 	Tmpl8::vec4 getIntersection(std::shared_ptr<Object>  target, std::shared_ptr<Object>  col);
 
 	void SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision, float deltaTime);
+	void checkForDestroyedObjects();
 
 	std::vector<unordered_pair<std::shared_ptr<Object>>> collisions; // All collision in current frame
 

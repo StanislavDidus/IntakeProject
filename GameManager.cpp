@@ -48,6 +48,14 @@ GameManager::~GameManager()
 
 void GameManager::update(float deltaTime)
 {
+    if (Tmpl8::Game::isKeyDown('k'))
+    {
+        for (auto& obj : objects)
+        {
+            obj->destroy = true;
+       }
+    }
+    
     spawnTimer += deltaTime;
 
     if (spawnTimer >= spawnRate)
@@ -227,7 +235,7 @@ void GameManager::spawnUpgrade()
         Tmpl8::vec2{static_cast<float>(w), static_cast<float>(h)}
     );
 
-    upgrd->setAngle(randomRange(0, 360));
+    upgrd->setAngle(static_cast<float>(randomRange(0, 360)));
     upgrd->setTag("upgrade");
 
     objects.push_back(upgrd);

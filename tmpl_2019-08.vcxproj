@@ -231,7 +231,6 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="EventBus.cpp" />
     <ClCompile Include="FillBar.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameManager.cpp" />
@@ -251,7 +250,6 @@
     <ClInclude Include="Button.hpp" />
     <ClInclude Include="CollisionHelper.hpp" />
     <ClInclude Include="CollisionManager.hpp" />
-    <ClInclude Include="EventBus.hpp" />
     <ClInclude Include="FillBar.hpp" />
     <ClInclude Include="Functions.hpp" />
     <ClInclude Include="game.hpp" />

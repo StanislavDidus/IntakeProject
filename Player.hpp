@@ -36,6 +36,7 @@ public:
 	void render(Tmpl8::Surface& screen) override;
 
 	const std::vector<std::shared_ptr<IBullet>>& getBullets() const;
+	int getHealth() const;
 
 	void move(float deltaTime) override;
 	void rotate(float angle, float deltaTime);

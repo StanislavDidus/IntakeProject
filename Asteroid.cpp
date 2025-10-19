@@ -88,3 +88,8 @@ void Asteroid::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 		}
 	}
 }
+
+void Asteroid::onCollisionExit(std::shared_ptr<Object> object)
+{
+	
+}

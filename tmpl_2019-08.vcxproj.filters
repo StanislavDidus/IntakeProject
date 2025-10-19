@@ -43,9 +43,6 @@
     <ClCompile Include="Upgrade.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="EventBus.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerStates.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -60,59 +57,56 @@
     <ClInclude Include="template.h">
       <Filter>template code</Filter>
     </ClInclude>
-    <ClInclude Include="Animator.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Asteroid.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionHelper.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionManager.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="EventBus.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="FillBar.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Functions.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="game.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionManager.hpp">
+      <Filter>include\Managers</Filter>
+    </ClInclude>
     <ClInclude Include="GameManager.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Sheep.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="SuperBullet.hpp">
-      <Filter>include</Filter>
+      <Filter>include\Managers</Filter>
     </ClInclude>
     <ClInclude Include="TimerManager.hpp">
-      <Filter>include</Filter>
+      <Filter>include\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="UIElement.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="Animator.hpp">
+      <Filter>include\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Asteroid.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Sheep.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="FillBar.hpp">
+      <Filter>include\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Upgrade.hpp">
-      <Filter>include</Filter>
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="UIElement.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="SuperBullet.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.hpp">
+      <Filter>include\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionHelper.hpp">
+      <Filter>include\Algorithms</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +118,15 @@
     </Filter>
     <Filter Include="source">
       <UniqueIdentifier>{8b2c0e23-ced3-4491-95da-2bc24679a13c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Managers">
+      <UniqueIdentifier>{95c4e044-701c-4cd6-b25f-802bd2955262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Objects">
+      <UniqueIdentifier>{bd6da58a-59ca-4842-ad56-ecf939d75e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Algorithms">
+      <UniqueIdentifier>{6e7c1b04-8f87-4780-813b-deb37c0e6aaf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

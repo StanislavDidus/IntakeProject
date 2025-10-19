@@ -64,6 +64,7 @@ public:
 	void SetChar( int c, const char* c1, const char* c2, const char* c3, const char* c4, const char* c5 );
 	void Centre( const char* a_String, int y1, Pixel color );
 	void Print( const char* a_String, int x1, int y1, Pixel color );
+	void PrintScaled(const char* a_String, int x1, int y1, int scaleX, int scaleY, Pixel color);
 	void Clear( Pixel a_Color );
 	void Line( float x1, float y1, float x2, float y2, Pixel color );
 	template<bool BoundsCheck = true>

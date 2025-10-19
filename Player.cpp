@@ -141,6 +141,11 @@ const std::vector<std::shared_ptr<IBullet>>& Player::getBullets() const
 	return bullets;
 }
 
+int Player::getHealth() const
+{
+	return currentHealth;
+}
+
 void Player::move(float deltaTime)
 {
 	velocity += acceleration * direction * deltaTime;

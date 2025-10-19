@@ -19,6 +19,7 @@ public:
 
 	void onCollisionEnter(std::shared_ptr<Object> object) override;
 	void onCollisionStay(std::shared_ptr<Object> object, float deltaTime) override;
+	void onCollisionExit(std::shared_ptr<Object> object) override;
 
 	bool divide;
 	bool turnToSheep;

@@ -2,6 +2,7 @@
 #include "surface.h"
 #include "CollisionHelper.hpp"
 #include <cassert>
+#include <sstream>
 
 #include <cstdio> //printf
 
@@ -40,10 +41,11 @@ namespace Tmpl8
 		spriteMap["weapon1"] = std::make_shared<Sprite>(new Surface("assets/weapon1.png"), 12);
 		spriteMap["bullet"] = std::make_shared<Sprite>(new Surface("assets/bullet.png"), 4);
 		spriteMap["bullet1"] = std::make_shared<Sprite>(new Surface("assets/bullet1.png"), 10);
+		spriteMap["bulletEffect"] = std::make_shared<Sprite>(new Surface("assets/bulletEffect.png"), 4);
 		//Object
 		spriteMap["sheep"] = std::make_shared<Sprite>(new Surface("assets/sheep.png"), 1);
 		spriteMap["space"] = std::make_shared<Sprite>(new Surface("assets/space.png"), 2);
-		spriteMap["upgrade"] = std::make_shared<Sprite>(new Surface("assets/upgrade.png"), 1);
+		spriteMap["upgrade"] = std::make_shared<Sprite>(new Surface("assets/upgrade.png"), 1);	
 		//UI
 		spriteMap["startButton"] = std::make_shared<Sprite>(new Surface("assets/startButton.png"), 3);
 		spriteMap["scoreButton"] = std::make_shared<Sprite>(new Surface("assets/scoreButton.png"), 3);
@@ -198,13 +200,6 @@ namespace Tmpl8
 		wasMouseDown = false;
 		wasMouseUp = false;
 
-		/*for (const auto& key : downButtons)
-		{
-			holdButtons.insert(key);
-		}
-		downButtons.clear();
-		upButtons.clear();*/
-
 		pressedButtons = keys & ~heldButtons;
 		releasedButtons = heldButtons & ~keys;
 		heldButtons = keys;
@@ -225,6 +220,37 @@ namespace Tmpl8
 			break;
 		case GameState::GAME:
 			gameManager->render(screen);
+
+			int uiSize = 75;
+
+			float scale = static_cast<float>(uiSize) / (3.f * 6.f);
+
+			int letterSize = static_cast<int>(6.f * scale);
+			int posY = uiSize / 2 - letterSize / 2;
+
+			//Render Ship UI
+			
+			spriteMap["engineEffect"]->DrawScaled(0, 0, uiSize, uiSize, screen);
+			if(!gameManager->getPlayer()->isUpgraded())
+				spriteMap["weapon"]->DrawScaled(0, 0, uiSize, uiSize, screen);
+			else
+				spriteMap["weapon1"]->DrawScaled(0, 0, uiSize, uiSize, screen);
+			spriteMap["shipEngine"]->DrawScaled(0, 0, uiSize, uiSize, screen);
+			spriteMap["ship"]->DrawScaled(0,0, uiSize, uiSize, screen);
+
+			std::stringstream hpText;
+			hpText << std::to_string(gameManager->getPlayer()->getHealth()) << "x";
+
+			screen.PrintScaled(&hpText.str()[0], uiSize, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+
+			//Render sheep UI
+			spriteMap["sheep"]->DrawScaled(uiSize + letterSize * 2, 0, uiSize, uiSize, screen);
+
+			std::stringstream sheepText;
+			sheepText << std::to_string(0) << "x";
+
+			screen.PrintScaled(&sheepText.str()[0], uiSize * 2 + letterSize * 2, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+
 			break;
 		}
 	}

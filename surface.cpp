@@ -125,6 +125,41 @@ namespace Tmpl8 {
 		}
 	}
 
+	void Surface::PrintScaled(const char* a_String, int x1, int y1, int scaleX, int scaleY, Pixel color)
+	{
+		if (!fontInitialized)
+		{
+			InitCharset();
+			fontInitialized = true;
+		}
+
+		Pixel* t = m_Buffer + x1 + y1 * m_Pitch;
+		for (int i = 0; i < (int)(strlen(a_String)); i++, t += 6 * scaleX) // t - space between letters
+		{
+			long pos = 0;
+			if ((a_String[i] >= 'A') && (a_String[i] <= 'Z')) pos = s_Transl[(unsigned short)(a_String[i] - ('A' - 'a'))];
+			else pos = s_Transl[(unsigned short)a_String[i]];
+			Pixel* a = t;
+			char* c = (char*)s_Font[pos];
+
+			for (int v = 0; v < 5 * scaleX; v += scaleX, c++, a += m_Pitch * scaleY)
+			{
+				for (int h = 0; h < 5 * scaleX; h += scaleX)
+				{
+					if (*c++ == 'o')
+					{
+						for (int x = 0; x < scaleY; x++)
+						{
+							for (int y = 0; y < scaleX; y++) {
+								*(a + h + y + m_Pitch * x) = color;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	void Surface::Resize(Surface* a_Orig)
 	{
 		Pixel* src = a_Orig->GetBuffer(), * dst = m_Buffer;
