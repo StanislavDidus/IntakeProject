@@ -83,67 +83,77 @@ struct CollisionHelper
 //Area formula 
 // ||(B - A) * (C - A)|| / 2
 
+constexpr bool isTopLeft(float ax, float ay, float bx, float by) noexcept
+{
+	return (ay > by) || (ay == by && ax < bx);  // TODO: Check correctness of top-left rule.
+}
+
+constexpr bool isTopLeft(const Tmpl8::vec2& a, const Tmpl8::vec2& b) noexcept
+{
+	return isTopLeft(a.x, a.y, b.x, b.y);
+}
+
+constexpr float orient2D(float ax, float ay, float bx, float by, float cx, float cy) noexcept
+{
+	return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+}
+
+constexpr int orient2D(const Tmpl8::vec2& a, const Tmpl8::vec2& b, const Tmpl8::vec2& c) noexcept
+{
+	return orient2D(a.x, a.y, b.x, b.y, c.x, c.y);
+}
+
 struct Edge
 {
-	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2) : p0(p0), p1(p1), p2(p2) 
+	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p) : dX{ p1.x - p0.x, p2.x - p1.x, p0.x - p2.x }, dY{ p0.y - p1.y, p1.y - p2.y, p2.y - p0.y }
 	{ 
-		//Calculate an area of main triangle
-		const Tmpl8::vec2 a1 = p1 - p0;
-		const Tmpl8::vec2 a2 = p0 - p2;
-		float cross = a1.x * a2.y - a1.y * a2.x;
-		area = abs(cross) / 2.f;
+		area = orient2D(p0, p1, p2);
+
+		float bias0 = isTopLeft(p1, p2) ? 0.f : -1.f;
+		float bias1 = isTopLeft(p2, p0) ? 0.f : -1.f;
+		float bias2 = isTopLeft(p0, p1) ? 0.f : -1.f;
+
+		w0.x = orient2D(p1, p2, p) + bias0;
+		w0.y = orient2D(p2, p0, p) + bias1;
+		w0.z = orient2D(p0, p1, p) + bias2;
+
+		w = w0;
 	}
 
-	bool intersect(const Tmpl8::vec2& p) const
+	bool inside() const
 	{
-		//Calculate w
-		const Tmpl8::vec2 w1 = p1 - p0;
-		const Tmpl8::vec2 w2 = p - p0;
-		float wcross = w1.x * w2.y - w1.y * w2.x;
-		float warea = abs(wcross) / 2.f;
-
-		//Calculate v
-		const Tmpl8::vec2 v1 = p0 - p2;
-		const Tmpl8::vec2 v2 = p - p2;
-		float vcross = v1.x * v2.y - v1.y * v2.x;
-		float varea = abs(vcross) / 2.f;
-
-		//Calculate u
-		const Tmpl8::vec2 u1 = p2 - p1;
-		const Tmpl8::vec2 u2 = p - p1;
-		float ucross = u1.x * u2.y - u1.y * u2.x;
-		float uarea = abs(ucross) / 2.f;
-
-		float areasum = warea + varea + uarea;
-
-		if (abs(area - areasum) < 0.01f) return true;
-		return false;
+		return (static_cast<int>(w.x) | static_cast<int>(w.y) | static_cast<int>(w.z)) >= 0;  // Check if all weights are non-negative.
 	}
 
-	//Implementation: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
-	Tmpl8::vec3 barycentric(const Tmpl8::vec2& p) const
+	 void stepX()
+    {
+        w[0] += dY[1];
+        w[1] += dY[2];
+        w[2] += dY[0];
+    }
+
+    void stepY()
+    {
+        w0[0] += dX[1];
+        w0[1] += dX[2];
+        w0[2] += dX[0];
+
+        w = w0;
+    }
+
+
+	Tmpl8::vec3 barycentric() const
 	{
-		//Calculate w
-		const Tmpl8::vec2 w1 = p1 - p0;
-		const Tmpl8::vec2 w2 = p - p0;
-		float wcross = w1.x * w2.y - w1.y * w2.x;
-		float w = abs(wcross) / 2.f / area;
+		float u = w.x / area;
+		float v = w.y / area;
 
-		//Calculate v
-		const Tmpl8::vec2 v1 = p0 - p2;
-		const Tmpl8::vec2 v2 = p - p2;
-		float vcross = v1.x * v2.y - v1.y * v2.x;
-		float v = abs(vcross) / 2.f / area;
-
-		//Calculate u
-		//w + u + v = 1
-		float u = 1.f - w - v;
-
-		return Tmpl8::vec3{u ,v ,w};
+		return { u, v, 1.0f - (u + v) };
 	}
 
 	float area;
 	Tmpl8::vec2 p0, p1, p2;
+
+	Tmpl8::vec3 dX, dY, w0, w;
 };
 
 struct AABB

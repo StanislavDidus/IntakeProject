@@ -462,10 +462,12 @@ namespace Tmpl8 {
 		int maxX = static_cast<int>(dst.x + dst.width);
 		int maxY = static_cast<int>(dst.y + dst.height);
 
+		Tmpl8::vec2 p = { static_cast<float>(minX), static_cast<float>(minY) };
+
 		Edge edges[2]
 		{
-			{v0.position, v1.position, v2.position},
-			{v2.position, v3.position, v0.position}
+			{v0.position, v1.position, v2.position, p},
+			{v2.position, v3.position, v0.position, p}
 		};
 
 		Vertex verts[4]
@@ -479,14 +481,14 @@ namespace Tmpl8 {
 			2, 3, 0
 		};
 
-		for (int x = minX; x <= maxX; x++)
+		for (int y = minY; y <= maxY; y++, p.y += 1.f)
 		{
-			for (int y = minY; y <= maxY; y++)
+			for (int x = minX; x <= maxX; x++, p.x += 1.f)
 			{
 				for (int i = 0; i < 2; i++)
 				{
 					const Edge& e = edges[i];
-					if (e.intersect({ static_cast<float>(x), static_cast<float>(y) }))
+					if (e.inside())
 					{
 						uint32_t i0 = indicies[i * 3 + 0];
 						uint32_t i1 = indicies[i * 3 + 1];
@@ -496,7 +498,7 @@ namespace Tmpl8 {
 						const Vertex& b = verts[i1];
 						const Vertex& c = verts[i2];
 
-						Tmpl8::vec3 bc = e.barycentric({ static_cast<float>(x), static_cast<float>(y) });
+						Tmpl8::vec3 bc = e.barycentric();
 						Tmpl8::vec2 textureCoordinate = interpolate(a.textureCoordinate, b.textureCoordinate, c.textureCoordinate, bc);
 						Tmpl8::vec2i textureCoordinatei = { static_cast<int>(textureCoordinate.x), static_cast<int>(textureCoordinate.y) };
 
@@ -509,8 +511,21 @@ namespace Tmpl8 {
 						if (color & 0xffffff) screen.Plot<false>(x, y, color);
 					}
 				}
+
+				
+
+				edges[0].stepX();
+				edges[1].stepX();
 			}
+
+			
+			edges[0].stepY();
+			edges[1].stepY();
 		}
+
+	
+
+
 	}
 
 	Pixel Sprite::getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle)
