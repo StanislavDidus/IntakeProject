@@ -87,7 +87,7 @@ bool CollisionManager::PointRectangle(Tmpl8::vec2 target, std::shared_ptr<Object
 	Tmpl8::vec2 pos = col->getPosition();
 	Tmpl8::vec2 size = col->getSize();
 
-	Tmpl8::vec2 cTarget = col->getRotatedPoint(target, -1.f);
+	Tmpl8::vec2 cTarget = col->getRotatedPoint(target, col->getPosition(), - 1.f);
 
 	if (cTarget.x >= pos.x &&
 		cTarget.x <= pos.x + size.x &&

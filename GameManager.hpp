@@ -25,6 +25,9 @@ public:
 	void update(float deltaTime);
 	void render(Tmpl8::Surface& screen );
 
+	//Getters
+	int getNumberOfSheep() const;
+
 	std::shared_ptr<Player> getPlayer() const;
 
 	std::vector<std::shared_ptr<Object>> getObjects() const;
@@ -54,5 +57,7 @@ private:
 	float upgradeSpawnTime, upgradeSpawnTimer;
 	bool isUpgradeOnMap;
 	bool isUpgradeUsed;
+
+	int sheepCounter = 0;
 };
 

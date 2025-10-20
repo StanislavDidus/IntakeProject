@@ -11,7 +11,7 @@ Button::~Button()
 
 void Button::render(Tmpl8::Surface& screen)
 {
-	sprite->DrawScaled(position.x, position.y, size.x, size.y, screen);
+	sprite->DrawScaled(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(size.x), static_cast<int>(size.y), screen);
 }
 
 void Button::CheckClick(Tmpl8::vec2i cpos, bool wasMouseDown, bool wasMouseUp) // cursor position

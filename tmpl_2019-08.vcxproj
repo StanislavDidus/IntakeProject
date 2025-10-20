@@ -241,6 +241,7 @@
     <ClCompile Include="SuperBullet.cpp" />
     <ClCompile Include="surface.cpp" />
     <ClCompile Include="template.cpp" />
+    <ClCompile Include="Trail.cpp" />
     <ClCompile Include="Upgrade.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +262,7 @@
     <ClInclude Include="surface.h" />
     <ClInclude Include="template.h" />
     <ClInclude Include="TimerManager.hpp" />
+    <ClInclude Include="Trail.hpp" />
     <ClInclude Include="UIElement.hpp" />
     <ClInclude Include="Upgrade.hpp" />
   </ItemGroup>

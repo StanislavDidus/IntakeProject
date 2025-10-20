@@ -17,6 +17,8 @@ Player::Player
 
 	initAnimator();
 	initTimerManager();
+
+	//center = { 0.f, 0.f };
 }
 
 void Player::initAnimator()
@@ -122,6 +124,8 @@ void Player::renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surfac
 	int y = static_cast<int>(position.y);
 	int width = static_cast<int>(size.x);
 	int height = static_cast<int>(size.y);
+
+	//center = { size.x / 2.f, size.y };
 
 	auto v1 = getVertices(sprite, position);
 	auto v2 = getVertices(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) });

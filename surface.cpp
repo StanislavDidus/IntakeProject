@@ -548,20 +548,20 @@ namespace Tmpl8 {
 		}
 	}
 
-	Pixel Sprite::getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, float angle)
+	Pixel Sprite::getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, int centerX, int centerY, float angle)
 	{
 		float radians = angle * PI / 180.f;
 		float sin = std::sin(radians);
 		float cos = std::cos(radians);
 
-		int cx = width / 2;
-		int cy = height / 2;
+		//int cx = width / 2;
+		//int cy = height / 2;
 
-		int sx = pixelX - spriteX - cx;
-		int sy = pixelY - spriteY - cy;
+		int sx = pixelX - spriteX - centerX;
+		int sy = pixelY - spriteY - centerY;
 
-		float rx = float(sx) * cos + float(sy) * sin + float(cx);
-		float ry = float(-sx) * sin + float(sy) * cos + float(cy);
+		float rx = float(sx) * cos + float(sy) * sin + float(centerX);
+		float ry = float(-sx) * sin + float(sy) * cos + float(centerY);
 
 		int u = (int)(rx * ((float)m_Width / (float)width));
 		int v = (int)(ry * ((float)m_Height / (float)height));

@@ -70,10 +70,13 @@ void Player::exitState(PlayerState state)
 		auto  bullet = std::make_shared<SuperBullet>
 			(
 				spriteMap["bullet1"],
+				spriteMap["trail"],
 				Tmpl8::vec2{ position.x + size.x / 2.f - bulletWidth * areaMultiplier / 2.f, position.y + size.y / 2.f - bulletHeight * areaMultiplier / 2.f },
 				Tmpl8::vec2{ bulletWidth * areaMultiplier, bulletHeight * areaMultiplier},
 				areaMultiplier
 			);
+
+		//getRotatedPoint(position.x + size.x / 2.f - bulletWidth * areaMultiplier / 2.f, position.y + size.y / 2.f - bulletHeight * areaMultiplier / 2.f),
 
 		bullet->setVelocity(Tmpl8::vec2{ direction.x * bulletForce, direction.y * bulletForce });
 		bullet->setMaxSpeed(1000.f);
@@ -127,13 +130,13 @@ void Player::updateShoot(float deltaTime)
 	if (shootLeft)
 	{
 		shootLeft = false;
-		bulletPosition = getRotatedPoint({ position.x + size.x / 3.f, position.y + size.y / 3.f });
+		bulletPosition = getRotatedPoint({ position.x + size.x / 3.f, position.y + size.y / 3.f }, position);
 		animator->playAnimation("LeftShoot");
 	}
 	else
 	{
 		shootLeft = true;
-		bulletPosition = getRotatedPoint({ position.x + size.x / 3.f * 2.f, position.y + size.y / 3.f });
+		bulletPosition = getRotatedPoint({ position.x + size.x / 3.f * 2.f, position.y + size.y / 3.f }, position);
 		animator->playAnimation("RightShoot");
 	}
 

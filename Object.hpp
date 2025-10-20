@@ -60,10 +60,12 @@ public:
 	std::vector<Tmpl8::vec2> getAxes                   ()                                                              const;
 	std::vector<Tmpl8::vec4> getEdges                  ()                                                              const;
 	std::vector<Tmpl8::vec2> getVerticesPosition       ()                                                              const;
+	//Get vertices with by their upper left position
 	std::vector<Vertex>      getVertices               (std::shared_ptr<Tmpl8::Sprite> sprite, const Tmpl8::vec2& pos) const;
 	std::vector<Vertex>      getVertices               ()                                                              const;
-	Tmpl8::vec2              getRotatedPoint           (const Tmpl8::vec2& pos, float dir = 1.f)                       const;
+	Tmpl8::vec2              getRotatedPoint           (const Tmpl8::vec2& point, const Tmpl8::vec2& pos, float dir = 1.f)                       const;
 	Tmpl8::Pixel             getPixelAtRotatedPosition (int pixelX, int pixelY)                                        const;
+	//Tmpl8::vec2 getRotatedPointWithCenter        (const Tmpl8::vec2& pos, float dir = 1.f)  const;
 
 	virtual void onCollisionEnter(std::shared_ptr<Object> object);
 	virtual void onCollisionStay(std::shared_ptr<Object> object, float deltaTime);
@@ -71,16 +73,18 @@ public:
 
 	bool destroy = false; // Destroy as soon as possible
 	bool checkPixelPerfectCollision = true;
+
+	Tmpl8::vec2 center{};
 protected:
 	Tmpl8::vec2 getEdgeVector             (Side s)                                                              const;
 	Tmpl8::vec4 getEdge                   (Side s)                                                              const;
 	Tmpl8::vec2 getVertex                 (Side v, Side h)                                                      const;
 	Tmpl8::vec2 getVertexAtPos            (Side v, Side h, const Tmpl8::vec2& pos)                              const;
-	Tmpl8::vec2 getRotatedPointWithCenter (const Tmpl8::vec2& pos, const Tmpl8::vec2& center, float dir = 1.f)  const;
 
 	std::shared_ptr<Tmpl8::Sprite> sprite;
 	Tmpl8::vec2 position{};
 	Tmpl8::vec2 size{};
+	
 	float angle = 0.f;
 	std::string tag = "default";
 

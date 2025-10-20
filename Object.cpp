@@ -7,7 +7,7 @@ Object::Object
 	std::shared_ptr<Tmpl8::Sprite> sprite,
 	Tmpl8::vec2 position,
 	Tmpl8::vec2 size
-) : sprite(sprite), position(position), size(size)
+) : sprite(sprite), position(position), size(size), center(size.x / 2.f, size.y / 2.f)
 {	
 	
 }
@@ -243,10 +243,10 @@ std::vector<Tmpl8::vec2> Object::getVerticesPosition() const
 	std::vector<Tmpl8::vec2> verticies;
 	verticies.reserve(4);
 
-	verticies.emplace_back(getVertexAtPos(UP, LEFT, position));
-	verticies.emplace_back(getVertexAtPos(UP, RIGHT, position));
-	verticies.emplace_back(getVertexAtPos(DOWN, RIGHT, position));
-	verticies.emplace_back(getVertexAtPos(DOWN, LEFT, position));
+	verticies.emplace_back(getVertex(UP, LEFT));
+	verticies.emplace_back(getVertex(UP, RIGHT));
+	verticies.emplace_back(getVertex(DOWN, RIGHT));
+	verticies.emplace_back(getVertex(DOWN, LEFT));
 
 	return verticies;
 }
@@ -296,7 +296,7 @@ Tmpl8::vec2 Object::getVertex(Side v, Side h) const
 	break;
 	}
 
-	return getRotatedPoint({ px, py });
+	return getRotatedPoint({ px, py }, position);
 }
 
 Tmpl8::vec2 Object::getVertexAtPos(Side v, Side h, const Tmpl8::vec2& pos) const
@@ -323,40 +323,44 @@ Tmpl8::vec2 Object::getVertexAtPos(Side v, Side h, const Tmpl8::vec2& pos) const
 		break;
 	}
 
-	return getRotatedPointWithCenter({ px, py }, {pos.x, pos.y});
+	return getRotatedPoint({ px, py }, pos);
 }
 
-Tmpl8::vec2 Object::getRotatedPoint(const Tmpl8::vec2& pos, float dir) const
+//point - is a point we want to rotate
+//pos - is coordinate of an upper-left corner of the object
+Tmpl8::vec2 Object::getRotatedPoint(const Tmpl8::vec2& point, const Tmpl8::vec2& pos, float dir) const
 {
 	float radians = angle * dir * Tmpl8::PI / 180.f;
 	float sin = std::sin(radians);
 	float cos = std::cos(radians);
 
-	Tmpl8::vec2 center = { position.x + size.x / 2.f, position.y + size.y / 2.f };
+	Tmpl8::vec2 centerPos = pos + center;
 	
-	float sx = pos.x - center.x;
-	float sy = pos.y - center.y;
-
-	return { sx * cos - sy * sin + center.x, sx * sin + sy * cos + center.y };
+	float sx = point.x - centerPos.x;
+	float sy = point.y - centerPos.y;
+	
+	return { sx * cos - sy * sin + centerPos.x, sx * sin + sy * cos + centerPos.y};
 }
 
-Tmpl8::vec2 Object::getRotatedPointWithCenter(const Tmpl8::vec2& pos, const Tmpl8::vec2& center, float dir) const
-{
-	float radians = angle * dir * Tmpl8::PI / 180.f;
-	float sin = std::sin(radians);
-	float cos = std::cos(radians);
-
-	Tmpl8::vec2 centerPos = { center.x + size.x / 2.f, center.y + size.y / 2.f };
-
-	float sx = pos.x - centerPos.x;
-	float sy = pos.y - centerPos.y;
-
-	return { sx * cos - sy * sin + centerPos.x, sx * sin + sy * cos + centerPos.y };
-}
+//Tmpl8::vec2 Object::getRotatedPointWithCenter(const Tmpl8::vec2& pos, float dir) const
+//{
+//	float radians = angle * dir * Tmpl8::PI / 180.f;
+//	float sin = std::sin(radians);
+//	float cos = std::cos(radians);
+//
+//	Tmpl8::vec2 centerPos = { position.x + center.x, position.y + center.y};
+//
+//	float sx = pos.x - centerPos.x;
+//	float sy = pos.y - centerPos.y;
+//
+//	return { sx * cos - sy * sin + centerPos.x, sx * sin + sy * cos + centerPos.y};
+//}
 
 Tmpl8::Pixel Object::getPixelAtRotatedPosition(int pixelX, int pixelY) const
 {
-	return sprite->getPixelAtRotatedPosition(static_cast<int>(position.x), static_cast<int>(position.y), pixelX, pixelY , static_cast<int>(size.x), static_cast<int>(size.y), angle);
+	Tmpl8::vec2 c = center;
+
+	return sprite->getPixelAtRotatedPosition(static_cast<int>(position.x), static_cast<int>(position.y), pixelX, pixelY , static_cast<int>(size.x), static_cast<int>(size.y), static_cast<int>(c.x), static_cast<int>(c.y), angle);
 }
 
 void Object::onCollisionEnter(std::shared_ptr<Object> object)

@@ -117,6 +117,11 @@ void GameManager::updateObjects(float deltaTime)
                 isUpgradeOnMap = false;
                 isUpgradeUsed = true;
             }
+
+            /*else if (obj->getTag() == "sheep")
+            {
+                sheepCounter--;
+            }*/
             
             it = objects.erase(it);
         }
@@ -164,6 +169,11 @@ void GameManager::render(Tmpl8::Surface& screen)
 
     player->render(screen);
 
+}
+
+int GameManager::getNumberOfSheep() const
+{
+    return sheepCounter;
 }
 
 std::shared_ptr<Player> GameManager::getPlayer() const
@@ -227,7 +237,7 @@ void GameManager::spawnUpgrade()
     int w = 70, h = 70;
 
     float x = static_cast<float>(randomRange(0,ScreenWidth - w));
-    float y = static_cast<float>(randomRange(0, ScreenHeight - h));
+    float y = static_cast<float>(randomRange(100, ScreenHeight - h));
 
     auto upgrd = std::make_shared<Upgrade>(
         sprites["upgrade"],
@@ -258,4 +268,6 @@ void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 dire
     sheep->setTag("sheep");
 
     tempObjects.push_back(sheep);
+
+    sheepCounter++;
 }

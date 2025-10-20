@@ -41,7 +41,7 @@ namespace Tmpl8
 		spriteMap["weapon1"] = std::make_shared<Sprite>(new Surface("assets/weapon1.png"), 12);
 		spriteMap["bullet"] = std::make_shared<Sprite>(new Surface("assets/bullet.png"), 4);
 		spriteMap["bullet1"] = std::make_shared<Sprite>(new Surface("assets/bullet1.png"), 10);
-		spriteMap["bulletEffect"] = std::make_shared<Sprite>(new Surface("assets/bulletEffect.png"), 4);
+		spriteMap["trail"] = std::make_shared<Sprite>(new Surface("assets/bulletEffect.png"), 4);
 		//Object
 		spriteMap["sheep"] = std::make_shared<Sprite>(new Surface("assets/sheep.png"), 1);
 		spriteMap["space"] = std::make_shared<Sprite>(new Surface("assets/space.png"), 2);
@@ -174,6 +174,9 @@ namespace Tmpl8
 		ss << "FPS: " + std::to_string(1.f / deltaTime);
 		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
 #else 
+		if (currentGameState == GameState::GAME)
+			collisionManager->renderDEBUG(*screen);
+
 		std::stringstream ss;
 		ss << "FPS: " + std::to_string(1.f / deltaTime);
 		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
@@ -247,7 +250,7 @@ namespace Tmpl8
 			spriteMap["sheep"]->DrawScaled(uiSize + letterSize * 2, 0, uiSize, uiSize, screen);
 
 			std::stringstream sheepText;
-			sheepText << std::to_string(0) << "x";
+			sheepText << std::to_string(gameManager->getNumberOfSheep()) << "x";
 
 			screen.PrintScaled(&sheepText.str()[0], uiSize * 2 + letterSize * 2, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
 
