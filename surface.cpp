@@ -521,7 +521,7 @@ namespace Tmpl8 {
 				for (int i = 0; i < 2; i++)
 				{
 					const Edge& e = edges[i];
-					if (e.intersect({ static_cast<float>(x), static_cast<float>(y) }))
+					if (e.inside({ static_cast<float>(x), static_cast<float>(y) }))
 					{
 						uint32_t i0 = indicies[i * 3 + 0];
 						uint32_t i1 = indicies[i * 3 + 1];

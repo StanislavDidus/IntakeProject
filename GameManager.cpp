@@ -1,6 +1,7 @@
 #include "GameManager.hpp"
 #include "game.hpp"
 #include "Upgrade.hpp"
+#include "EventBus.hpp"
 
 #include <random>
 
@@ -129,15 +130,18 @@ void GameManager::updateObjects(float deltaTime)
             ++it;
     }
 
+    //Move objects from temprorary vector
     objects.reserve(tempObjects.size());
     objects.insert(objects.end(), tempObjects.begin(), tempObjects.end());
     tempObjects.clear();
 
+    //Update all objects
     for (const auto& obj : objects)
     {
         obj->update(deltaTime);
     }
 
+    //Delete objects when they get out of screen
     for (const auto& obj : objects)
     {
         auto pos = obj->getPosition();
@@ -154,9 +158,7 @@ void GameManager::updateObjects(float deltaTime)
 
     if (player->destroy)
     {
-        sounds["gameOver"].replay();
-
-        game->restart = true;
+        EventBus::Get().push<EventType::GAMEOVER>();
     }
 }
 

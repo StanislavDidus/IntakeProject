@@ -89,51 +89,31 @@ struct Edge
 	{ 
 		//Calculate an area of main triangle
 		const Tmpl8::vec2 a1 = p1 - p0;
-		const Tmpl8::vec2 a2 = p0 - p2;
-		float cross = a1.x * a2.y - a1.y * a2.x;
-		area = abs(cross) / 2.f;
+		const Tmpl8::vec2 a2 = p2 - p0;
+		area = a1.x * a2.y - a1.y * a2.x;
 	}
 
-	bool intersect(const Tmpl8::vec2& p) const
+	bool inside(const Tmpl8::vec2& p) const
 	{
-		//Calculate w
-		const Tmpl8::vec2 w1 = p1 - p0;
-		const Tmpl8::vec2 w2 = p - p0;
-		float wcross = w1.x * w2.y - w1.y * w2.x;
-		float warea = abs(wcross) / 2.f;
+		auto br = barycentric(p);
 
-		//Calculate v
-		const Tmpl8::vec2 v1 = p0 - p2;
-		const Tmpl8::vec2 v2 = p - p2;
-		float vcross = v1.x * v2.y - v1.y * v2.x;
-		float varea = abs(vcross) / 2.f;
-
-		//Calculate u
-		const Tmpl8::vec2 u1 = p2 - p1;
-		const Tmpl8::vec2 u2 = p - p1;
-		float ucross = u1.x * u2.y - u1.y * u2.x;
-		float uarea = abs(ucross) / 2.f;
-
-		float areasum = warea + varea + uarea;
-
-		if (abs(area - areasum) < 0.01f) return true;
-		return false;
+		return br.x >= 0.f && br.y >= 0.f && br.z >= 0.f;
 	}
 
-	//Implementation: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
+	//Formula: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
 	Tmpl8::vec3 barycentric(const Tmpl8::vec2& p) const
 	{
 		//Calculate w
 		const Tmpl8::vec2 w1 = p1 - p0;
 		const Tmpl8::vec2 w2 = p - p0;
 		float wcross = w1.x * w2.y - w1.y * w2.x;
-		float w = abs(wcross) / 2.f / area;
+		float w = wcross / area;
 
 		//Calculate v
 		const Tmpl8::vec2 v1 = p0 - p2;
 		const Tmpl8::vec2 v2 = p - p2;
 		float vcross = v1.x * v2.y - v1.y * v2.x;
-		float v = abs(vcross) / 2.f / area;
+		float v = vcross / area;
 
 		//Calculate u
 		//w + u + v = 1

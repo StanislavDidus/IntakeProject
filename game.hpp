@@ -13,6 +13,7 @@
 #include "CollisionManager.hpp"
 #include "Button.hpp"
 #include <Audio/Device.hpp>
+#include "EventBus.hpp"
 
 enum class GameState
 {
@@ -22,7 +23,7 @@ enum class GameState
 namespace Tmpl8 {
 
 class Surface;
-class Game
+class Game : public Listener
 {
 public:
 	void SetTarget( Surface* surface ) { screen = surface; }
@@ -41,8 +42,6 @@ public:
 	static bool isKeyUp(int key);	
 
 	bool restart = false;
-
-	
 private:
 
 	static std::bitset<256> pressedButtons;
@@ -69,6 +68,7 @@ private:
 	void initSprites();
 	void initSounds();
 	void initGameManager();
+	void initEvents();
 	void initCollisionManager();
 	void initAnimators();
 	void initButtons();

@@ -4,8 +4,6 @@
 #include <cassert>
 #include <sstream>
 
-#include <cstdio> //printf
-
 namespace Tmpl8
 {
 	// -----------------------------------------------------------
@@ -80,6 +78,11 @@ namespace Tmpl8
 		gameManager = std::make_shared<GameManager>(spriteMap, soundMap, this);
 	}
 
+	void Game::initEvents()
+	{
+		EventBus::Get().subscribe<EventType::GAMEOVER>(this, [this] {restart = true; soundMap["gameOver"].replay(); });
+	}
+
 	void Game::initCollisionManager()
 	{
 		collisionManager = std::make_shared<CollisionManager>(gameManager);
@@ -113,8 +116,6 @@ namespace Tmpl8
 		initGameManager();
 		initCollisionManager();
 		initAnimators();
-
-
 	}
 
 	void Game::Init()
@@ -130,6 +131,7 @@ namespace Tmpl8
 		initSprites();
 		initSounds();
 		initButtons();
+		initEvents();
 	}
 
 	void Game::Restart()
@@ -150,6 +152,7 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::Shutdown()
 	{
+		EventBus::Get().unsubscribe<EventType::GAMEOVER>(this);
 	}
 
 	// -----------------------------------------------------------
@@ -198,6 +201,8 @@ namespace Tmpl8
 			backgroundAnimator->update(deltaTime);
 			break;
 		}
+
+		EventBus::Get().process();	
 
 		//Update buttons
 		wasMouseDown = false;

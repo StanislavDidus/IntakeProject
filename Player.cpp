@@ -4,6 +4,7 @@
 #include <iostream>
 #include "CollisionHelper.hpp"
 #include "Audio/Device.hpp"
+#include "EventBus.hpp"
 
 Player::Player
 (
