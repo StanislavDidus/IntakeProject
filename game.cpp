@@ -35,8 +35,10 @@ namespace Tmpl8
 		spriteMap["ship"] = std::make_shared<Sprite>(new Surface("assets/ship.png"), 4);
 		spriteMap["shipEngine"] = std::make_shared<Sprite>(new Surface("assets/engine.png"), 1);
 		spriteMap["engineEffect"] = std::make_shared<Sprite>(new Surface("assets/engineEffect.png"), 7);
+		spriteMap["explosion"] = std::make_shared<Sprite>(new Surface("assets/explosion.png"), 11);
 		spriteMap["weapon"] = std::make_shared<Sprite>(new Surface("assets/weapon.png"), 7);
 		spriteMap["weapon1"] = std::make_shared<Sprite>(new Surface("assets/weapon1.png"), 12);
+		spriteMap["hitEffect"] = std::make_shared<Sprite>(new Surface("assets/hitEffect.png"), 7);
 		spriteMap["bullet"] = std::make_shared<Sprite>(new Surface("assets/bullet.png"), 4);
 		spriteMap["bullet1"] = std::make_shared<Sprite>(new Surface("assets/bullet1.png"), 10);
 		spriteMap["trail"] = std::make_shared<Sprite>(new Surface("assets/bulletEffect.png"), 4);
@@ -65,17 +67,18 @@ namespace Tmpl8
 		soundMap["charge"] = Audio::Sound{ "assets/Sounds/charge.mp3" };
 		soundMap["upgrade"] = Audio::Sound{ "assets/Sounds/upgrade.mp3" };
 		soundMap["shipDamaged"] = Audio::Sound{ "assets/Sounds/shipDamaged.mp3" };
+		soundMap["shipDestroyed"] = Audio::Sound{ "assets/Sounds/shipDestroyed.mp3" };
 		soundMap["asteroidDestroyed"] = Audio::Sound{ "assets/Sounds/asteroidDestroyed.mp3" };
 		soundMap["gameOver"] = Audio::Sound{ "assets/Sounds/gameOver.mp3" };
 		soundMap["buttonCover"] = Audio::Sound{ "assets/Sounds/buttonCover.mp3" };
 		soundMap["buttonUp"] = Audio::Sound{ "assets/Sounds/buttonUp.mp3" };
 
-		Audio::Device::setMasterVolume(0.05f);
+		Audio::Device::setMasterVolume(0.1f);
 	}
 
 	void Game::initGameManager()
 	{
-		gameManager = std::make_shared<GameManager>(spriteMap, soundMap, this);
+		gameManager = std::make_shared<GameManager>(collisionManager, spriteMap, soundMap);
 	}
 
 	void Game::initEvents()
@@ -85,7 +88,7 @@ namespace Tmpl8
 
 	void Game::initCollisionManager()
 	{
-		collisionManager = std::make_shared<CollisionManager>(gameManager);
+		collisionManager = std::make_shared<CollisionManager>();
 	}
 
 	void Game::initAnimators()
@@ -113,8 +116,8 @@ namespace Tmpl8
 	{
 		currentGameState = GameState::GAME;
 
-		initGameManager();
 		initCollisionManager();
+		initGameManager();
 		initAnimators();
 	}
 
@@ -170,16 +173,13 @@ namespace Tmpl8
 		DebugContol(deltaTime);
 
 		if (currentGameState == GameState::GAME)
-			collisionManager->renderDEBUG(*screen);
+			collisionManager->renderDEBUG(gameManager, *screen);
 
 		//FPS Counter
 		std::stringstream ss;
 		ss << "FPS: " + std::to_string(1.f / deltaTime);
 		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
 #else 
-		if (currentGameState == GameState::GAME)
-			collisionManager->renderDEBUG(*screen);
-
 		std::stringstream ss;
 		ss << "FPS: " + std::to_string(1.f / deltaTime);
 		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
@@ -196,7 +196,7 @@ namespace Tmpl8
 		case GameState::GAME:
 			gameManager->update(deltaTime);
 
-			collisionManager->checkCollision(deltaTime);
+			collisionManager->checkCollision(gameManager, deltaTime);
 
 			backgroundAnimator->update(deltaTime);
 			break;
@@ -270,7 +270,7 @@ namespace Tmpl8
 		}
 		else if (isKeyUp('u'))
 		{
-			//Upgrade
+			
 		}
 	}
 };

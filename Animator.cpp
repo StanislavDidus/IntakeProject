@@ -111,6 +111,11 @@ void Animator::stopAnimation(const std::string& name)
 	frameCycledAnimations[name]->stop();
 }
 
+bool Animator::isAnimationActive(const std::string& name)
+{
+	return frameCycledAnimations[name]->active;
+}
+
 void Animator::addFrameAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float animationSpeed, int firstFrame, int lastFrame, const std::function<bool()>& condition)
 {
 	frameAnimations.push_back(std::make_shared<FrameAnimation>(sprite, animationSpeed, firstFrame, lastFrame, condition));

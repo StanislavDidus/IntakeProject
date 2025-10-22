@@ -1,8 +1,9 @@
 #include "CollisionManager.hpp"
 #include "Functions.hpp"
 #include "CollisionHelper.hpp"
+#include "GameManager.hpp"
 
-CollisionManager::CollisionManager(std::shared_ptr<GameManager> gameManager) : gameManager(gameManager)
+CollisionManager::CollisionManager()
 {
 	
 }
@@ -12,8 +13,11 @@ CollisionManager::~CollisionManager()
 	
 }
 
-void CollisionManager::checkCollision(float deltaTime)
+void CollisionManager::checkCollision(std::shared_ptr<GameManager> gameManager, float deltaTime)
 {
+	//It is crucial to ensure that onCollisionExit() gets called even if one of the colliding objects gets destroyed during the collision
+	checkForDestroyedObjects();
+	
 	//Reset grid
 	std::vector<std::shared_ptr<Object>> objects = gameManager->getObjects();
 	for (const auto& col : objects)
@@ -46,12 +50,9 @@ void CollisionManager::checkCollision(float deltaTime)
 			SendCollisionEvents(col, col1, isCollision, deltaTime);
 		}
 	}
-
-	//It is crucial to ensure that onCollisionExit() gets called even if one of the colliding objects gets destroyed during the collision
-	checkForDestroyedObjects();
 }
 
-void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
+void CollisionManager::renderDEBUG(std::shared_ptr<GameManager> gameManager, Tmpl8::Surface& screen)
 {
 	for (const auto& col : gameManager->getObjects())
 	{
@@ -75,6 +76,11 @@ void CollisionManager::renderDEBUG(Tmpl8::Surface& screen)
 			}
 		}
 	}
+}
+
+const std::vector<unordered_pair<std::shared_ptr<Object>>>& CollisionManager::getCollisions() const
+{
+	return collisions;
 }
 
 void CollisionManager::render(Tmpl8::Surface& screen)

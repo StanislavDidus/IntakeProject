@@ -12,16 +12,18 @@
 #include "SuperBullet.hpp"
 #include "TimerManager.hpp"
 #include "Audio/Device.hpp"
+#include "EventBus.hpp"
 
 enum class PlayerState
 {
 	NONE,
 	IDLE, 
 	SHOOT,
-	SUPERSHOOT
+	SUPERSHOOT,
+	DAMAGE
 };
 
-class Player : public Object
+class Player : public Object, public Listener
 {
 public:
 	Player
@@ -49,6 +51,7 @@ public:
 private:
 	void initAnimator();
 	void initTimerManager();
+	void initEvents();
 
 	//void generateSprite();
 
@@ -62,9 +65,11 @@ private:
 
 	void updateBullets(float deltaTime);
 
+	//States
 	void updateIdle(float deltaTime);
 	void updateShoot(float deltaTime);
 	void updateSuperShoot(float deltaTime);
+	void updateDamage(float deltaTime);
 
 	void renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surface& screen);
 
@@ -100,5 +105,8 @@ private:
 	bool upgraded = false;
 	bool isChargedStarted = false;
 	float chargeTime = 1.f, chargeTimer = chargeTime;
+
+	//Explosion
+	float explosionAnimationSpeed = 0.1f;	
 };
 

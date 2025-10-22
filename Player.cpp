@@ -4,7 +4,6 @@
 #include <iostream>
 #include "CollisionHelper.hpp"
 #include "Audio/Device.hpp"
-#include "EventBus.hpp"
 
 Player::Player
 (
@@ -18,6 +17,7 @@ Player::Player
 
 	initAnimator();
 	initTimerManager();
+	initEvents();
 
 	//center = { 0.f, 0.f };
 }
@@ -37,6 +37,9 @@ void Player::initAnimator()
 	//Upgraded weapon charge and shooting
 	animator->addFrameCycledAnimation(spriteMap["weapon1"], chargeTime / 6.f, 1, 6, "Charge", false);
 	animator->addFrameCycledAnimation(spriteMap["weapon1"], shootTime / 2.f, 7, 11, "ChargeShoot", true);
+	
+	//Destroy animation
+	animator->addFrameCycledAnimation(spriteMap["explosion"], explosionAnimationSpeed, 0, 11, "Explosion", true);
 
 	//animator->addFrameAnimation(sprite, 1.f, 0, 3, [this]() {return true; });
 }
@@ -44,6 +47,11 @@ void Player::initAnimator()
 void Player::initTimerManager()
 {
 	timerManager = std::make_unique<TimerManager>();
+}
+
+void Player::initEvents()
+{
+	
 }
 
 void Player::update(float deltaTime)
@@ -61,9 +69,6 @@ void Player::update(float deltaTime)
 			blinkTimer = blinkTime;
 		}
 	}
-
-	checkMove(deltaTime);
-	checkRotation(deltaTime);
 
 	updateBullets(deltaTime);
 
@@ -98,22 +103,27 @@ void Player::render(Tmpl8::Surface& screen)
 		bullet->render(screen);
 	}
 
-	// Draw engine
-	renderShipPart(spriteMap["shipEngine"], screen);
+	if (!animator->isAnimationActive("Explosion") && state != PlayerState::DAMAGE)
+	{
+		// Draw engine
+		renderShipPart(spriteMap["shipEngine"], screen);
 
-	// Draw weapon
-	if (!upgraded)
-		renderShipPart(spriteMap["weapon"], screen);
-	else
-		renderShipPart(spriteMap["weapon1"], screen);
+		// Draw weapon
+		if (!upgraded)
+			renderShipPart(spriteMap["weapon"], screen);
+		else
+			renderShipPart(spriteMap["weapon1"], screen);
 
-	//// Draw engine effect
-	renderShipPart(spriteMap["engineEffect"], screen);
+		//// Draw engine effect
+		renderShipPart(spriteMap["engineEffect"], screen);
 
-	// Draw main ship
-	renderShipPart(sprite, screen);
-
-
+		// Draw main ship
+		renderShipPart(sprite, screen);
+	}
+	else if(animator->isAnimationActive("Explosion"))
+	{
+		renderShipPart(spriteMap["explosion"], screen);
+	}
 }
 
 
@@ -199,6 +209,8 @@ void Player::onCollisionEnter(std::shared_ptr<Object> object)
 
 void Player::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 {
+	if (state == PlayerState::DAMAGE) return;
+	
 	//Stay
 	if (object->getTag() == "asteroid" && !isHit)
 	{
@@ -219,7 +231,7 @@ void Player::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 
 		if (currentHealth <= 0)
 		{
-			destroy = true;
+			setState(PlayerState::DAMAGE);
 		}
 	}
 }

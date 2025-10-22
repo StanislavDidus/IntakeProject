@@ -10,6 +10,9 @@
 #include "Asteroid.hpp"
 #include "Player.hpp"
 #include "Sheep.hpp"
+#include "EventBus.hpp"
+#include "TimerManager.hpp"
+#include "CollisionManager.hpp"
 
 namespace Tmpl8
 {
@@ -19,7 +22,7 @@ namespace Tmpl8
 class GameManager
 {
 public:
-	GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, const std::unordered_map<std::string, Audio::Sound>& sounds,  Tmpl8::Game* game);
+	GameManager(std::shared_ptr<CollisionManager> collisionManager, std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, const std::unordered_map<std::string, Audio::Sound>& sounds);
 	virtual ~GameManager();
 
 	void update(float deltaTime);
@@ -32,6 +35,8 @@ public:
 
 	std::vector<std::shared_ptr<Object>> getObjects() const;
 private:
+	void initTimerManager();
+
 	void updatePlayer(float deltaTime);
 	void updateObjects(float deltaTime);
 
@@ -41,18 +46,20 @@ private:
 		
 	float spawnRate, spawnTimer;
 
+	std::unique_ptr<TimerManager> timerManager;
+
 	std::shared_ptr<Player> player;
 	std::vector<std::shared_ptr<Object>> objects;
 
 	//Temp object vector
 	std::vector<std::shared_ptr<Object>> tempObjects;
 
+	std::shared_ptr<CollisionManager> collisionManager;
+
 	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> sprites;
 	std::unordered_map<std::string, Audio::Sound> sounds;
 
 	std::vector<std::shared_ptr<Tmpl8::Sprite>> asteroidSprites;
-
-	Tmpl8::Game* game;
 
 	float upgradeSpawnTime, upgradeSpawnTimer;
 	bool isUpgradeOnMap;

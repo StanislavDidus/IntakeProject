@@ -1,7 +1,7 @@
 #include "GameManager.hpp"
-#include "game.hpp"
 #include "Upgrade.hpp"
 #include "EventBus.hpp"
+#include "game.hpp"
 
 #include <random>
 
@@ -17,8 +17,8 @@ static int randomRange(int min, int max)
     return dist(rng);
 }
 
-GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, const std::unordered_map<std::string, Audio::Sound>&  sounds, Tmpl8::Game* game) :
-    sprites(sprites), game(game), spawnRate(2.5f), spawnTimer(0.f), upgradeSpawnTime(3.f), upgradeSpawnTimer(upgradeSpawnTime), isUpgradeOnMap(false), isUpgradeUsed(false), sounds(sounds)
+GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, const std::unordered_map<std::string, Audio::Sound>&  sounds) :
+    collisionManager(collisionManager), sprites(sprites), spawnRate(2.5f), spawnTimer(0.f), upgradeSpawnTime(3.f), upgradeSpawnTimer(upgradeSpawnTime), isUpgradeOnMap(false), isUpgradeUsed(false), sounds(sounds)
 {
     player = std::make_shared<Player>
         (
@@ -41,6 +41,8 @@ GameManager::GameManager(std::unordered_map<std::string, std::shared_ptr<Tmpl8::
         sprite->SetFrame(i);
         asteroidSprites.push_back(sprite);
     }
+
+    initTimerManager();
 }
 
 GameManager::~GameManager()
@@ -49,13 +51,15 @@ GameManager::~GameManager()
 
 void GameManager::update(float deltaTime)
 {
-    if (Tmpl8::Game::isKeyDown('k'))
+    /*if (Tmpl8::Game::isKeyDown('k'))
     {
         for (auto& obj : objects)
         {
             obj->destroy = true;
        }
-    }
+    }*/
+
+    timerManager->update(deltaTime);
     
     spawnTimer += deltaTime;
 
@@ -80,6 +84,20 @@ void GameManager::update(float deltaTime)
         upgradeSpawnTimer = upgradeSpawnTime;
         isUpgradeOnMap = true;
 
+    }
+
+   
+   
+
+    //Spawn hit markers when bullet hits an asteroid
+    auto& collisions = collisionManager->getCollisions();
+    for (auto& [col1, col2] : collisions)
+    {
+        if ((col1->getTag() == "bullet" && col2->getTag() == "asteroid") ||
+            (col2->getTag() == "bullet" && col1->getTag() == "asteroid"))
+        {
+            std::cout << "Bullet hits an asteroid\n";
+        }
     }
 
     updatePlayer(deltaTime);
@@ -158,7 +176,7 @@ void GameManager::updateObjects(float deltaTime)
 
     if (player->destroy)
     {
-        EventBus::Get().push<EventType::GAMEOVER>();
+        timerManager->addTimer(2.f, [this]() {EventBus::Get().push<EventType::GAMEOVER>(); });
     }
 }
 
@@ -196,6 +214,11 @@ std::vector<std::shared_ptr<Object>> GameManager::getObjects() const
     vec.insert(vec.end(), bullets.begin(), bullets.end());
 
     return vec;
+}
+
+void GameManager::initTimerManager()
+{
+    timerManager = std::make_unique<TimerManager>();
 }
 
 void GameManager::spawnAsteroid()

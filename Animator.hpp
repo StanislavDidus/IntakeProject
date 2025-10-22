@@ -53,6 +53,8 @@ public:
 	void playAnimation(const std::string& name);
 	void stopAnimation(const std::string& name);
 
+	bool isAnimationActive(const std::string& name);
+
 	void addFrameAnimation(std::shared_ptr<Tmpl8::Sprite>sprite, float animationSpeed, int firstFrame, int lastFrame, const std::function<bool()>& condition);
 	void addFrameCycledAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float animationSpeed, int firstFrame, int lastFrame, const std::string& name, bool returnToBaseFrame = true);
 private:

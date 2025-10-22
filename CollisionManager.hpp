@@ -6,7 +6,7 @@
 #include <optional>
 #include <set>
 
-#include "GameManager.hpp"
+class GameManager;
 
 template<typename T>
 struct unordered_pair
@@ -22,14 +22,14 @@ struct unordered_pair
 class CollisionManager
 {
 public:
-	CollisionManager(std::shared_ptr<GameManager> gameManager);
+	CollisionManager();
 	virtual ~CollisionManager();
 
-	void checkCollision(float deltaTime);
+	void checkCollision(std::shared_ptr<GameManager> gameManager, float deltaTime);
 	void render(Tmpl8::Surface& screen);
-	void renderDEBUG(Tmpl8::Surface& screen);
+	void renderDEBUG(std::shared_ptr<GameManager> gameManager, Tmpl8::Surface& screen);
 
-	//void deleteObject(std::shared_ptr<Object> obj);
+	const std::vector<unordered_pair<std::shared_ptr<Object>>>& getCollisions() const;
 
 private:
 	bool PointRectangle(Tmpl8::vec2 target, std::shared_ptr<Object> col);
@@ -43,8 +43,5 @@ private:
 	void checkForDestroyedObjects();
 
 	std::vector<unordered_pair<std::shared_ptr<Object>>> collisions; // All collision in current frame
-
-	std::shared_ptr<GameManager> gameManager;
-
 };
 
