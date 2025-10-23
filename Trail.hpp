@@ -1,9 +1,10 @@
 #include "Object.hpp"
+#include "Animator.hpp"
 
 class Trail : public Object
 {
 public:
-	Trail(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::vec2 position, Tmpl8::vec2 size, std::shared_ptr<Object> asteroid, Tmpl8::vec2 bulletSize);
+	Trail(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::vec2 position, Tmpl8::vec2 size, std::shared_ptr<Object> asteroid);
 	virtual ~Trail();
 
 	void update(float deltaTime) override;
@@ -11,5 +12,8 @@ public:
 
 	std::shared_ptr<Object> asteroid;
 private:
-	Tmpl8::vec2 bulletSize;
+	Tmpl8::vec2 p0{};
+	Tmpl8::vec2 p1{};
+	Tmpl8::vec2 p2{};
+	Tmpl8::vec2 p3{};
 };

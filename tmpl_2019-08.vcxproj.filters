@@ -49,6 +49,9 @@
     <ClCompile Include="SuperBullet.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Trail.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">
@@ -107,6 +110,10 @@
     </ClInclude>
     <ClInclude Include="CollisionHelper.hpp">
       <Filter>include\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="EventBus.hpp" />
+    <ClInclude Include="Trail.hpp">
+      <Filter>include\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

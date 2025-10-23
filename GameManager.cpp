@@ -17,21 +17,21 @@ static int randomRange(int min, int max)
     return dist(rng);
 }
 
-GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites, const std::unordered_map<std::string, Audio::Sound>&  sounds) :
-    collisionManager(collisionManager), sprites(sprites), spawnRate(2.5f), spawnTimer(0.f), upgradeSpawnTime(3.f), upgradeSpawnTimer(upgradeSpawnTime), isUpgradeOnMap(false), isUpgradeUsed(false), sounds(sounds)
+GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap) :
+    collisionManager(collisionManager), spriteMap(spriteMap), spawnRate(2.5f), spawnTimer(0.f), upgradeSpawnTime(3.f), upgradeSpawnTimer(upgradeSpawnTime), isUpgradeOnMap(false), isUpgradeUsed(false), soundMap(soundMap)
 {
     player = std::make_shared<Player>
         (
-            sprites,
-            sounds,
+            spriteMap,
+            soundMap,
             Tmpl8::vec2{ static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f,
             static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f },
-            Tmpl8::vec2{96.f, 96.f}
+            Tmpl8::vec2{ 96.f, 96.f }
         );
 
     player->setMaxSpeed(150.f);
-    player->setAcceleration({550.f, 550.f});
-    player->setDirection({0.f, -1.f});
+    player->setAcceleration({ 550.f, 550.f });
+    player->setDirection({ 0.f, -1.f });
     player->setTag("player");
 
     //Init asteroid frame sprites
@@ -51,16 +51,10 @@ GameManager::~GameManager()
 
 void GameManager::update(float deltaTime)
 {
-    /*if (Tmpl8::Game::isKeyDown('k'))
-    {
-        for (auto& obj : objects)
-        {
-            obj->destroy = true;
-       }
-    }*/
-
     timerManager->update(deltaTime);
-    
+
+
+    // -- Asteroid Spawner -- //
     spawnTimer += deltaTime;
 
     if (spawnTimer >= spawnRate)
@@ -70,6 +64,7 @@ void GameManager::update(float deltaTime)
         spawnAsteroid();
     }
 
+    // -- Upgrade Spawner -- //
     upgradeSpawnTimer -= deltaTime;
 
     if (isUpgradeUsed && !player->isUpgraded())
@@ -86,20 +81,34 @@ void GameManager::update(float deltaTime)
 
     }
 
-   
-   
-
     //Spawn hit markers when bullet hits an asteroid
     auto& collisions = collisionManager->getCollisions();
     for (auto& [col1, col2] : collisions)
     {
-        if ((col1->getTag() == "bullet" && col2->getTag() == "asteroid") ||
-            (col2->getTag() == "bullet" && col1->getTag() == "asteroid"))
+        std::shared_ptr<Object> bullet;
+        std::shared_ptr<Object> asteroid;
+        
+        if (col1->getTag() == "bullet" && col2->getTag() == "asteroid")
         {
-            std::cout << "Bullet hits an asteroid\n";
+            bullet = col1;
+            asteroid = col2;
+        }
+        else if (col2->getTag() == "bullet" && col1->getTag() == "asteroid")
+        {
+            bullet = col2;
+            asteroid = col1;
+        }
+
+        if (bullet && asteroid)
+        {
+            auto par = std::make_shared<Object>(spriteMap["hitEffect"], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f });
+
+            particles.push_back({ par, particleSpawnTime });
         }
     }
 
+
+    // -- Update all gameObjects -- //
     updatePlayer(deltaTime);
     updateObjects(deltaTime);
 }
@@ -111,6 +120,7 @@ void GameManager::updatePlayer(float deltaTime)
 
 void GameManager::updateObjects(float deltaTime)
 {
+    // -- Delete Object -- //
     for (auto it = objects.begin(); it != objects.end();)
     {
         auto& obj = *it;
@@ -137,11 +147,6 @@ void GameManager::updateObjects(float deltaTime)
                 isUpgradeUsed = true;
             }
 
-            /*else if (obj->getTag() == "sheep")
-            {
-                sheepCounter--;
-            }*/
-            
             it = objects.erase(it);
         }
         else
@@ -153,10 +158,30 @@ void GameManager::updateObjects(float deltaTime)
     objects.insert(objects.end(), tempObjects.begin(), tempObjects.end());
     tempObjects.clear();
 
-    //Update all objects
+    //Update
     for (const auto& obj : objects)
     {
         obj->update(deltaTime);
+    }
+
+    //Update particles' timers
+    for (auto& [par, timer] : particles)
+    {
+        timer -= deltaTime;
+    }
+
+    for (auto it = particles.begin(); it != particles.end();)
+    {
+        auto& pair = *it;
+
+        pair.second -= deltaTime;
+
+        if (pair.second <= 0.f)
+        {
+            it = particles.erase(it);
+        }
+        else
+            ++it;
     }
 
     //Delete objects when they get out of screen
@@ -174,6 +199,7 @@ void GameManager::updateObjects(float deltaTime)
         }
     }
 
+    //Restart game when player dies 
     if (player->destroy)
     {
         timerManager->addTimer(2.f, [this]() {EventBus::Get().push<EventType::GAMEOVER>(); });
@@ -185,6 +211,11 @@ void GameManager::render(Tmpl8::Surface& screen)
     for (const auto& obj : objects)
     {
         obj->render(screen);
+    }
+
+    for (const auto& [par, timer] : particles)
+    {
+        par->render(screen);
     }
 
     player->render(screen);
@@ -265,7 +296,7 @@ void GameManager::spawnUpgrade()
     float y = static_cast<float>(randomRange(100, ScreenHeight - h));
 
     auto upgrd = std::make_shared<Upgrade>(
-        sprites["upgrade"],
+        spriteMap["upgrade"],
         Tmpl8::vec2{x, y},
         Tmpl8::vec2{static_cast<float>(w), static_cast<float>(h)}
     );
@@ -281,7 +312,7 @@ void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 dire
 {
     auto sheep = std::make_shared<Sheep>
         (
-            sprites["sheep"],
+            spriteMap["sheep"],
             pos,
             size
         );

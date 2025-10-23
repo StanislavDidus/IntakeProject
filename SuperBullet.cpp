@@ -24,6 +24,8 @@ void SuperBullet::initAnimator()
 {
 	animator = std::make_unique<Animator>();
 	animator->addFrameAnimation(bulletSprite, 0.1f, 0, bulletSprite->Frames() - 1, []() {return true; });
+
+	animator->addFrameAnimation(trailSprite, 0.1f, 0, 3, [] {return true; });
 }
 
 
@@ -79,7 +81,12 @@ void SuperBullet::onCollisionEnter(std::shared_ptr<Object> object)
 {
 	if (object->getTag() == "asteroid")
 	{
-		std::shared_ptr<Trail> trail = std::make_shared<Trail>(trailSprite, position, Tmpl8::vec2{ size.x / areaMultiplier, 0.f }, object, Tmpl8::vec2{ size.x / areaMultiplier, size.y / areaMultiplier });
+		resize(1.f / areaMultiplier);
+
+		std::shared_ptr<Trail> trail = std::make_shared<Trail>(trailSprite, position, size, object);
+
+		resize(areaMultiplier);
+
 		trails.push_back(trail);
 	}
 }

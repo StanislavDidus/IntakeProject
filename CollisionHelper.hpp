@@ -83,6 +83,11 @@ struct CollisionHelper
 //Area formula 
 // ||(B - A) * (C - A)|| / 2
 
+static bool isLeftOrTopEdge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1)
+{
+	return (p0.y > p1.y) || (p0.y == p1.y && p0.x < p1.x);
+}
+
 struct Edge
 {
 	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2) : p0(p0), p1(p1), p2(p2) 
@@ -91,6 +96,10 @@ struct Edge
 		const Tmpl8::vec2 a1 = p1 - p0;
 		const Tmpl8::vec2 a2 = p2 - p0;
 		area = a1.x * a2.y - a1.y * a2.x;
+
+		bias.x = isLeftOrTopEdge(p1, p2) ? -1.f : 0.f;
+		bias.y = isLeftOrTopEdge(p2, p0) ? -1.f : 0.f;
+		bias.z = isLeftOrTopEdge(p0, p1) ? -1.f : 0.f;
 	}
 
 	bool inside(const Tmpl8::vec2& p) const
@@ -124,6 +133,7 @@ struct Edge
 
 	float area;
 	Tmpl8::vec2 p0, p1, p2;
+	Tmpl8::vec3 bias = {0.f, 0.f, 0.f};
 };
 
 struct AABB

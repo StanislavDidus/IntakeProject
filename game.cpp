@@ -93,8 +93,10 @@ namespace Tmpl8
 
 	void Game::initAnimators()
 	{
-		backgroundAnimator = std::make_unique<Animator>();
-		backgroundAnimator->addFrameAnimation(spriteMap["space"], 1.f, 0, spriteMap["space"]->Frames() - 1, []() {return true; });
+		animator = std::make_unique<Animator>();
+		animator->addFrameAnimation(spriteMap["space"], 1.f, 0, spriteMap["space"]->Frames() - 1, []() {return true; });
+		
+		animator->addFrameAnimation(spriteMap["hitEffect"], 0.1f, 0, 6, [] {return true; });
 	}
 
 	void Game::initButtons()
@@ -123,10 +125,6 @@ namespace Tmpl8
 
 	void Game::Init()
 	{
-		//Edge edge = Edge{ {0.f, 0.f}, {1.f, 0.f}, {0.f, 1.f} };
-		//glm::vec3 br = edge.barycentric({ 0.5f, 0.5f });
-		//std::cout << "u: " << br.x << " v: " << br.y << " w: " << br.z << "\n";
-
 		restart = false;
 
 		currentGameState = GameState::MENU;
@@ -147,7 +145,7 @@ namespace Tmpl8
 
 		gameManager = nullptr;
 		collisionManager = nullptr;
-		backgroundAnimator = nullptr;
+		animator = nullptr;
 	}
 
 	// -----------------------------------------------------------
@@ -198,7 +196,7 @@ namespace Tmpl8
 
 			collisionManager->checkCollision(gameManager, deltaTime);
 
-			backgroundAnimator->update(deltaTime);
+			animator->update(deltaTime);
 			break;
 		}
 

@@ -59,7 +59,7 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<Sprite>> spriteMap;
 	std::unordered_map<std::string, Audio::Sound> soundMap;
 
-	std::unique_ptr<Animator> backgroundAnimator;
+	std::unique_ptr<Animator> animator;
 
 	std::vector<std::shared_ptr<Button>> buttons;
 	Tmpl8::vec2i mousePosition;

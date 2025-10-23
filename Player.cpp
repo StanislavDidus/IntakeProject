@@ -7,11 +7,11 @@
 
 Player::Player
 (
-	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
+	const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
 	const std::unordered_map<std::string, Audio::Sound>& soundMap,
 	Tmpl8::vec2 position,
 	Tmpl8::vec2 size
-) : Object(sprites["ship"], position, size), spriteMap(sprites), soundMap(soundMap)
+) : Object(sprites.at("ship"), position, size), spriteMap(sprites), soundMap(soundMap)
 {
 	setState(PlayerState::IDLE);
 
@@ -120,7 +120,7 @@ void Player::render(Tmpl8::Surface& screen)
 		// Draw main ship
 		renderShipPart(sprite, screen);
 	}
-	else if(animator->isAnimationActive("Explosion"))
+	else if(animator->isAnimationActive("Explosion"))	
 	{
 		renderShipPart(spriteMap["explosion"], screen);
 	}

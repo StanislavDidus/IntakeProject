@@ -28,7 +28,7 @@ class Player : public Object, public Listener
 public:
 	Player
 	(
-		std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
+		const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
 		const std::unordered_map<std::string, Audio::Sound>& soundMap,
 		Tmpl8::vec2 position,
 		Tmpl8::vec2 size
