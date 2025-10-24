@@ -65,6 +65,8 @@ private:
 	Tmpl8::vec2i mousePosition;
 	bool wasMouseDown, wasMouseUp;
 
+	float gameTimer = 0.f;
+
 	void initSprites();
 	void initSounds();
 	void initGameManager();

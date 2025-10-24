@@ -51,6 +51,7 @@ namespace Tmpl8
 		spriteMap["scoreButton"] = std::make_shared<Sprite>(new Surface("assets/scoreButton.png"), 3);
 		spriteMap["exitButton"] = std::make_shared<Sprite>(new Surface("assets/exitButton.png"), 3);
 		spriteMap["logo"] = std::make_shared<Sprite>(new Surface("assets/logo.png"), 1);
+		spriteMap["clock"] = std::make_shared<Sprite>(new Surface("assets/clock.png"), 1);
 	}
 
 	void Game::initSounds()
@@ -121,6 +122,8 @@ namespace Tmpl8
 		initCollisionManager();
 		initGameManager();
 		initAnimators();
+
+		gameTimer = 0.f;
 	}
 
 	void Game::Init()
@@ -192,6 +195,8 @@ namespace Tmpl8
 			for (const auto& button : buttons) button->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 			break;
 		case GameState::GAME:
+			gameTimer += deltaTime;
+
 			gameManager->update(deltaTime);
 
 			collisionManager->checkCollision(gameManager, deltaTime);
@@ -256,6 +261,14 @@ namespace Tmpl8
 			sheepText << std::to_string(gameManager->getNumberOfSheep()) << "x";
 
 			screen.PrintScaled(&sheepText.str()[0], uiSize * 2 + letterSize * 2, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+
+			//Render clock
+			spriteMap["clock"]->DrawScaled(uiSize * 2 + letterSize * 4, 0, uiSize, uiSize, screen); 
+
+			std::stringstream timerText;
+			float roundedTimer = std::round(gameTimer * 100.f) / 100.f;
+			timerText << roundedTimer;
+			screen.PrintScaled(&timerText.str()[0], uiSize * 3 + letterSize * 4, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
 
 			break;
 		}

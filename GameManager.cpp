@@ -2,6 +2,7 @@
 #include "Upgrade.hpp"
 #include "EventBus.hpp"
 #include "game.hpp"
+#include <sstream>
 
 #include <random>
 
@@ -15,6 +16,19 @@ static int randomRange(int min, int max)
 {
     std::uniform_int_distribution dist(min, max);
     return dist(rng);
+}
+
+static float randomRange(float min, float max)
+{
+    return randomRange(static_cast<int>(min), static_cast<int>(max));
+}
+
+static Tmpl8::vec2 generateRandomVec2(const Tmpl8::vec2& min = { 0.f, 0.f }, const Tmpl8::vec2& max = {0.f, 0.f})
+{
+    float x = randomRange(min.x, max.x);
+    float y = randomRange(min.y, max.y);
+
+    return Tmpl8::vec2{ x,y };
 }
 
 GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap) :
@@ -137,7 +151,44 @@ void GameManager::updateObjects(float deltaTime)
                     spawnSheep(obj->getPosition(), obj->getSize(), obj->getDirection(), obj->getAngle());
                 else if (asteroid->divide)
                 {
-                    //spawnAsteroid();
+                    // -- Divide an asteroid in the small ones -- //
+                    const auto& position = asteroid->getPosition();
+                    const auto& size = asteroid->getSize();
+                    const auto& direction = asteroid->getDirection();
+
+                    int newAsteroidsNumber = 0;
+
+                    //Size of an asteroid is in range of 64 to 256
+
+                    if (size.x < 90.f) newAsteroidsNumber = 0;
+                    else if (size.x < 150.f) newAsteroidsNumber = 1;
+                    else if (size.x < 210.f) newAsteroidsNumber = 2;
+                    else newAsteroidsNumber = 3;
+
+                    for (int i = 0; i < newAsteroidsNumber; i++)
+                    {
+                        auto& newSprite = asteroidSprites[randomRange(0, 2)];
+                        
+                        Tmpl8::vec2 newPosition = generateRandomVec2(position, position + size);
+                        Tmpl8::vec2 newSize = { randomRange(32.f, size.x / 1.5f) };
+
+
+                        Tmpl8::vec2 newDirection;
+                        do {
+                            newDirection = generateRandomVec2({ -1.f, -1.f }, { 1.f, 1.f });
+                        } while (newDirection.length() < 0.00001f);
+                        newDirection.normalized();
+
+                        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, 4 - newAsteroidsNumber);
+
+                        ast->setMaxSpeed(75.f);
+                        ast->setAcceleration({ 450.f * newDirection.x, 450.f * newDirection.y });
+                        //ast->setDirection(newDirection);
+                        ast->setTag("asteroid");
+
+                        tempObjects.push_back(ast);
+                    }
+                  
                 }
             }
            
@@ -190,10 +241,10 @@ void GameManager::updateObjects(float deltaTime)
         auto pos = obj->getPosition();
         auto size = obj->getSize();
 
-        if (pos.x < -size.x ||
-            pos.x + size.x >= ScreenWidth + size.x ||
-            pos.y < -size.y ||
-            pos.y + size.y >= ScreenHeight + size.y)
+        if (pos.x + size.x < 0.f ||
+            pos.x >= ScreenWidth ||
+            pos.y + size.y < 0.f ||
+            pos.y >= ScreenHeight)
         {
             obj->destroy = true;
         }

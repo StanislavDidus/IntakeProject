@@ -2,6 +2,7 @@
 #include "CollisionManager.hpp"
 #include "CollisionHelper.hpp"
 #include <Audio/Device.hpp>
+#include <sstream>
 
 Asteroid::Asteroid
 (
@@ -39,6 +40,17 @@ void Asteroid::render(Tmpl8::Surface& screen)
 	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 
 	hpBar->render(screen, currentHealth);
+
+#ifdef _DEBUG
+	std::stringstream ssPos, ssSize, ssHealth;
+	ssPos << "Pos:" << static_cast<int>(position.x) << ", " << static_cast<int>(position.y);
+	ssSize << "Size:" << static_cast<int>(size.x) << ", " << static_cast<int>(size.y);
+	ssHealth << "Heath: " << currentHealth << "/" << maxHealth;
+
+	screen.PrintScaled(&ssPos.str()[0], position.x, position.y - 60, 2, 2, 0xFFFFFF);
+	screen.PrintScaled(&ssSize.str()[0], position.x, position.y - 40, 2, 2, 0xFFFFFF);
+	screen.PrintScaled(&ssHealth.str()[0], position.x, position.y - 20, 2, 2, 0xFFFFFF);
+#endif 
 
 	//sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);
 	//sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + ScreenHeight, ScreenHeight), width, height, angle, &screen);

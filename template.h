@@ -151,6 +151,25 @@ public:
 	float dot( const vec3& operand ) const { return x * operand.x + y * operand.y + z * operand.z; }
 };
 
+class vec3i
+{
+public:
+	union { struct { int x, y, z, dummy; }; int cell[4]; };
+	vec3i() : x(0), y(0), z(0) {}
+	vec3i(int v) : x(v), y(v), z(v) {}
+	vec3i(int x, int y, int z) : x(x), y(y), z(z) {}
+	vec3i operator - () const { return vec3i(-x, -y, -z); }
+	vec3i operator + (const vec3i& addOperand) const { return vec3i(x + addOperand.x, y + addOperand.y, z + addOperand.z); }
+	vec3i operator - (const vec3i& operand) const { return vec3i(x - operand.x, y - operand.y, z - operand.z); }
+	vec3i operator * (const vec3i& operand) const { return vec3i(x * operand.x, y * operand.y, z * operand.z); }
+	void operator -= (const vec3i& a) { x -= a.x; y -= a.y; z -= a.z; }
+	void operator += (const vec3i& a) { x += a.x; y += a.y; z += a.z; }
+	void operator *= (const vec3i& a) { x *= a.x; y *= a.y; z *= a.z; }
+	void operator *= (const int a) { x *= a; y *= a; z *= a; }
+	int operator [] (const uint& idx) const { return cell[idx]; }
+	int& operator [] (const uint& idx) { return cell[idx]; }
+};
+
 class vec4
 {
 public:

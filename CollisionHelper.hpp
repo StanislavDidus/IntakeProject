@@ -83,57 +83,66 @@ struct CollisionHelper
 //Area formula 
 // ||(B - A) * (C - A)|| / 2
 
-static bool isLeftOrTopEdge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1)
-{
-	return (p0.y > p1.y) || (p0.y == p1.y && p0.x < p1.x);
-}
-
+//Formula: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
+//Code: https://github.com/3dgep/rasterizer/blob/main/graphics/src/Rasterizer.cpp#L70,
+// https://fgiesen.wordpress.com/2013/02/08/triangle-rasterization-in-practice/#:~:text=again%2C%20I%20digress.-,Fill%20rules,-The%20goal%20of
 struct Edge
 {
-	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2) : p0(p0), p1(p1), p2(p2) 
+	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p) :
+		dx(p2.x - p1.x, p0.x - p2.x, p1.x - p0.x),  dy(p2.y - p1.y, p0.y - p2.y, p1.y - p0.y)
 	{ 
-		//Calculate an area of main triangle
-		const Tmpl8::vec2 a1 = p1 - p0;
-		const Tmpl8::vec2 a2 = p2 - p0;
-		area = a1.x * a2.y - a1.y * a2.x;
+		area = edgeFunction(p0, p1, dx.x, dy.x);
 
-		bias.x = isLeftOrTopEdge(p1, p2) ? -1.f : 0.f;
-		bias.y = isLeftOrTopEdge(p2, p0) ? -1.f : 0.f;
-		bias.z = isLeftOrTopEdge(p0, p1) ? -1.f : 0.f;
+		float bias0 = isLeftOrTopEdge(p1, p2) ? 0.f : -1.f;
+		float bias1 = isLeftOrTopEdge(p2, p0) ? 0.f : -1.f;
+		float bias2 = isLeftOrTopEdge(p0, p1) ? 0.f : -1.f;
+		
+		w0.x = edgeFunction(p, p1, dx.x, dy.x) + bias0;
+		w0.y = edgeFunction(p, p2, dx.y, dy.y) + bias1;
+		w0.z = edgeFunction(p, p0, dx.z, dy.z) + bias2;
+
+		w = w0;
 	}
 
-	bool inside(const Tmpl8::vec2& p) const
+	bool inside() const
 	{
-		auto br = barycentric(p);
-
-		return br.x >= 0.f && br.y >= 0.f && br.z >= 0.f;
+		return w.x >= 0.f && w.y >= 0.f && w.z >= 0.f;
 	}
 
-	//Formula: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
-	Tmpl8::vec3 barycentric(const Tmpl8::vec2& p) const
+	Tmpl8::vec3 barycentric() const
 	{
-		//Calculate w
-		const Tmpl8::vec2 w1 = p1 - p0;
-		const Tmpl8::vec2 w2 = p - p0;
-		float wcross = w1.x * w2.y - w1.y * w2.x;
-		float w = wcross / area;
+		float u = w.x / area;
+		float v = w.y / area;
 
-		//Calculate v
-		const Tmpl8::vec2 v1 = p0 - p2;
-		const Tmpl8::vec2 v2 = p - p2;
-		float vcross = v1.x * v2.y - v1.y * v2.x;
-		float v = vcross / area;
-
-		//Calculate u
-		//w + u + v = 1
-		float u = 1.f - w - v;
-
-		return Tmpl8::vec3{u ,v ,w};
+		return { u, v, 1.f - (u + v)};
 	}
+
+	void stepX() 
+	{
+		w -= dy;
+	}
+
+	void stepY() 
+	{
+		w0 += dx;
+		w = w0;
+	}
+
+	inline float edgeFunction(Tmpl8::vec2 point, Tmpl8::vec2 e, float deltaX, float deltaY) const
+	{
+		//Multiply by -1.f for inversed y calculation
+		return  ((point.x - e.x) * deltaY - (point.y - e.y) * deltaX) * -1.f;
+	}
+	inline bool isLeftOrTopEdge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1) const
+	{
+		return (p0.y > p1.y) || (p0.y == p1.y && p0.x < p1.x);
+	}
+
+	Tmpl8::vec3 dx, dy;
+	Tmpl8::vec3 w;
+	Tmpl8::vec3 w0;
 
 	float area;
-	Tmpl8::vec2 p0, p1, p2;
-	Tmpl8::vec3 bias = {0.f, 0.f, 0.f};
 };
 
 struct AABB
@@ -171,7 +180,7 @@ struct AABB
 		x = minX, y = minY, width = maxX - minX, height = maxY - minY;
 	}
 
-	bool intersects(const AABB& col)
+	inline bool intersects(const AABB& col) const
 	{
 		return !(x + width <= col.x ||
 			col.x + col.width <= x ||

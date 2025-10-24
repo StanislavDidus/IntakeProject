@@ -92,8 +92,14 @@ void Player::update(float deltaTime)
 
 	applyVelocity(deltaTime);
 
-	position.x = fmodf(static_cast<float>(position.x) + ScreenWidth, ScreenWidth);
-	position.y = fmodf(static_cast<float>(position.y) + ScreenHeight, ScreenHeight);
+	//position.x = fmodf(static_cast<float>(position.x) + ScreenWidth, ScreenWidth);
+	//position.y = fmodf(static_cast<float>(position.y) + ScreenHeight, ScreenHeight);
+
+	if (position.x >= ScreenWidth) position.x = 0.f;
+	if (position.y >= ScreenHeight) position.y = 0.f;
+
+	if (position.x + size.x < 0.f) position.x = ScreenWidth - size.x;
+	if (position.y + size.y < 0.f) position.y = ScreenHeight - size.y;
 }
 
 void Player::render(Tmpl8::Surface& screen)
