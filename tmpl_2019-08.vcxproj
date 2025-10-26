@@ -236,6 +236,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameStates.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerStates.cpp" />
     <ClCompile Include="Sheep.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="game.hpp" />
     <ClInclude Include="GameManager.hpp" />
     <ClInclude Include="Object.hpp" />
+    <ClInclude Include="Particle.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Sheep.hpp" />
     <ClInclude Include="SuperBullet.hpp" />

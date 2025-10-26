@@ -37,6 +37,7 @@ namespace Tmpl8
 		spriteMap["shipEngine"] = std::make_shared<Sprite>(new Surface("assets/engine.png"), 1);
 		spriteMap["engineEffect"] = std::make_shared<Sprite>(new Surface("assets/engineEffect.png"), 7);
 		spriteMap["explosion"] = std::make_shared<Sprite>(new Surface("assets/explosion.png"), 11);
+		spriteMap["explosion1"] = std::make_shared<Sprite>(new Surface("assets/explosion1.png"), 10);
 		spriteMap["weapon"] = std::make_shared<Sprite>(new Surface("assets/weapon.png"), 7);
 		spriteMap["weapon1"] = std::make_shared<Sprite>(new Surface("assets/weapon1.png"), 12);
 		spriteMap["hitEffect"] = std::make_shared<Sprite>(new Surface("assets/hitEffect.png"), 7);
@@ -98,6 +99,7 @@ namespace Tmpl8
 		animator->addFrameAnimation(spriteMap["space"], 1.f, 0, spriteMap["space"]->Frames() - 1, []() {return true; });
 		
 		animator->addFrameAnimation(spriteMap["hitEffect"], 0.1f, 0, 6, [] {return true; });
+		animator->addFrameCycledAnimation(spriteMap["explosion1"], 0.1f, 0, 9, "Explosion1");
 	}
 
 	void Game::initButtons()

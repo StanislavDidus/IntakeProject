@@ -26,12 +26,12 @@ struct RunData
 {
 	int spriteIndex; //Index in an array
 
-	int startTimeDay;
-	int startTimeMonth;
-	int startTimeYear;
-
-	int startTimeHours;
-	int startTimeMinutes;
+	int saveTimeDay;
+	int saveTimeMonth;
+	int saveTimeYear;
+		
+	int saveTimeHours;
+	int saveTimeMinutes;
 
 	int sheepScore;
 
@@ -90,7 +90,7 @@ private:
 	int scoreOffSetX = 25;
 	int scoreOffSetY = 25;
 
-	int scoreXSpace = 15;
+	int scoreXSpace = 5;
 	int scoreYSpace = 15;
 
 	int iconWidth = 60;

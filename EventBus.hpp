@@ -42,7 +42,7 @@ public:
 	void unsubscribe(Listener* l)
 	{
 		auto& vector = events[T];
-		vector.erase(std::remove_if(vector.begin(), vector.end(), [l](const Event& e) {if (e.subscriber == l) return true; }), vector.end());
+		vector.erase(std::remove_if(vector.begin(), vector.end(), [l](const Event& e) { return e.subscriber == l; }), vector.end());
 	}
 
 	template<EventType T>

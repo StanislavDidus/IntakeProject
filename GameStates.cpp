@@ -69,12 +69,12 @@ namespace Tmpl8
 			std::time_t t = std::time(0);
 			std::tm* now = std::localtime(&t);
 
-			runData.startTimeDay = now->tm_mday;
-			runData.startTimeMonth = now->tm_mon + 1;
-			runData.startTimeYear = now->tm_year + 1900;
-
-			runData.startTimeHours = now->tm_hour;
-			runData.startTimeMinutes = now->tm_min;
+			runData.saveTimeDay = now->tm_mday;
+			runData.saveTimeMonth = now->tm_mon + 1;
+			runData.saveTimeYear = now->tm_year + 1900;
+					
+			runData.saveTimeHours = now->tm_hour;
+			runData.saveTimeMinutes = now->tm_min;
 
 			runData.sheepScore = gameManager->getNumberOfSheep();
 
@@ -110,7 +110,7 @@ namespace Tmpl8
 
 		collisionManager->checkCollision(gameManager, deltaTime);
 
-		animator->update(deltaTime);
+		spriteMap["space"]->SetFrame(animator->update(deltaTime));
 	}
 
 	void Game::updateScore(float deltaTime)
@@ -127,7 +127,7 @@ namespace Tmpl8
 			scrolled += static_cast<int>(1000.f * deltaTime);
 		}
 
-		int maxPossibleScroll = runDataVector.size() * (iconHeight + scoreYSpace) + scoreOffSetX;
+		int maxPossibleScroll = static_cast<int>(runDataVector.size()) * (iconHeight + scoreYSpace) + scoreOffSetX;
 		scrolled = std::clamp(scrolled, 0, maxPossibleScroll);
 	}
 
@@ -208,13 +208,20 @@ namespace Tmpl8
 			std::stringstream dayMonthYearText;
 
 			//Add dates to the stream and also include '0' before numbers that are less than 10
-			
+			dayMonthYearText
+				<< std::setw(2) << std::setfill('0') << data.saveTimeDay << '/'
+				<< std::setw(2) << std::setfill('0') << data.saveTimeMonth << '/'
+				<< std::setw(4) << std::setfill('0') << data.saveTimeYear;
 
-			dayMonthYearText << data.startTimeDay << '/' << data.startTimeMonth << '/' << data.startTimeYear;
 			screen.PrintScaled(&dayMonthYearText.str()[0], xPos, yPos + scoreYSpace, scoreTextScale, scoreTextScale, 0xFFFFFF);
 
 			std::stringstream hoursMinuteText;
-			hoursMinuteText << data.startTimeHours << ':' << data.startTimeMinutes;
+
+
+			hoursMinuteText
+				<< std::setw(2) << std::setfill('0') << data.saveTimeHours << ':'
+				<< std::setw(2) << std::setfill('0') << data.saveTimeMinutes;
+
 			screen.PrintScaled(&hoursMinuteText.str()[0], xPos + 2 * letterSizeX, yPos + letterSizeY + scoreYSpace * 2, scoreTextScale, scoreTextScale, 0xFFFFFF);
 
 			xPos += (2 + 1 + 2 + 1 + 4) * letterSizeX + scoreXSpace;
@@ -227,7 +234,7 @@ namespace Tmpl8
 
 			screen.PrintScaled(&sheepScoreText.str()[0], xPos, yPos + iconHeight / 2 - letterSizeY / 2, scoreTextScale, scoreTextScale, 0xFFFFFF);
 
-			xPos += std::to_string(data.sheepScore).length() * letterSizeX + scoreXSpace;
+			xPos += static_cast<int>(std::to_string(data.sheepScore).length()) * letterSizeX + scoreXSpace;
 
 			spriteMap["clock"]->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);
 

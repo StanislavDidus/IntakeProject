@@ -122,9 +122,9 @@ void GameManager::update(float deltaTime)
 
         if (bullet && asteroid)
         {
-            auto par = std::make_shared<Object>(spriteMap["hitEffect"], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f });
+            auto par = std::make_shared<Particle>(spriteMap["hitEffect"], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
 
-            particles.push_back({ par, particleSpawnTime });
+            particles.push_back(par);
         }
     }
 
@@ -193,6 +193,14 @@ void GameManager::updateObjects(float deltaTime)
 
                         tempObjects.push_back(ast);
                     }
+
+                    //Spawn explosion particle
+
+                    auto par = std::make_shared<Particle>(spriteMap["explosion1"], asteroid->getPosition(), asteroid->getSize(), 1.f);
+
+                    particles.push_back(par);
+
+                    
                   
                 }
             }
@@ -221,18 +229,17 @@ void GameManager::updateObjects(float deltaTime)
     }
 
     //Update particles' timers
-    for (auto& [par, timer] : particles)
+    for (auto& par : particles)
     {
-        timer -= deltaTime;
+        par->update(deltaTime);
     }
 
+    //Delete particles
     for (auto it = particles.begin(); it != particles.end();)
     {
         auto& pair = *it;
 
-        pair.second -= deltaTime;
-
-        if (pair.second <= 0.f)
+        if (pair->destroy)
         {
             it = particles.erase(it);
         }
@@ -269,7 +276,7 @@ void GameManager::render(Tmpl8::Surface& screen)
         obj->render(screen);
     }
 
-    for (const auto& [par, timer] : particles)
+    for (const auto& par: particles)
     {
         par->render(screen);
     }

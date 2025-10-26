@@ -13,6 +13,7 @@
 #include "EventBus.hpp"
 #include "TimerManager.hpp"
 #include "CollisionManager.hpp"
+#include "Particle.hpp"
 
 namespace Tmpl8
 {
@@ -50,7 +51,7 @@ private:
 	std::unique_ptr<TimerManager> timerManager;
 
 	//Particles
-	std::vector<std::pair<std::shared_ptr<Object>, float>> particles;
+	std::vector<std::shared_ptr<Particle>> particles;
 
 
 	std::shared_ptr<Player> player;
@@ -71,7 +72,7 @@ private:
 	float asteroidMaxSpeed = 100.f;
 
 	//Particles
-	float particleSpawnTime = 0.3f;
+	//float particleSpawnTime = 0.3f;
 
 	float upgradeSpawnTime = 5.f;
 	float upgradeSpawnTimer = 5.f;

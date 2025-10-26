@@ -55,6 +55,9 @@
     <ClCompile Include="GameStates.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">
@@ -114,8 +117,13 @@
     <ClInclude Include="CollisionHelper.hpp">
       <Filter>include\Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="EventBus.hpp" />
     <ClInclude Include="Trail.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="EventBus.hpp">
+      <Filter>include\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.hpp">
       <Filter>include\Objects</Filter>
     </ClInclude>
   </ItemGroup>

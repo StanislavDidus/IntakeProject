@@ -5,7 +5,7 @@ FrameAnimation::FrameAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float anim
 {
 }
 
-void FrameAnimation::play(float deltaTime)
+int FrameAnimation::play(float deltaTime)
 {
 	timer += deltaTime;
 
@@ -19,7 +19,9 @@ void FrameAnimation::play(float deltaTime)
 
 		currentFrame++;
 		if (currentFrame > lastFrame) currentFrame = firstFrame;
-		sprite->SetFrame(currentFrame);
+		//sprite->SetFrame(currentFrame);
+
+		return currentFrame;
 	}
 }
 const std::function<bool()>& FrameAnimation::getCondition() const
@@ -34,15 +36,15 @@ FrameCycledAnimation::FrameCycledAnimation(std::shared_ptr<Tmpl8::Sprite> sprite
 
 }
 
-void FrameCycledAnimation::play(float deltaTime)
+int FrameCycledAnimation::play(float deltaTime)
 {
+	int frame = currentFrame;
+	
 	timer += deltaTime;
 
 	if (timer >= animationSpeed)
 	{
 		timer = 0.f;
-
-		sprite->SetFrame(currentFrame);
 
 		//std::cout << currentFrame << "\n";
 
@@ -52,12 +54,17 @@ void FrameCycledAnimation::play(float deltaTime)
 		{
 			active = false; 
 
-			if(returnToBaseFrame)
-				sprite->SetFrame(0);
+			if (returnToBaseFrame)
+			{
+				//sprite->SetFrame(0);
+				frame = 0;
+			}
 
 			return;
 		}
 	}
+
+	return frame;
 }
 
 void FrameCycledAnimation::stop()
@@ -84,20 +91,24 @@ Animator::~Animator()
 
 }
 
-void Animator::update(float deltaTime)
+int Animator::update(float deltaTime)
 {
+	int frame = 0;
+	
 	for (const auto& animation : frameAnimations)
 	{
 		if (animation->getCondition()())
 		{
-			animation->play(deltaTime);
+			frame = animation->play(deltaTime);
 		}
 	}
 
 	for (const auto& [name, animation] : frameCycledAnimations)
 	{
-		if(animation->active) animation->play(deltaTime);
+		if(animation->active) frame = animation->play(deltaTime);
 	}
+
+	return frame;
 }
 
 void Animator::playAnimation(const std::string& name)
