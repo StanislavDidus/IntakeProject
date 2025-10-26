@@ -10,6 +10,9 @@ enum class EventType
 {
 	GAMEOVER,
 	RESTART,
+
+	//Debug
+	KILL_ALL
 };
 
 class Listener { };

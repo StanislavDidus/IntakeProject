@@ -19,7 +19,7 @@ namespace Tmpl8
 	class Game;
 }
 
-class GameManager
+class GameManager : public Listener
 {
 public:
 	GameManager(std::shared_ptr<CollisionManager> collisionManager, const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap);
@@ -44,7 +44,8 @@ private:
 	void spawnUpgrade();
 	void spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 direction, float angle);
 		
-	float spawnRate, spawnTimer;
+	float spawnRate = 2.f;
+	float spawnTimer = 2.f;
 
 	std::unique_ptr<TimerManager> timerManager;
 
@@ -65,12 +66,17 @@ private:
 
 	std::vector<std::shared_ptr<Tmpl8::Sprite>> asteroidSprites;
 
+	//Asteroids
+	float asteroidAcceleration = 500.f;
+	float asteroidMaxSpeed = 100.f;
+
 	//Particles
 	float particleSpawnTime = 0.3f;
 
-	float upgradeSpawnTime, upgradeSpawnTimer;
-	bool isUpgradeOnMap;
-	bool isUpgradeUsed;
+	float upgradeSpawnTime = 5.f;
+	float upgradeSpawnTimer = 5.f;
+	bool isUpgradeOnMap = false;
+	bool isUpgradeUsed = false; 
 
 	int sheepCounter = 0;
 };

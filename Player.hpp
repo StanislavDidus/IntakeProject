@@ -87,7 +87,7 @@ private:
 
 	//Health Component
 	int maxHealth = 4, currentHealth = maxHealth;
-	float invulnerableTime = 2.5f;
+	float invulnerableTime = 2.f;
 	bool isHit = false;
 
 	//Blinking after getting hit
@@ -95,7 +95,7 @@ private:
 	bool blink = false;
 
 	//Shooting
-	float shootTime = 0.25f, shootTimer = shootTime;
+	float shootTime = 0.3f, shootTimer = shootTime;
 	bool shootLeft = true;
 	bool canShoot = true;
 

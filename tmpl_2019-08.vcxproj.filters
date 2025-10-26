@@ -52,6 +52,9 @@
     <ClCompile Include="Trail.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="GameStates.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">

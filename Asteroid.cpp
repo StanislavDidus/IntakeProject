@@ -42,14 +42,17 @@ void Asteroid::render(Tmpl8::Surface& screen)
 	hpBar->render(screen, currentHealth);
 
 #ifdef _DEBUG
+	Tmpl8::vec2i posi = { static_cast<int>(position.x), static_cast<int>(position.y) };
+	Tmpl8::vec2i sizei = { static_cast<int>(size.x), static_cast<int>(size.y) };
+
 	std::stringstream ssPos, ssSize, ssHealth;
-	ssPos << "Pos:" << static_cast<int>(position.x) << ", " << static_cast<int>(position.y);
-	ssSize << "Size:" << static_cast<int>(size.x) << ", " << static_cast<int>(size.y);
+	ssPos << "Pos:" << static_cast<int>(posi.x) << ", " << static_cast<int>(posi.y);
+	ssSize << "Size:" << static_cast<int>(sizei.x) << ", " << static_cast<int>(sizei.y);
 	ssHealth << "Heath: " << currentHealth << "/" << maxHealth;
 
-	screen.PrintScaled(&ssPos.str()[0], position.x, position.y - 60, 2, 2, 0xFFFFFF);
-	screen.PrintScaled(&ssSize.str()[0], position.x, position.y - 40, 2, 2, 0xFFFFFF);
-	screen.PrintScaled(&ssHealth.str()[0], position.x, position.y - 20, 2, 2, 0xFFFFFF);
+	screen.PrintScaled(&ssPos.str()[0], posi.x, posi.y - 60, 2, 2, 0xFFFFFF);
+	screen.PrintScaled(&ssSize.str()[0], posi.x, posi.y - 40, 2, 2, 0xFFFFFF);
+	screen.PrintScaled(&ssHealth.str()[0], posi.x, posi.y - 20, 2, 2, 0xFFFFFF);
 #endif 
 
 	//sprite->DrawScaledRotated(fmodf(x + width + ScreenWidth, ScreenWidth) - width, fmodf(y + height + ScreenHeight, ScreenHeight) - height, width, height, angle, &screen);

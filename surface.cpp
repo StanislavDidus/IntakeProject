@@ -128,7 +128,7 @@ namespace Tmpl8 {
 	void Surface::PrintScaled(const char* a_String, int x1, int y1, int scaleX, int scaleY, Pixel color)
 	{
 		int length = (int)strlen(a_String);
-		int width = length * scaleX * 5 + (length - 1) * scaleX * 6;
+		int width = length * scaleX * 6;
 		int height = 5 * scaleY;
 
 		//width = 400;
@@ -485,13 +485,38 @@ namespace Tmpl8 {
 
 	void Sprite::DrawScaled(int a_X, int a_Y, int a_Width, int a_Height, Surface& a_Target)
 	{
+		/*if (a_X < 0 ||
+			a_Y < 0 ||
+			a_X + a_Width >= ScreenWidth ||
+			a_Y + a_Height >= ScreenHeight) return;*/
+
 		if ((a_Width == 0) || (a_Height == 0)) return;
-		for (int x = 0; x < a_Width; x++) for (int y = 0; y < a_Height; y++)
-		{
-			int u = (int)((float)x * ((float)m_Width / (float)a_Width));
-			int v = (int)((float)y * ((float)m_Height / (float)a_Height));
-			Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
-			if (color & 0xffffff) a_Target.GetBuffer()[a_X + x + ((a_Y + y) * a_Target.GetPitch())] = color;
+
+		// -- Clipping -- //
+		Tmpl8::vec2i min = { a_X, a_Y };
+		Tmpl8::vec2i max = { a_X + a_Width, a_Y + a_Height };
+
+		Tmpl8::vec2i clampedMin = clampVec2i(min, { 0,0 }, { ScreenWidth - 1, ScreenHeight - 1 });
+		Tmpl8::vec2i clampedMax = clampVec2i(max, { 0,0 }, { ScreenWidth - 1, ScreenHeight - 1 });
+
+		Tmpl8::vec2i posOffset, sizeOffset;
+
+		if (clampedMin.x > a_X) posOffset.x = clampedMin.x - a_X;
+		if (clampedMin.y > a_Y) posOffset.y = clampedMin.y - a_Y;
+
+		if (clampedMax.x < max.x) sizeOffset.x = max.x - clampedMax.x;
+		if (clampedMax.y < max.y) sizeOffset.y = max.y - clampedMax.y;
+
+		
+		for (int x = posOffset.x; x < a_Width - sizeOffset.x; x++)
+		{ 
+			for (int y = posOffset.y; y < a_Height - sizeOffset.y; y++)
+			{
+				int u = (int)((float)x * ((float)m_Width / (float)a_Width));
+				int v = (int)((float)y * ((float)m_Height / (float)a_Height));
+				Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
+				if (color & 0xffffff) a_Target.GetBuffer()[a_X + x + ((a_Y + y) * a_Target.GetPitch())] = color;
+			}
 		}
 	}
 
@@ -553,7 +578,7 @@ namespace Tmpl8 {
 
 						int u = textureCoordinatei.x, v = textureCoordinatei.y;
 
-						if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) continue;
+						//if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) continue;
 
 						Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
 

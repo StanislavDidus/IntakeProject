@@ -3,6 +3,7 @@
 #include "CollisionHelper.hpp"
 #include <cassert>
 #include <sstream>
+#include <fstream>
 
 namespace Tmpl8
 {
@@ -50,8 +51,12 @@ namespace Tmpl8
 		spriteMap["startButton"] = std::make_shared<Sprite>(new Surface("assets/startButton.png"), 3);
 		spriteMap["scoreButton"] = std::make_shared<Sprite>(new Surface("assets/scoreButton.png"), 3);
 		spriteMap["exitButton"] = std::make_shared<Sprite>(new Surface("assets/exitButton.png"), 3);
+		spriteMap["deleteButton"] = std::make_shared<Sprite>(new Surface("assets/deleteButton.png"), 3);
+		spriteMap["cancelButton"] = std::make_shared<Sprite>(new Surface("assets/cancelButton.png"), 3);
 		spriteMap["logo"] = std::make_shared<Sprite>(new Surface("assets/logo.png"), 1);
 		spriteMap["clock"] = std::make_shared<Sprite>(new Surface("assets/clock.png"), 1);
+		spriteMap["smileys"] = std::make_shared<Sprite>(new Surface("assets/smileys.png"), 20);
+		spriteMap["label"] = std::make_shared<Sprite>(new Surface("assets/label.png"), 1);
 	}
 
 	void Game::initSounds()
@@ -82,11 +87,6 @@ namespace Tmpl8
 		gameManager = std::make_shared<GameManager>(collisionManager, spriteMap, soundMap);
 	}
 
-	void Game::initEvents()
-	{
-		EventBus::Get().subscribe<EventType::GAMEOVER>(this, [this] {restart = true; soundMap["gameOver"].replay(); });
-	}
-
 	void Game::initCollisionManager()
 	{
 		collisionManager = std::make_shared<CollisionManager>();
@@ -109,46 +109,41 @@ namespace Tmpl8
 		float ScreenW = static_cast<float>(ScreenWidth);
 		float ScreenH = static_cast<float>(ScreenHeight);
 
-		buttons.push_back(std::make_shared<Button>(spriteMap["startButton"], soundMap, Tmpl8::vec2{ ScreenW / 2.f - sizeX / 2, ScreenH / 2 - sizeY / 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { initGame(); }));
-		buttons.push_back(std::make_shared<Button>(spriteMap["scoreButton"], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] {}));
-		buttons.push_back(std::make_shared<Button>(spriteMap["exitButton"], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY * 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] {std::exit(0); }));
-		//buttons.push_back(std::make_shared<Button>(spriteMap["creditButton"], ScreenWidth / 2 - sizeX / 2 + 125, ScreenHeight / 2 - sizeY / 2 + sizeY * 2 + posY, 100, 75, [this] { }));
+		buttons.push_back(std::make_shared<Button>(spriteMap["startButton"], soundMap, Tmpl8::vec2{ ScreenW / 2.f - sizeX / 2, ScreenH / 2 - sizeY / 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { setState(GameState::GAME); }));
+		buttons.push_back(std::make_shared<Button>(spriteMap["scoreButton"], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { setState(GameState::SCORE);  }));
+		buttons.push_back(std::make_shared<Button>(spriteMap["exitButton"], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY * 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { Shutdown();  std::exit(0); }));
+		
+		// -- Score Menu -- //
+		
+		//Clear all player's data on click
+		buttons.push_back(std::make_shared<Button>(spriteMap["deleteButton"], soundMap, Tmpl8::vec2{ ScreenW - 100.f, ScreenH - sizeY - 25.f + 5.f }, Tmpl8::vec2{100.f, 75.f}, [this] { runDataVector.clear(); }));
+
+		//Return to main menu
+		buttons.push_back(std::make_shared<Button>(spriteMap["cancelButton"], soundMap, Tmpl8::vec2{ ScreenW - 100.f - 25.f - 100.f, ScreenH - sizeY - 25.f}, Tmpl8::vec2{ sizeX, sizeY }, [this] {setState(GameState::MENU); }));
 	}
 
-	void Game::initGame()
-	{
-		currentGameState = GameState::GAME;
-
-		initCollisionManager();
-		initGameManager();
-		initAnimators();
-
-		gameTimer = 0.f;
-	}
-
+	// -- First init of the game -- //
 	void Game::Init()
 	{
-		restart = false;
-
-		currentGameState = GameState::MENU;
-
+		// -- Read player's data -- //
+		loadData();
+		
+		//Initialize basic game components
 		initSprites();
 		initSounds();
 		initButtons();
-		initEvents();
+		
+		//Init menu
+		setState(GameState::MENU);
 	}
 
 	void Game::Restart()
 	{
-		currentGameState = GameState::MENU;
+		setState(GameState::MENU);
 
 		soundMap["music"].replay();
 
 		initSprites();
-
-		gameManager = nullptr;
-		collisionManager = nullptr;
-		animator = nullptr;
 	}
 
 	// -----------------------------------------------------------
@@ -156,7 +151,8 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::Shutdown()
 	{
-		EventBus::Get().unsubscribe<EventType::GAMEOVER>(this);
+		// -- Save player's data -- //
+		saveData();
 	}
 
 	// -----------------------------------------------------------
@@ -173,7 +169,7 @@ namespace Tmpl8
 #ifdef _DEBUG
 		DebugContol(deltaTime);
 
-		if (currentGameState == GameState::GAME)
+		if (currentState == GameState::GAME)
 			collisionManager->renderDEBUG(gameManager, *screen);
 
 		//FPS Counter
@@ -189,19 +185,16 @@ namespace Tmpl8
 
 	void Game::update(float deltaTime)
 	{
-		switch (currentGameState)
+		switch (currentState)
 		{
 		case GameState::MENU:
-			for (const auto& button : buttons) button->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
+			updateMenu(deltaTime);
 			break;
 		case GameState::GAME:
-			gameTimer += deltaTime;
-
-			gameManager->update(deltaTime);
-
-			collisionManager->checkCollision(gameManager, deltaTime);
-
-			animator->update(deltaTime);
+			updateGame(deltaTime);
+			break;
+		case GameState::SCORE:
+			updateScore(deltaTime);
 			break;
 		}
 
@@ -220,68 +213,84 @@ namespace Tmpl8
 	{
 		screen.Clear(0);
 
-		spriteMap["space"]->DrawScaled(0, 0, ScreenWidth, ScreenHeight, screen);
+		spriteMap["space"]->DrawScaled(0, 0, ScreenWidth - 1, ScreenHeight - 1, screen);
 
-		switch (currentGameState)
+		switch (currentState)
 		{
 		case GameState::MENU:
-			for (const auto& button : buttons)
-				button->render(screen);
-			spriteMap["logo"]->DrawScaled(175, 10, ScreenWidth - 350, 225, screen);
+			renderMenu(screen);
 			break;
 		case GameState::GAME:
-			gameManager->render(screen);
-
-			int uiSize = 75;
-
-			float scale = static_cast<float>(uiSize) / (3.f * 6.f);
-
-			int letterSize = static_cast<int>(6.f * scale);
-			int posY = uiSize / 2 - letterSize / 2;
-
-			//Render Ship UI
-			
-			spriteMap["engineEffect"]->DrawScaled(0, 0, uiSize, uiSize, screen);
-			if(!gameManager->getPlayer()->isUpgraded())
-				spriteMap["weapon"]->DrawScaled(0, 0, uiSize, uiSize, screen);
-			else
-				spriteMap["weapon1"]->DrawScaled(0, 0, uiSize, uiSize, screen);
-			spriteMap["shipEngine"]->DrawScaled(0, 0, uiSize, uiSize, screen);
-			spriteMap["ship"]->DrawScaled(0,0, uiSize, uiSize, screen);
-
-			std::stringstream hpText;
-			hpText << std::to_string(gameManager->getPlayer()->getHealth()) << "x";
-
-			screen.PrintScaled(&hpText.str()[0], uiSize, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
-
-			//Render sheep UI
-			spriteMap["sheep"]->DrawScaled(uiSize + letterSize * 2, 0, uiSize, uiSize, screen);
-
-			std::stringstream sheepText;
-			sheepText << std::to_string(gameManager->getNumberOfSheep()) << "x";
-
-			screen.PrintScaled(&sheepText.str()[0], uiSize * 2 + letterSize * 2, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
-
-			//Render clock
-			spriteMap["clock"]->DrawScaled(uiSize * 2 + letterSize * 4, 0, uiSize, uiSize, screen); 
-
-			std::stringstream timerText;
-			float roundedTimer = std::round(gameTimer * 100.f) / 100.f;
-			timerText << roundedTimer;
-			screen.PrintScaled(&timerText.str()[0], uiSize * 3 + letterSize * 4, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
-
+			renderGame(screen);
+			break;
+		case GameState::SCORE:
+			renderScore(screen);
 			break;
 		}
 	}
+	
 	void Game::DebugContol(float deltaTime)
 	{
 		if (isKeyUp('r'))
 		{
 			Restart();
 		}
-		else if (isKeyUp('u'))
+		else if (isKeyUp('k'))
 		{
-			
+			EventBus::Get().push<EventType::KILL_ALL>();
 		}
+	}
+
+	void Game::loadData()
+	{
+		std::ifstream data("data.bin", std::ios::binary);
+		if (!data)
+		{
+			std::cerr << "ERROR: Could not open file for reading\n";
+			return;
+		}
+
+		size_t numEntries = 0;
+
+		data.read(reinterpret_cast<char*>(&numEntries), sizeof(numEntries));
+
+		/*if (!data || numEntries == 0) {
+			return;
+		}*/
+
+		runDataVector.resize(numEntries);
+
+		data.read(reinterpret_cast<char*>(runDataVector.data()), numEntries * sizeof(RunData));
+
+		if (data.bad())
+		{
+			std::cerr << "ERROR: Could not open file for reading";
+			return;
+		}
+
+		data.close();
+	}
+
+	void Game::saveData()
+	{
+		std::ofstream data("data.bin", std::ios::binary);
+		if (!data)
+		{
+			std::cerr << "ERROR: Could not open file for writing\n";
+			return;
+		}
+
+		auto numberOfData = std::size(runDataVector);
+
+		data.write(reinterpret_cast<const char*>(&numberOfData), sizeof(numberOfData));
+		data.write(reinterpret_cast<const char*>(runDataVector.data()), numberOfData * sizeof(RunData));
+
+		if (data.bad())
+		{
+			std::cerr << "ERROR: Could not open file for writing\n";
+			return;
+		}
+
+		data.close();
 	}
 };

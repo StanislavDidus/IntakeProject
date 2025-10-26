@@ -7,6 +7,8 @@
 #include <string>
 #include <sstream>
 #include <bitset>
+#include <chrono>
+#include <ctime>
 
 #include "Player.hpp"
 #include "GameManager.hpp"
@@ -17,7 +19,23 @@
 
 enum class GameState
 {
-	MENU, GAME
+	NONE, MENU, GAME, SCORE
+};
+
+struct RunData
+{
+	int spriteIndex; //Index in an array
+
+	int startTimeDay;
+	int startTimeMonth;
+	int startTimeYear;
+
+	int startTimeHours;
+	int startTimeMinutes;
+
+	int sheepScore;
+
+	float runTime;
 };
 
 namespace Tmpl8 {
@@ -51,7 +69,10 @@ private:
 
 	Surface* screen;
 
-	GameState currentGameState = GameState::MENU;
+	GameState currentState = GameState::NONE;
+
+	RunData runData;
+	std::vector<RunData> runDataVector;
 
 	std::shared_ptr<GameManager> gameManager;
 	std::shared_ptr<CollisionManager> collisionManager;
@@ -65,19 +86,49 @@ private:
 	Tmpl8::vec2i mousePosition;
 	bool wasMouseDown, wasMouseUp;
 
+	//Score UI
+	int scoreOffSetX = 25;
+	int scoreOffSetY = 25;
+
+	int scoreXSpace = 15;
+	int scoreYSpace = 15;
+
+	int iconWidth = 60;
+	int iconHeight = 60;
+
+	int scoreTextScale = 3;
+
+	int scrolled = 0;
+	
+
 	float gameTimer = 0.f;
+
+	void loadData();
+	void saveData();
+
+	void setState(GameState state);
 
 	void initSprites();
 	void initSounds();
 	void initGameManager();
-	void initEvents();
+	//void initEvents();
 	void initCollisionManager();
 	void initAnimators();
 	void initButtons();
-	void initGame();
+
+	void enterState(GameState state);
+	void exitState(GameState state);
 
 	void update(float deltaTime);
 	void render(Tmpl8::Surface& screen);
+
+	void updateMenu(float deltaTime);
+	void updateGame(float deltaTime);
+	void updateScore(float deltaTime);
+
+	void renderMenu(Tmpl8::Surface& screen);
+	void renderGame(Tmpl8::Surface& screen);
+	void renderScore(Tmpl8::Surface& screen);
 
 	void DebugContol(float deltaTime);
 };
