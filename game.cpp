@@ -98,8 +98,8 @@ namespace Tmpl8
 		animator = std::make_unique<Animator>();
 		animator->addFrameAnimation(spriteMap["space"], 1.f, 0, spriteMap["space"]->Frames() - 1, []() {return true; });
 		
-		animator->addFrameAnimation(spriteMap["hitEffect"], 0.1f, 0, 6, [] {return true; });
-		animator->addFrameCycledAnimation(spriteMap["explosion1"], 0.1f, 0, 9, "Explosion1");
+		//animator->addFrameAnimation(spriteMap["hitEffect"], 0.1f, 0, 6, [] {return true; });
+		//animator->addFrameCycledAnimation(spriteMap["explosion1"], 0.1f, 0, 9, "Explosion1");
 	}
 
 	void Game::initButtons()
@@ -118,10 +118,10 @@ namespace Tmpl8
 		// -- Score Menu -- //
 		
 		//Clear all player's data on click
-		buttons.push_back(std::make_shared<Button>(spriteMap["deleteButton"], soundMap, Tmpl8::vec2{ ScreenW - 100.f, ScreenH - sizeY - 25.f + 5.f }, Tmpl8::vec2{100.f, 75.f}, [this] { runDataVector.clear(); }));
+		buttons.push_back(std::make_shared<Button>(spriteMap["deleteButton"], soundMap, Tmpl8::vec2{ ScreenW - 100.f - 50.f, ScreenH - sizeY - 25.f - sizeY }, Tmpl8::vec2{sizeX, sizeY}, [this] { runDataVector.clear(); }));
 
 		//Return to main menu
-		buttons.push_back(std::make_shared<Button>(spriteMap["cancelButton"], soundMap, Tmpl8::vec2{ ScreenW - 100.f - 25.f - 100.f, ScreenH - sizeY - 25.f}, Tmpl8::vec2{ sizeX, sizeY }, [this] {setState(GameState::MENU); }));
+		buttons.push_back(std::make_shared<Button>(spriteMap["cancelButton"], soundMap, Tmpl8::vec2{ ScreenW - 100.f - 50.f, ScreenH - sizeY - 25.f}, Tmpl8::vec2{ sizeX, sizeY }, [this] {setState(GameState::MENU); }));
 	}
 
 	// -- First init of the game -- //
@@ -255,10 +255,6 @@ namespace Tmpl8
 		size_t numEntries = 0;
 
 		data.read(reinterpret_cast<char*>(&numEntries), sizeof(numEntries));
-
-		/*if (!data || numEntries == 0) {
-			return;
-		}*/
 
 		runDataVector.resize(numEntries);
 

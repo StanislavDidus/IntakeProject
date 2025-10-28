@@ -11,11 +11,16 @@ Particle::~Particle()
 
 void Particle::update(float deltaTime)
 {
-	animator->update(deltaTime);
+	updateAnimations(deltaTime);
 
 	lastTime -= deltaTime;
 
 	if (lastTime <= 0.f) destroy = true;
+}
+
+void Particle::updateAnimations(float deltaTime)
+{
+	animator->update(deltaTime);
 }
 
 void Particle::render(Tmpl8::Surface& screen)
@@ -33,5 +38,7 @@ void Particle::initAnimator()
 	
 	animator = std::make_unique<Animator>();
 
-	animator->addFrameAnimation(sprite, animationSpeed, 0, frames - 1, [] {return true; });
+	animator->addFrameCycledAnimation(sprite, animationSpeed, 0, frames - 1, "Particle");
+
+	animator->playAnimation("Particle");
 }

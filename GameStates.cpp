@@ -110,7 +110,7 @@ namespace Tmpl8
 
 		collisionManager->checkCollision(gameManager, deltaTime);
 
-		spriteMap["space"]->SetFrame(animator->update(deltaTime));
+		animator->update(deltaTime);
 	}
 
 	void Game::updateScore(float deltaTime)
@@ -120,14 +120,24 @@ namespace Tmpl8
 
 		if (isKeyHold('w'))
 		{
-			scrolled -= static_cast<int>(1000.f * deltaTime);
+			toScroll += scrollButtonSpeed * deltaTime;
 		}
 		else if (isKeyHold('s'))
 		{
-			scrolled += static_cast<int>(1000.f * deltaTime);
+			toScroll -= scrollButtonSpeed * deltaTime;
 		}
 
-		int maxPossibleScroll = static_cast<int>(runDataVector.size()) * (iconHeight + scoreYSpace) + scoreOffSetX;
+		scrolled += static_cast<int>(toScroll * inverseMouseWheel * scrollWheelSpeed);
+		toScroll = 0;
+
+		int maxPossibleScroll = 0;
+
+		if (runDataVector.size() > 6)
+		{
+			maxPossibleScroll = static_cast<int>(runDataVector.size()) * (iconHeight + scoreYSpace) + scoreOffSetX - scoreYSpace;
+			maxPossibleScroll -= 6 * (iconHeight + scoreYSpace) + scoreOffSetX;
+		}
+
 		scrolled = std::clamp(scrolled, 0, maxPossibleScroll);
 	}
 
@@ -149,38 +159,52 @@ namespace Tmpl8
 		float scale = static_cast<float>(uiSize) / (3.f * 6.f);
 
 		int letterSize = static_cast<int>(6.f * scale);
+
+		int posX = 0;
 		int posY = uiSize / 2 - letterSize / 2;
 
 		//Render Ship UI
 
-		spriteMap["engineEffect"]->DrawScaled(0, 0, uiSize, uiSize, screen);
+		spriteMap["engineEffect"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
 		if (!gameManager->getPlayer()->isUpgraded())
-			spriteMap["weapon"]->DrawScaled(0, 0, uiSize, uiSize, screen);
+			spriteMap["weapon"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
 		else
-			spriteMap["weapon1"]->DrawScaled(0, 0, uiSize, uiSize, screen);
-		spriteMap["shipEngine"]->DrawScaled(0, 0, uiSize, uiSize, screen);
-		spriteMap["ship"]->DrawScaled(0, 0, uiSize, uiSize, screen);
+			spriteMap["weapon1"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+		spriteMap["shipEngine"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+		spriteMap["ship"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+
+		posX += uiSize;
 
 		std::stringstream hpText;
 		hpText << std::to_string(gameManager->getPlayer()->getHealth()) << "x";
 
-		screen.PrintScaled(&hpText.str()[0], uiSize, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+		screen.PrintScaled(&hpText.str()[0], posX, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+
+		posX += letterSize * 2;
 
 		//Render sheep UI
-		spriteMap["sheep"]->DrawScaled(uiSize + letterSize * 2, 0, uiSize, uiSize, screen);
+		spriteMap["sheep"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
 
 		std::stringstream sheepText;
+		int sheepTextLength = static_cast<int>(std::to_string(gameManager->getNumberOfSheep()).length()) + 1; // + 1 because we also and 'x' sign
 		sheepText << std::to_string(gameManager->getNumberOfSheep()) << "x";
 
-		screen.PrintScaled(&sheepText.str()[0], uiSize * 2 + letterSize * 2, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+		posX += uiSize;
+
+		screen.PrintScaled(&sheepText.str()[0], posX, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+
+		posX += letterSize * sheepTextLength;
 
 		//Render clock
-		spriteMap["clock"]->DrawScaled(uiSize * 2 + letterSize * 4, 0, uiSize, uiSize, screen);
+		spriteMap["clock"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
 
 		std::stringstream timerText;
 		float roundedTimer = std::round(gameTimer * 100.f) / 100.f;
 		timerText << roundedTimer;
-		screen.PrintScaled(&timerText.str()[0], uiSize * 3 + letterSize * 4, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
+
+		posX += uiSize;
+
+		screen.PrintScaled(&timerText.str()[0], posX, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
 	}
 
 	void Game::renderScore(Tmpl8::Surface& screen)
@@ -198,7 +222,7 @@ namespace Tmpl8
 			int xPos = scoreOffSetX;
 			int yPos = iconHeight * i + scoreYSpace * i + scoreOffSetY - scrolled;
 
-			spriteMap["label"]->DrawScaled(0, yPos - 10, 575, iconHeight + 20, screen);
+			spriteMap["label"]->DrawScaled(0, yPos - 10, 625, iconHeight + 20, screen);
 
 			spriteMap["smileys"]->SetFrame(data.spriteIndex);
 			spriteMap["smileys"]->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);

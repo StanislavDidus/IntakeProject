@@ -29,7 +29,6 @@ struct RunData
 	int saveTimeDay;
 	int saveTimeMonth;
 	int saveTimeYear;
-		
 	int saveTimeHours;
 	int saveTimeMinutes;
 
@@ -49,6 +48,7 @@ public:
 	void Restart();
 	void Shutdown();
 	void Tick( float deltaTime );
+	void MouseWheelScrolled(int y) { if (currentState == GameState::SCORE) toScroll = static_cast<float>(y); }
 	void MouseUp(int button) { wasMouseUp = true; }
 	void MouseDown(int button) { wasMouseDown = true; }
 	void MouseMove(int x, int y) { mousePosition = { x, y }; }
@@ -98,6 +98,10 @@ private:
 
 	int scoreTextScale = 3;
 
+	float inverseMouseWheel = -1.f; // -1.f - scroll down to move down, 1.f - scroll up to move down
+	float toScroll = 0.f;
+	float scrollButtonSpeed = 75.f;
+	float scrollWheelSpeed = 20.f;
 	int scrolled = 0;
 	
 
