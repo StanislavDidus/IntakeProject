@@ -89,7 +89,7 @@ struct CollisionHelper
 struct Edge
 {
 	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p) :
-		dx(p2.x - p1.x, p0.x - p2.x, p1.x - p0.x),  dy(p2.y - p1.y, p0.y - p2.y, p1.y - p0.y)
+		dx(p2.x - p1.x, p0.x - p2.x, p1.x - p0.x), dy(p2.y - p1.y, p0.y - p2.y, p1.y - p0.y)
 	{ 
 		area = edgeFunction(p0, p1, dx.x, dy.x);
 
@@ -130,7 +130,7 @@ struct Edge
 
 	inline float edgeFunction(Tmpl8::vec2 point, Tmpl8::vec2 e, float deltaX, float deltaY) const
 	{
-		//Multiply by -1.f for inversed y calculation
+		//Multiply by -1.f because in computer coordinates y coordinate is increasing downwards
 		return  ((point.x - e.x) * deltaY - (point.y - e.y) * deltaX) * -1.f;
 	}
 	inline bool isLeftOrTopEdge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1) const
