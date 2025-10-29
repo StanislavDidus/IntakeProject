@@ -42,7 +42,7 @@ namespace Tmpl8
 
 			initCollisionManager();
 			initGameManager();
-			initAnimators();
+			
 
 			gameTimer = 0.f;
 			break;
@@ -87,7 +87,6 @@ namespace Tmpl8
 
 			gameManager = nullptr;
 			collisionManager = nullptr;
-			animator = nullptr;
 			break;
 		}
 		case GameState::SCORE:
@@ -163,10 +162,18 @@ namespace Tmpl8
 		int posX = 0;
 		int posY = uiSize / 2 - letterSize / 2;
 
+		//Save players data(if player exists)
+		auto player = gameManager->getPlayer();
+		if (player)
+		{
+			playerHealth = player->getHealth();
+			isPlayerUpgraded = player->isUpgraded();
+		}
+
 		//Render Ship UI
 
 		spriteMap["engineEffect"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
-		if (!gameManager->getPlayer()->isUpgraded())
+		if (!isPlayerUpgraded)
 			spriteMap["weapon"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
 		else
 			spriteMap["weapon1"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
@@ -176,7 +183,7 @@ namespace Tmpl8
 		posX += uiSize;
 
 		std::stringstream hpText;
-		hpText << std::to_string(gameManager->getPlayer()->getHealth()) << "x";
+		hpText << std::to_string(playerHealth) << "x";
 
 		screen.PrintScaled(&hpText.str()[0], posX, posY, static_cast<int>(scale), static_cast<int>(scale), 0xFFFFFF);
 

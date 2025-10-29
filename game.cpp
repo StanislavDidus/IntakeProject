@@ -132,6 +132,7 @@ namespace Tmpl8
 		
 		//Initialize basic game components
 		initSprites();
+		initAnimators();
 		initSounds();
 		initButtons();
 		
@@ -215,7 +216,30 @@ namespace Tmpl8
 	{
 		screen.Clear(0);
 
+		spriteMap["space"]->SetFrame(animator->getAnimationFrame(spriteMap["space"]));
+
 		spriteMap["space"]->DrawScaled(0, 0, ScreenWidth - 1, ScreenHeight - 1, screen);
+
+		Tmpl8::vec2 p0 = { 0.f, 0.f };
+		Tmpl8::vec2 p2 = {ScreenWidth, 0.f};
+		Tmpl8::vec2 p1 = { ScreenWidth, ScreenHeight };
+		Tmpl8::vec2 p = { 0.f, 0.f };
+		Edge e = { p0, p1, p2, p };
+
+		for (int y = p.y; y < ScreenHeight; y++)
+		{
+			for (int x = p.x; x < ScreenWidth; x++)
+			{
+				if (e.inside())
+				{
+					//screen.Plot<false>(x, y, Tmpl8::RedMask);
+				}
+
+				e.stepX();
+			}
+
+			e.stepY();
+		}
 
 		switch (currentState)
 		{

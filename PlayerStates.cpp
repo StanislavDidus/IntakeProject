@@ -43,17 +43,6 @@ void Player::enterState(PlayerState state)
 		chargeTimer = chargeTime;
 		isChargedStarted = true;
 		break;
-	case PlayerState::DAMAGE:
-		animator->playAnimation("Explosion");
-
-		timerManager->addTimer(explosionAnimationSpeed * 11.f, [this] {destroy = true; });
-		blink = false;
-		isHit = false;
-		velocity = { 0.f, 0.f };
-
-		soundMap["shipDestroyed"].replay();
-
-		break;
 	}
 }
 
@@ -194,7 +183,3 @@ void Player::updateSuperShoot(float deltaTime)
 	if (chargeTimer <= 0.f) soundMap["charge"].stop();
 }
 
-void Player::updateDamage(float deltaTime)
-{
-
-}

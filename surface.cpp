@@ -240,19 +240,6 @@ namespace Tmpl8 {
 		}
 	}
 
-	template<bool BoundsCheck>
-	void Surface::Plot(int x, int y, Pixel c)
-	{
-		if constexpr (BoundsCheck) {
-			if ((x >= 0) && (y >= 0) && (x < m_Width) && (y < m_Height))
-				m_Buffer[x + y * m_Pitch] = c;
-		}
-		else
-		{
-			m_Buffer[x + y * m_Pitch] = c;
-		}
-	}
-
 	void Surface::Box(int x1, int y1, int x2, int y2, Pixel c)
 	{
 		Line((float)x1, (float)y1, (float)x2, (float)y1, c);

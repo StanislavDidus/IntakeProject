@@ -103,6 +103,10 @@ private:
 	float scrollButtonSpeed = 75.f;
 	float scrollWheelSpeed = 20.f;
 	int scrolled = 0;
+
+	//UI player data
+	int playerHealth = 0;
+	bool isPlayerUpgraded = false;
 	
 
 	float gameTimer = 0.f;

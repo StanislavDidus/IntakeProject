@@ -3,15 +3,25 @@
 
 Trail::Trail(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::vec2 position, Tmpl8::vec2 size, std::shared_ptr<Object> asteroid) : Object(sprite, position, size), asteroid(asteroid)
 {
-
+	initAnimations();
 }
 
 Trail::~Trail()
 {
 }
 
+void Trail::initAnimations()
+{
+	animator = std::make_unique<Animator>();
+
+	animator->addFrameAnimation(sprite, 0.1f, 0, 3, [] {return true; });
+}
+
+
 void Trail::update(float deltaTime)
 {
+	animator->update(deltaTime);
+
 	const auto& asteroidPosition = asteroid->getPosition();
 	const auto& asteroidSize = asteroid->getSize();
 
@@ -36,13 +46,16 @@ void Trail::update(float deltaTime)
 
 void Trail::render(Tmpl8::Surface& screen)
 {
+	sprite->SetFrame(animator->getAnimationFrame(sprite));
+	
 	auto v = getVertices();
 
 	//Substitute the position to a new one
-	v[0].position = p0;
-	v[1].position = p1;
-	v[2].position = p2;
-	v[3].position = p3;
+	v[0].position = p1;
+	v[1].position = p0;
+	v[2].position = p3;
+	v[3].position = p2;
 
 	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 }
+

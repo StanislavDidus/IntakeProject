@@ -11,20 +11,17 @@ Particle::~Particle()
 
 void Particle::update(float deltaTime)
 {
-	updateAnimations(deltaTime);
+	animator->update(deltaTime);
 
 	lastTime -= deltaTime;
 
 	if (lastTime <= 0.f) destroy = true;
 }
 
-void Particle::updateAnimations(float deltaTime)
-{
-	animator->update(deltaTime);
-}
-
 void Particle::render(Tmpl8::Surface& screen)
 {
+	sprite->SetFrame(animator->getAnimationFrame(sprite));
+	
 	Tmpl8::vec2i posi = { static_cast<int>(position.x), static_cast<int>(position.y) };
 	Tmpl8::vec2i sizei = { static_cast<int>(size.x), static_cast<int>(size.y) };
 		

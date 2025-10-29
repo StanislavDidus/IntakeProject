@@ -38,6 +38,7 @@ public:
 	);
 
 	void update(float deltaTime) override;
+	void render(Tmpl8::Surface& screen) override;
 
 	void onCollisionEnter(std::shared_ptr<Object> object) override;
 

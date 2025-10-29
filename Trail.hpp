@@ -12,6 +12,10 @@ public:
 
 	std::shared_ptr<Object> asteroid;
 private:
+	void initAnimations();
+
+	std::unique_ptr<Animator> animator;
+
 	Tmpl8::vec2 p0{};
 	Tmpl8::vec2 p1{};
 	Tmpl8::vec2 p2{};

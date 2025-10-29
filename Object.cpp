@@ -260,10 +260,12 @@ std::vector<Vertex> Object::getVertices(std::shared_ptr<Tmpl8::Sprite> sprite, c
 	float h = static_cast<float>(sprite->GetHeight());
 
 	
-	verticies.emplace_back(getVertexAtPos(UP, LEFT, pos), Tmpl8::vec2{ 0.f, 0.f });
+	
 	verticies.emplace_back(getVertexAtPos(UP, RIGHT, pos), Tmpl8::vec2{ w, 0.f });
-	verticies.emplace_back(getVertexAtPos(DOWN, RIGHT, pos), Tmpl8::vec2{ w, h });
+	verticies.emplace_back(getVertexAtPos(UP, LEFT, pos), Tmpl8::vec2{ 0.f, 0.f });
 	verticies.emplace_back(getVertexAtPos(DOWN, LEFT, pos), Tmpl8::vec2{ 0.f, h });
+	verticies.emplace_back(getVertexAtPos(DOWN, RIGHT, pos), Tmpl8::vec2{ w, h });
+	
 	
 	
 

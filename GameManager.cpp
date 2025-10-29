@@ -88,10 +88,13 @@ void GameManager::update(float deltaTime)
     // -- Upgrade Spawner -- //
     upgradeSpawnTimer -= deltaTime;
 
-    if (isUpgradeUsed && !player->isUpgraded())
+    if (player)
     {
-        isUpgradeUsed = false;
-        upgradeSpawnTimer = upgradeSpawnTime;
+        if (isUpgradeUsed && !player->isUpgraded())
+        {
+            isUpgradeUsed = false;
+            upgradeSpawnTimer = upgradeSpawnTime;
+        }
     }
 
     if (upgradeSpawnTimer <= 0.f && !isUpgradeOnMap && !isUpgradeUsed)
@@ -130,13 +133,7 @@ void GameManager::update(float deltaTime)
 
 
     // -- Update all gameObjects -- //
-    updatePlayer(deltaTime);
     updateObjects(deltaTime);
-}
-
-void GameManager::updatePlayer(float deltaTime)
-{
-    player->update(deltaTime);
 }
 
 void GameManager::updateObjects(float deltaTime)
@@ -234,6 +231,10 @@ void GameManager::updateObjects(float deltaTime)
         par->update(deltaTime);
     }
 
+    //Update players
+    if(player)
+        player->update(deltaTime);
+
     //Delete particles
     for (auto it = particles.begin(); it != particles.end();)
     {
@@ -263,8 +264,15 @@ void GameManager::updateObjects(float deltaTime)
     }
 
     //Restart game when player dies 
-    if (player->destroy)
+    if (player && player->destroy)
     {
+        soundMap["shipDestroyed"].replay();
+
+        auto par = std::make_shared<Particle>(spriteMap["explosion"], player->getPosition(), player->getSize(), 1.2f);
+        particles.push_back(par);
+
+        player = nullptr;
+
         timerManager->addTimer(2.f, [this]() {EventBus::Get().push<EventType::GAMEOVER>(); });
     }
 }
@@ -281,7 +289,8 @@ void GameManager::render(Tmpl8::Surface& screen)
         par->render(screen);
     }
 
-    player->render(screen);
+    if(player)
+        player->render(screen);
 
 }
 
@@ -297,15 +306,29 @@ std::shared_ptr<Player> GameManager::getPlayer() const
 
 std::vector<std::shared_ptr<Object>> GameManager::getObjects() const
 {
-   auto& bullets = player->getBullets();
-
-    size_t vectorSize = 1 + objects.size() + bullets.size();
     std::vector<std::shared_ptr<Object>> vec;
-    vec.reserve(vectorSize);
 
-    vec.push_back(player);
-    vec.insert(vec.end(), objects.begin(), objects.end());
-    vec.insert(vec.end(), bullets.begin(), bullets.end());
+    size_t vectorSize = objects.size();
+
+    if (player)
+    {
+        auto& bullets = player->getBullets();
+
+        vectorSize += 1 + bullets.size();
+
+        vec.reserve(vectorSize);
+
+        vec.push_back(player);
+
+        vec.insert(vec.end(), objects.begin(), objects.end());
+        vec.insert(vec.end(), bullets.begin(), bullets.end());
+    }
+    else
+    {
+        vec.reserve(vectorSize);
+
+        vec.insert(vec.end(), objects.begin(), objects.end());
+    }
 
     return vec;
 }

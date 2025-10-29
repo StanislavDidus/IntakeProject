@@ -67,8 +67,20 @@ public:
 	void PrintScaled(const char* a_String, int x1, int y1, int scaleX, int scaleY, Pixel color);
 	void Clear( Pixel a_Color );
 	void Line( float x1, float y1, float x2, float y2, Pixel color );
+
 	template<bool BoundsCheck = true>
-	void Plot( int x, int y, Pixel c );
+	void Plot(int x, int y, Pixel c)
+	{
+		if constexpr (BoundsCheck) {
+			if ((x >= 0) && (y >= 0) && (x < m_Width) && (y < m_Height))
+				m_Buffer[x + y * m_Pitch] = c;
+		}
+		else
+		{
+			m_Buffer[x + y * m_Pitch] = c;
+		}
+	}
+
 	void LoadImage( const char* a_File );
 	void CopyTo( Surface* a_Dst, int a_X, int a_Y );
 	void BlendCopyTo( Surface* a_Dst, int a_X, int a_Y );

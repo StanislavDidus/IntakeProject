@@ -114,24 +114,24 @@ struct Edge
 		float u = w.x / area;
 		float v = w.y / area;
 
-		return { u, v, 1.f - (u + v)};
+		return { u, v, 1.f - u - v};
 	}
 
 	void stepX() 
 	{
-		w -= dy;
+		w += dy;
 	}
 
 	void stepY() 
 	{
-		w0 += dx;
+		w0 -= dx;
 		w = w0;
 	}
 
-	inline float edgeFunction(Tmpl8::vec2 point, Tmpl8::vec2 e, float deltaX, float deltaY) const
+	inline float edgeFunction(Tmpl8::vec2 p, Tmpl8::vec2 P, float dX, float dY) const
 	{
 		//Multiply by -1.f because in computer coordinates y coordinate is increasing downwards
-		return  ((point.x - e.x) * deltaY - (point.y - e.y) * deltaX) * -1.f;
+		return  (p.x - P.x) * dY - (p.y - P.y) * dX;
 	}
 	inline bool isLeftOrTopEdge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1) const
 	{

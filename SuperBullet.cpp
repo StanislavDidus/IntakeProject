@@ -25,7 +25,7 @@ void SuperBullet::initAnimator()
 	animator = std::make_unique<Animator>();
 	animator->addFrameAnimation(bulletSprite, 0.1f, 0, bulletSprite->Frames() - 1, []() {return true; });
 
-	animator->addFrameAnimation(trailSprite, 0.1f, 0, 3, [] {return true; });
+	
 }
 
 
@@ -60,6 +60,8 @@ void SuperBullet::update(float deltaTime)
 
 void SuperBullet::render(Tmpl8::Surface& screen)
 {	
+	bulletSprite->SetFrame(animator->getAnimationFrame(bulletSprite));
+	
 	resize(1.f / areaMultiplier);
 
 	center = { size.x / 2.f, size.y / 2.f };

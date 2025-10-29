@@ -19,8 +19,7 @@ enum class PlayerState
 	NONE,
 	IDLE, 
 	SHOOT,
-	SUPERSHOOT,
-	DAMAGE
+	SUPERSHOOT
 };
 
 class Player : public Object, public Listener

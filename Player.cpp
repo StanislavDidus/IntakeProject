@@ -109,7 +109,7 @@ void Player::render(Tmpl8::Surface& screen)
 		bullet->render(screen);
 	}
 
-	if (!animator->isAnimationActive("Explosion") && state != PlayerState::DAMAGE)
+	if (!animator->isAnimationActive("Explosion"))
 	{
 		// Draw engine
 		renderShipPart(spriteMap["shipEngine"], screen);
@@ -136,6 +136,8 @@ void Player::render(Tmpl8::Surface& screen)
 void Player::renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surface& screen)
 {
 	if (blink) return;
+
+	sprite->SetFrame(animator->getAnimationFrame(sprite));
 
 	int x = static_cast<int>(position.x);
 	int y = static_cast<int>(position.y);
@@ -215,8 +217,6 @@ void Player::onCollisionEnter(std::shared_ptr<Object> object)
 
 void Player::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 {
-	if (state == PlayerState::DAMAGE) return;
-	
 	//Stay
 	if (object->getTag() == "asteroid" && !isHit)
 	{
@@ -237,7 +237,9 @@ void Player::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 
 		if (currentHealth <= 0)
 		{
-			setState(PlayerState::DAMAGE);
+			//setState(PlayerState::DAMAGE);
+
+			destroy = true;
 		}
 	}
 }

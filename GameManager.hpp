@@ -38,7 +38,6 @@ public:
 private:
 	void initTimerManager();
 
-	void updatePlayer(float deltaTime);
 	void updateObjects(float deltaTime);
 
 	void spawnAsteroid();

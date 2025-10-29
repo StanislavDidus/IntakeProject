@@ -11,7 +11,6 @@ public:
 	virtual ~Particle();
 
 	void update(float deltaTime);
-	void updateAnimations(float deltaTime);
 	void render(Tmpl8::Surface& screen);
 
 	bool destroy = false;
