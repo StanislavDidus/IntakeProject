@@ -131,7 +131,7 @@ void Player::renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surfac
 {
 	if (blink) return;
 
-	sprite->SetFrame(animator->getAnimationFrame(sprite));
+	animator->setAnimationFrame(sprite);
 
 	int x = static_cast<int>(position.x);
 	int y = static_cast<int>(position.y);

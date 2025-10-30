@@ -33,7 +33,8 @@ namespace Tmpl8
 		switch (state)
 		{
 		case GameState::MENU:
-			
+			initCollisionManager();
+			initGameManager();
 			break;
 		case GameState::GAME:
 			// -- Init game -- //
@@ -42,6 +43,7 @@ namespace Tmpl8
 
 			initCollisionManager();
 			initGameManager();
+			gameManager->initPlayer();
 			
 
 			gameTimer = 0.f;
@@ -57,8 +59,8 @@ namespace Tmpl8
 		switch (state)
 		{
 		case GameState::MENU:
-			
-
+			collisionManager = nullptr;
+			gameManager = nullptr;
 			break;
 		case GameState::GAME:
 		{//Add braces because case: does not have it own scope 
@@ -96,6 +98,8 @@ namespace Tmpl8
 
 	void Game::updateMenu(float deltaTime)
 	{
+		gameManager->update(deltaTime);
+		
 		buttons[0]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[1]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[2]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
@@ -142,11 +146,15 @@ namespace Tmpl8
 
 	void Game::renderMenu(Tmpl8::Surface& screen)
 	{
+		gameManager->render(screen);
+		
 		buttons[0]->render(screen);
 		buttons[1]->render(screen);
 		buttons[2]->render(screen);
 
 		spriteMap["logo"]->DrawScaled(175, 10, ScreenWidth - 350, 225, screen);
+
+		
 	}
 
 	void Game::renderGame(Tmpl8::Surface& screen)

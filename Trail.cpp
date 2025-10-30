@@ -46,7 +46,7 @@ void Trail::update(float deltaTime)
 
 void Trail::render(Tmpl8::Surface& screen)
 {
-	sprite->SetFrame(animator->getAnimationFrame(sprite));
+	animator->setAnimationFrame(sprite);
 	
 	auto v = getVertices();
 

@@ -139,16 +139,12 @@ void Animator::stopAnimation(const std::string& name)
 	}
 }
 
-int Animator::getAnimationFrame(std::shared_ptr<Tmpl8::Sprite> sprite)
+void Animator::setAnimationFrame(std::shared_ptr<Tmpl8::Sprite> sprite)
 {
 	auto it = spriteAnimationFrames.find(sprite);
 	if (it != spriteAnimationFrames.end())
 	{
-		return spriteAnimationFrames[sprite];
-	}
-	else
-	{
-		return 0;
+		sprite->SetFrame(spriteAnimationFrames[sprite]);
 	}
 }
 

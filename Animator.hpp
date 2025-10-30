@@ -67,7 +67,7 @@ public:
 	void stopAnimation(const std::string& name);
 
 	//Get animation frame based on a sprite
-	int getAnimationFrame(std::shared_ptr<Tmpl8::Sprite> sprite); 
+	void setAnimationFrame(std::shared_ptr<Tmpl8::Sprite> sprite); 
 
 	bool isAnimationActive(const std::string& name);
 

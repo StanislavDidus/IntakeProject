@@ -188,6 +188,8 @@ namespace Tmpl8
 
 	void Game::update(float deltaTime)
 	{
+		animator->update(deltaTime);
+		
 		switch (currentState)
 		{
 		case GameState::MENU:
@@ -216,7 +218,7 @@ namespace Tmpl8
 	{
 		screen.Clear(0);
 
-		spriteMap["space"]->SetFrame(animator->getAnimationFrame(spriteMap["space"]));
+		animator->setAnimationFrame(spriteMap["space"]);
 
 		spriteMap["space"]->DrawScaled(0, 0, ScreenWidth - 1, ScreenHeight - 1, screen);
 

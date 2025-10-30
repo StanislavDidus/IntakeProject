@@ -34,19 +34,6 @@ static Tmpl8::vec2 generateRandomVec2(const Tmpl8::vec2& min = { 0.f, 0.f }, con
 GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap) :
     collisionManager(collisionManager), spriteMap(spriteMap), soundMap(soundMap)
 {
-    player = std::make_shared<Player>
-        (
-            spriteMap,
-            soundMap,
-            Tmpl8::vec2{ static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f, static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f },
-            Tmpl8::vec2{ 96.f, 96.f }
-        );
-
-    player->setMaxSpeed(150.f);
-    player->setAcceleration({ 550.f, 550.f });
-    player->setDirection({ 0.f, -1.f });
-    player->setTag("player");
-
     //Init asteroid frame sprites
     for (int i = 0; i < 3; i++)
     {
@@ -77,6 +64,22 @@ GameManager::~GameManager()
 #ifdef _DEBUG
     EventBus::Get().unsubscribe<EventType::KILL_ALL>(this);
 #endif
+}
+
+void GameManager::initPlayer()
+{
+    player = std::make_shared<Player>
+        (
+            spriteMap,
+            soundMap,
+            Tmpl8::vec2{ static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f, static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f },
+            Tmpl8::vec2{ 96.f, 96.f }
+        );
+
+    player->setMaxSpeed(150.f);
+    player->setAcceleration({ 550.f, 550.f });
+    player->setDirection({ 0.f, -1.f });
+    player->setTag("player");
 }
 
 void GameManager::update(float deltaTime)
@@ -149,7 +152,7 @@ void GameManager::updateObjects(float deltaTime)
                     const auto& size = asteroid->getSize();
                     const auto& direction = asteroid->getDirection();
 
-                    int newAsteroidsNumber = 0;
+                    int newAsteroidsNumber;
 
                     //Size of an asteroid is in range of 64 to 256
 
@@ -170,7 +173,7 @@ void GameManager::updateObjects(float deltaTime)
                         Tmpl8::vec2 newDirection = randomTarget - newPosition;
                         newDirection.normalize();
 
-                        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, 4 - newAsteroidsNumber);
+                        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, newAsteroidsNumber);
 
                         ast->setMaxSpeed(asteroidMaxSpeed * 0.9f);
                         ast->setAcceleration({ asteroidAcceleration * 0.9f * newDirection.x, asteroidAcceleration * 0.9f * newDirection.y });
@@ -183,6 +186,8 @@ void GameManager::updateObjects(float deltaTime)
                     //Spawn explosion particle
 
                     auto par = std::make_shared<Particle>(spriteMap["explosion1"], asteroid->getPosition(), asteroid->getSize(), 1.f);
+
+                    par->resize(1.5f);
 
                     particles.push_back(par);
 
@@ -328,8 +333,8 @@ void GameManager::spawnAsteroid()
 
     std::bernoulli_distribution dist(0.5); // 50% true / 50% false.
 
-    float x = static_cast<float>(dist(rng) ? -width : ScreenWidth);
-    float y = static_cast<float>(dist(rng) ? -height : ScreenHeight);
+    float x = static_cast<float>(dist(rng) ? -width : ScreenWidth - 1);
+    float y = static_cast<float>(dist(rng) ? -height : ScreenHeight - 1);
 
    // Tmpl8::vec2 randomTarget = { static_cast<float>(randomRange(100, ScreenWidth - 100)), static_cast<float>(randomRange(50, ScreenHeight - 50)) };
     Tmpl8::vec2 randomTarget = { generateRandomVec2({100.f, 50.f}, {ScreenWidth - 100.f, ScreenHeight - 50.f}) };

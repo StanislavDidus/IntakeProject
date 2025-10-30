@@ -29,6 +29,8 @@ public:
 	void update(float deltaTime);
 	void render(Tmpl8::Surface& screen );
 
+	void initPlayer();
+
 	//Getters
 	int getNumberOfSheep() const;
 

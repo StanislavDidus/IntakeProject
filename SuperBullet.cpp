@@ -60,7 +60,7 @@ void SuperBullet::update(float deltaTime)
 
 void SuperBullet::render(Tmpl8::Surface& screen)
 {	
-	bulletSprite->SetFrame(animator->getAnimationFrame(bulletSprite));
+	animator->setAnimationFrame(bulletSprite);
 	
 	resize(1.f / areaMultiplier);
 

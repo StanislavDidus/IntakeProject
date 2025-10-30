@@ -25,7 +25,7 @@ void Bullet::update(float deltaTime)
 }
 void Bullet::render(Tmpl8::Surface& screen)
 {
-	sprite->SetFrame(animator->getAnimationFrame(sprite));
+	animator->setAnimationFrame(sprite);
 
 	auto v = getVertices();
 	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
