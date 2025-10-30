@@ -39,7 +39,7 @@ void Player::initAnimator()
 	animator->addFrameCycledAnimation(spriteMap["weapon1"], shootTime / 2.f, 7, 11, "ChargeShoot", true);
 	
 	//Destroy animation
-	animator->addFrameCycledAnimation(spriteMap["explosion"], explosionAnimationSpeed, 0, 11, "Explosion", true);
+	//animator->addFrameCycledAnimation(spriteMap["explosion"], explosionAnimationSpeed, 0, 11, "Explosion", true);
 
 	//animator->addFrameAnimation(sprite, 1.f, 0, 3, [this]() {return true; });
 }
@@ -109,27 +109,21 @@ void Player::render(Tmpl8::Surface& screen)
 		bullet->render(screen);
 	}
 
-	if (!animator->isAnimationActive("Explosion"))
-	{
-		// Draw engine
-		renderShipPart(spriteMap["shipEngine"], screen);
 
-		// Draw weapon
-		if (!upgraded)
-			renderShipPart(spriteMap["weapon"], screen);
-		else
-			renderShipPart(spriteMap["weapon1"], screen);
+	// Draw engine
+	renderShipPart(spriteMap["shipEngine"], screen);
 
-		//// Draw engine effect
-		renderShipPart(spriteMap["engineEffect"], screen);
+	// Draw weapon
+	if (!upgraded)
+		renderShipPart(spriteMap["weapon"], screen);
+	else
+		renderShipPart(spriteMap["weapon1"], screen);
 
-		// Draw main ship
-		renderShipPart(sprite, screen);
-	}
-	else if(animator->isAnimationActive("Explosion"))	
-	{
-		renderShipPart(spriteMap["explosion"], screen);
-	}
+	//// Draw engine effect
+	renderShipPart(spriteMap["engineEffect"], screen);
+
+	// Draw main ship
+	renderShipPart(sprite, screen);
 }
 
 

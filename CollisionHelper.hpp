@@ -130,7 +130,6 @@ struct Edge
 
 	inline float edgeFunction(Tmpl8::vec2 p, Tmpl8::vec2 P, float dX, float dY) const
 	{
-		//Multiply by -1.f because in computer coordinates y coordinate is increasing downwards
 		return  (p.x - P.x) * dY - (p.y - P.y) * dX;
 	}
 	inline bool isLeftOrTopEdge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1) const

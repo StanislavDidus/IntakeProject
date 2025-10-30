@@ -15,12 +15,12 @@ public:
 
 	virtual int play(float deltaTime) = 0;
 
-	std::shared_ptr<Tmpl8::Sprite> getSprite() const
+	std::weak_ptr<Tmpl8::Sprite> getSprite() const
 	{
 		return sprite;
 	}
 protected:
-	std::shared_ptr<Tmpl8::Sprite> sprite;
+	std::weak_ptr<Tmpl8::Sprite> sprite;
 };
 
 class FrameAnimation : public Animation
@@ -44,7 +44,7 @@ public:
 	FrameCycledAnimation(std::shared_ptr<Tmpl8::Sprite> sprite, float animationSpeed, int firstFrame, int lastFrame, bool returnToBaseFrame);
 
 	int play(float deltaTime) override;
-	void stop();
+	int stop();
 	void setBaseFrame();
 
 	bool active;

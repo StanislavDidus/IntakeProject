@@ -62,7 +62,7 @@ void Player::exitState(PlayerState state)
 
 		chargeTimer = std::max(chargeTimer, 0.f);
 		float bulletForce = -300.f * chargeTimer + 400.f;
-		//std::cout << bulletForce << "\n";
+		//std::cout << bulletForce << "\n";	
 
 		float bulletWidth = size.x / 2.f, bulletHeight = size.y / 2.f;
 		float areaMultiplier = 6.f;
@@ -89,6 +89,8 @@ void Player::exitState(PlayerState state)
 		velocity += -Tmpl8::vec2{ direction.x, direction.y } * bulletForce;
 
 		isChargedStarted = false;
+
+		EventBus::Get().push<EventType::PLAYER_USED_UPGRADE>();
 
 		break;
 	}

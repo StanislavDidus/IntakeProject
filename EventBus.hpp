@@ -10,7 +10,7 @@ enum class EventType
 {
 	GAMEOVER,
 	RESTART,
-	PLAYER_PICKED_UP_UPGRADE
+	PLAYER_USED_UPGRADE,
 
 	//Debug
 	KILL_ALL

@@ -57,14 +57,23 @@ GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, con
 
     initTimerManager();
 
+    EventBus::Get().subscribe<EventType::PLAYER_USED_UPGRADE>(this, [this] 
+        {
+            timerManager->addTimer(upgradeSpawnTime, [this] {spawnUpgrade(); });
+        });
+
 #ifdef _DEBUG
     EventBus::Get().subscribe<EventType::KILL_ALL>(this, [this] {objects.clear(); });
 #endif
 
+    //Spawn first upgrade
+    timerManager->addTimer(upgradeSpawnTime, [this] {spawnUpgrade(); });
 }
 
 GameManager::~GameManager()
 {
+    EventBus::Get().unsubscribe<EventType::PLAYER_USED_UPGRADE>(this);
+
 #ifdef _DEBUG
     EventBus::Get().unsubscribe<EventType::KILL_ALL>(this);
 #endif
@@ -83,26 +92,6 @@ void GameManager::update(float deltaTime)
         spawnTimer = 0.f;
 
         spawnAsteroid();
-    }
-
-    // -- Upgrade Spawner -- //
-    upgradeSpawnTimer -= deltaTime;
-
-    if (player)
-    {
-        if (isUpgradeUsed && !player->isUpgraded())
-        {
-            isUpgradeUsed = false;
-            upgradeSpawnTimer = upgradeSpawnTime;
-        }
-    }
-
-    if (upgradeSpawnTimer <= 0.f && !isUpgradeOnMap && !isUpgradeUsed)
-    {
-        spawnUpgrade();
-        upgradeSpawnTimer = upgradeSpawnTime;
-        isUpgradeOnMap = true;
-
     }
 
     //Spawn hit markers when bullet hits an asteroid
@@ -200,12 +189,6 @@ void GameManager::updateObjects(float deltaTime)
                     
                   
                 }
-            }
-           
-            else if (obj->getTag() == "upgrade")
-            {
-                isUpgradeOnMap = false;
-                isUpgradeUsed = true;
             }
 
             it = objects.erase(it);

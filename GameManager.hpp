@@ -74,9 +74,6 @@ private:
 	//float particleSpawnTime = 0.3f;
 
 	float upgradeSpawnTime = 5.f;
-	float upgradeSpawnTimer = 5.f;
-	bool isUpgradeOnMap = false;
-	bool isUpgradeUsed = false; 
 
 	int sheepCounter = 0;
 };
