@@ -9,7 +9,6 @@
 #include "Object.hpp"
 #include "Animator.hpp"
 #include "Bullet.hpp"
-#include "SuperBullet.hpp"
 #include "TimerManager.hpp"
 #include "Audio/Device.hpp"
 #include "EventBus.hpp"

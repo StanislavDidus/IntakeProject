@@ -1,38 +1,12 @@
 #include "GameManager.hpp"
 #include "Upgrade.hpp"
-#include "EventBus.hpp"
 #include "game.hpp"
 #include <sstream>
 
-#include <random>
+#include "Random.hpp"
 
-namespace
-{
-    std::random_device rd; 
-    std::minstd_rand rng(rd());
-}
-
-static int randomRange(int min, int max)
-{
-    std::uniform_int_distribution dist(min, max);
-    return dist(rng);
-}
-
-static float randomRange(float min, float max)
-{
-    return static_cast<float>(randomRange(static_cast<int>(min), static_cast<int>(max)));
-}
-
-static Tmpl8::vec2 generateRandomVec2(const Tmpl8::vec2& min = { 0.f, 0.f }, const Tmpl8::vec2& max = {0.f, 0.f})
-{
-    float x = randomRange(min.x, max.x);
-    float y = randomRange(min.y, max.y);
-
-    return Tmpl8::vec2{ x,y };
-}
-
-GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap) :
-    collisionManager(collisionManager), spriteMap(spriteMap), soundMap(soundMap)
+GameManager::GameManager(const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap) :
+     spriteMap(spriteMap), soundMap(soundMap)
 {
     //Init asteroid frame sprites
     for (int i = 0; i < 3; i++)
@@ -50,7 +24,10 @@ GameManager::GameManager(std::shared_ptr<CollisionManager> collisionManager, con
         });
 
 #ifdef _DEBUG
-    EventBus::Get().subscribe<EventType::KILL_ALL>(this, [this] {objects.clear(); });
+    EventBus::Get().subscribe<EventType::KILL_ALL>(this, [this] 
+        {
+            objects.clear();
+        });
 #endif
 
     //Spawn first upgrade
@@ -98,7 +75,7 @@ void GameManager::update(float deltaTime)
     }
 
     //Spawn hit markers when bullet hits an asteroid
-    auto& collisions = collisionManager->getCollisions();
+    /*auto& collisions = collisionManager->getCollisions();
     for (auto& [col1, col2] : collisions)
     {
         std::shared_ptr<Object> bullet;
@@ -120,6 +97,20 @@ void GameManager::update(float deltaTime)
             auto par = std::make_shared<Particle>(spriteMap["hitEffect"], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
 
             particles.push_back(par);
+        }
+    }*/
+    if (player)
+    {
+        const auto& bullets = player->getBullets();
+
+        for (const auto& bullet : bullets)
+        {
+            if (bullet->destroy)
+            {
+                auto par = std::make_shared<Particle>(spriteMap["hitEffect"], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
+
+                particles.push_back(par);
+            }
         }
     }
 
@@ -163,12 +154,12 @@ void GameManager::updateObjects(float deltaTime)
 
                     for (int i = 0; i < newAsteroidsNumber; i++)
                     {
-                        auto& newSprite = asteroidSprites[randomRange(0, 2)];
+                        auto& newSprite = asteroidSprites[Random::randomRange(0, 2)];
                         
-                        Tmpl8::vec2 newPosition = generateRandomVec2(position, position + size);
-                        Tmpl8::vec2 newSize = { randomRange(32.f, size.x / 1.5f) };
+                        Tmpl8::vec2 newPosition = Random::randomVector2(position, position + size);
+                        Tmpl8::vec2 newSize = { Random::randomRange(32.f, size.x / 1.5f) };
 
-                        Tmpl8::vec2 randomTarget = { generateRandomVec2({0.f, 0.f}, {ScreenWidth, ScreenHeight}) };
+                        Tmpl8::vec2 randomTarget = { Random::randomVector2({0.f, 0.f}, {ScreenWidth, ScreenHeight}) };
 
                         Tmpl8::vec2 newDirection = randomTarget - newPosition;
                         newDirection.normalize();
@@ -328,16 +319,14 @@ void GameManager::initTimerManager()
 
 void GameManager::spawnAsteroid()
 {
-    int width = randomRange(64, 256);
+    int width = Random::randomRange(64, 256);
     int height = width;
 
-    std::bernoulli_distribution dist(0.5); // 50% true / 50% false.
-
-    float x = static_cast<float>(dist(rng) ? -width : ScreenWidth - 1);
-    float y = static_cast<float>(dist(rng) ? -height : ScreenHeight - 1);
+    float x = static_cast<float>(Random::ff() ? -width : ScreenWidth - 1);
+    float y = static_cast<float>(Random::ff() ? -height : ScreenHeight - 1);
 
    // Tmpl8::vec2 randomTarget = { static_cast<float>(randomRange(100, ScreenWidth - 100)), static_cast<float>(randomRange(50, ScreenHeight - 50)) };
-    Tmpl8::vec2 randomTarget = { generateRandomVec2({100.f, 50.f}, {ScreenWidth - 100.f, ScreenHeight - 50.f}) };
+    Tmpl8::vec2 randomTarget = { Random::randomVector2({100.f, 50.f}, {ScreenWidth - 100.f, ScreenHeight - 50.f}) };
     Tmpl8::vec2 direction = randomTarget - Tmpl8::vec2{ x , y };
     direction.normalize();
 
@@ -349,7 +338,7 @@ void GameManager::spawnAsteroid()
 
     auto asteroid = std::make_shared<Asteroid>
         (
-            asteroidSprites[randomRange(0, 2)],
+            asteroidSprites[Random::randomRange(0, 2)],
             Tmpl8::vec2{x ,y},
             Tmpl8::vec2{static_cast<float>(width), static_cast<float>(height)},
             health
@@ -367,8 +356,8 @@ void GameManager::spawnUpgrade()
 {
     int w = 70, h = 70;
 
-    float x = static_cast<float>(randomRange(0,ScreenWidth - w));
-    float y = static_cast<float>(randomRange(100, ScreenHeight - h));
+    float x = static_cast<float>(Random::randomRange(0,ScreenWidth - w));
+    float y = static_cast<float>(Random::randomRange(100, ScreenHeight - h));
 
     auto upgrd = std::make_shared<Upgrade>(
         spriteMap["upgrade"],
@@ -376,7 +365,7 @@ void GameManager::spawnUpgrade()
         Tmpl8::vec2{static_cast<float>(w), static_cast<float>(h)}
     );
 
-    upgrd->setAngle(static_cast<float>(randomRange(0, 360)));
+    upgrd->setAngle(static_cast<float>(Random::randomRange(0, 360)));
     upgrd->setTag("upgrade");
 
     objects.push_back(upgrd);

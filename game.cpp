@@ -4,6 +4,8 @@
 #include <cassert>
 #include <sstream>
 #include <fstream>
+#include "Random.hpp"
+
 
 namespace Tmpl8
 {
@@ -46,6 +48,7 @@ namespace Tmpl8
 		spriteMap["trail"] = std::make_shared<Sprite>(new Surface("assets/bulletEffect.png"), 4);
 		//Object
 		spriteMap["sheep"] = std::make_shared<Sprite>(new Surface("assets/sheep.png"), 1);
+		spriteMap["asteroid"] = std::make_shared<Sprite>(new Surface("assets/asteroid.png"), 3);
 		spriteMap["space"] = std::make_shared<Sprite>(new Surface("assets/space.png"), 2);
 		spriteMap["upgrade"] = std::make_shared<Sprite>(new Surface("assets/upgrade.png"), 1);	
 		//UI
@@ -80,12 +83,12 @@ namespace Tmpl8
 		soundMap["buttonCover"] = Audio::Sound{ "assets/Sounds/buttonCover.mp3" };
 		soundMap["buttonUp"] = Audio::Sound{ "assets/Sounds/buttonUp.mp3" };
 
-		Audio::Device::setMasterVolume(0.1f);
+		Audio::Device::setMasterVolume(0.f);
 	}
 
 	void Game::initGameManager()
 	{
-		gameManager = std::make_shared<GameManager>(collisionManager, spriteMap, soundMap);
+		gameManager = std::make_shared<GameManager>(spriteMap, soundMap);
 	}
 
 	void Game::initCollisionManager()
@@ -266,6 +269,65 @@ namespace Tmpl8
 		else if (isKeyUp('k'))
 		{
 			EventBus::Get().push<EventType::KILL_ALL>();
+		}
+	}
+
+	void Game::spawnBgAsteroid()
+	{
+		int width = Random::randomRange(64, 256);
+		int height = width;
+
+		float x = static_cast<float>(Random::ff() ? -width : ScreenWidth - 1);
+		float y = static_cast<float>(Random::ff() ? -height : ScreenHeight - 1);
+
+		Tmpl8::vec2 randomTarget = { Random::randomVector2({100.f, 50.f}, {ScreenWidth - 100.f, ScreenHeight - 50.f}) };
+		Tmpl8::vec2 direction = randomTarget - Tmpl8::vec2{ x , y };
+		direction.normalize();
+
+		auto ast = std::make_shared<Object>
+			(
+				spriteMap["asteroid"],
+				Tmpl8::vec2{ x, y },
+				Tmpl8::vec2{ static_cast<float>(width), static_cast<float>(height) }
+			);
+
+		ast->setDirection(direction);
+		ast->setMaxSpeed(150.f);
+		ast->setAngle(Random::randomRange(0.f, 360.f));
+		ast->setAcceleration(Tmpl8::vec2{40.f * direction.x, 40.f * direction.y});
+
+		bgAsteroids.push_back(ast);
+	}
+
+	void Game::updateAsteroids(float deltaTime)
+	{
+		bgAsteroidsSpawnTimer -= deltaTime;
+		if (bgAsteroidsSpawnTimer <= 0.f)
+		{
+			spawnBgAsteroid();
+			bgAsteroidsSpawnTimer = bgAsteroidsSpawnTime;
+		}
+
+		for (auto it = bgAsteroids.begin(); it != bgAsteroids.end(); )
+		{
+			auto& ast = *it;
+
+			ast->move(deltaTime);
+			ast->update(deltaTime);
+			ast->setAngle(ast->getAngle() + 20.f * deltaTime);
+
+			auto pos = ast->getPosition();
+			auto size = ast->getSize();
+
+			if (pos.x + size.x < 0.f ||
+				pos.x >= ScreenWidth ||
+				pos.y + size.y < 0.f ||
+				pos.y >= ScreenHeight)
+			{
+				it = bgAsteroids.erase(it);
+			}
+			else
+				++it;
 		}
 	}
 

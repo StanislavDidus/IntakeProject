@@ -17,6 +17,8 @@
 #include <Audio/Device.hpp>
 #include "EventBus.hpp"
 
+#include <SDL.h>
+
 enum class GameState
 {
 	NONE, MENU, GAME, SCORE
@@ -49,11 +51,11 @@ public:
 	void Shutdown();
 	void Tick( float deltaTime );
 	void MouseWheelScrolled(int y) { if (currentState == GameState::SCORE) toScroll = static_cast<float>(y); }
-	void MouseUp(int button) { wasMouseUp = true; }
-	void MouseDown(int button) { wasMouseDown = true; }
+	void MouseUp(int button) { if (button == SDL_BUTTON_LEFT) wasMouseUp = true; }
+	void MouseDown(int button) { if( button == SDL_BUTTON_LEFT) wasMouseDown = true; }
 	void MouseMove(int x, int y) { mousePosition = { x, y }; }
-	void KeyUp(int key) { /*upButtons.insert(key); holdButtons.erase(key); */ if (key < 256) keys.reset(key); }
-	void KeyDown(int key) { /*if(!isKeyHold(key)) downButtons.insert(key);*/ if (key < 256) keys.set(key); }
+	void KeyUp(int key) { if (key < 256) keys.reset(key); }
+	void KeyDown(int key) { if (key < 256) keys.set(key); }
 
 	static bool isKeyDown(int key);
 	static bool isKeyHold(int key);
@@ -139,6 +141,16 @@ private:
 	void renderScore(Tmpl8::Surface& screen);
 
 	void DebugContol(float deltaTime);
+
+	//Spawn asteroids in the background
+
+	std::vector<std::shared_ptr<Object>> bgAsteroids;
+
+	void spawnBgAsteroid();
+	void updateAsteroids(float deltaTime);
+
+	float bgAsteroidsSpawnTime = 5.f;
+	float bgAsteroidsSpawnTimer = 5.f;
 };
 
 }; // namespace Tmpl8

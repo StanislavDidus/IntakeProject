@@ -58,6 +58,9 @@
     <ClCompile Include="Particle.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">
@@ -125,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="Particle.hpp">
       <Filter>include\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.hpp">
+      <Filter>include\Algorithms</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

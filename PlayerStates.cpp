@@ -1,6 +1,6 @@
 #include "Player.hpp"
 #include "game.hpp"
-#include <Audio/Device.hpp>
+#include "SuperBullet.hpp"
 
 void Player::setState(PlayerState state)
 {

@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <iostream>
 #include "CollisionHelper.hpp"
-#include "Audio/Device.hpp"
 
 Player::Player
 (
@@ -254,6 +253,18 @@ bool Player::isUpgraded() const
 
 void Player::updateBullets(float deltaTime)
 {
+	for (auto it = bullets.begin(); it != bullets.end();)
+	{
+		auto& bullet = *it;
+
+		if (bullet->destroy)
+		{
+			it = bullets.erase(it);
+		}
+		else
+			++it;
+	}
+
 	for (const auto& bullet : bullets)
 	{
 		bullet->update(deltaTime);
@@ -271,17 +282,5 @@ void Player::updateBullets(float deltaTime)
 		{
 			bullet->destroy = true;
 		}
-	}
-
-	for (auto it = bullets.begin(); it != bullets.end();)
-	{
-		auto& bullet = *it;
-
-		if (bullet->destroy)
-		{
-			it = bullets.erase(it);
-		}
-		else
-			++it;
 	}
 }

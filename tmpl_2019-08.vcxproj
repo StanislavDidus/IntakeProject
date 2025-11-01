@@ -239,6 +239,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerStates.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Sheep.cpp" />
     <ClCompile Include="SuperBullet.cpp" />
     <ClCompile Include="surface.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="Object.hpp" />
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Random.hpp" />
     <ClInclude Include="Sheep.hpp" />
     <ClInclude Include="SuperBullet.hpp" />
     <ClInclude Include="surface.h" />

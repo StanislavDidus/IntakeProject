@@ -1,18 +1,6 @@
 #include "game.hpp"
-#include <random>
+#include "Random.hpp"
 #include <fstream>
-
-namespace
-{
-	std::random_device rd;
-	std::minstd_rand rng(rd());
-}
-
-static int randomRange(int min, int max)
-{
-	std::uniform_int_distribution dist(min, max);
-	return dist(rng);
-}
 
 namespace Tmpl8
 {
@@ -33,8 +21,7 @@ namespace Tmpl8
 		switch (state)
 		{
 		case GameState::MENU:
-			initCollisionManager();
-			initGameManager();
+			//initGameManager();
 			break;
 		case GameState::GAME:
 			// -- Init game -- //
@@ -59,14 +46,13 @@ namespace Tmpl8
 		switch (state)
 		{
 		case GameState::MENU:
-			collisionManager = nullptr;
-			gameManager = nullptr;
+			//gameManager = nullptr;
 			break;
 		case GameState::GAME:
 		{//Add braces because case: does not have it own scope 
 			// -- Save data on game finish -- //
 
-			runData.spriteIndex = randomRange(0, 19);
+			runData.spriteIndex = Random::randomRange(0, 19);
 
 			std::time_t t = std::time(0);
 			std::tm* now = std::localtime(&t);
@@ -98,7 +84,9 @@ namespace Tmpl8
 
 	void Game::updateMenu(float deltaTime)
 	{
-		gameManager->update(deltaTime);
+		updateAsteroids(deltaTime);
+
+		//gameManager->update(deltaTime);
 		
 		buttons[0]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[1]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
@@ -118,6 +106,8 @@ namespace Tmpl8
 
 	void Game::updateScore(float deltaTime)
 	{
+		updateAsteroids(deltaTime);
+
 		buttons[3]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[4]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 
@@ -146,7 +136,12 @@ namespace Tmpl8
 
 	void Game::renderMenu(Tmpl8::Surface& screen)
 	{
-		gameManager->render(screen);
+		for (auto& ast : bgAsteroids)
+		{
+			ast->render(screen);
+		}
+		
+		//gameManager->render(screen);
 		
 		buttons[0]->render(screen);
 		buttons[1]->render(screen);
@@ -224,6 +219,11 @@ namespace Tmpl8
 
 	void Game::renderScore(Tmpl8::Surface& screen)
 	{
+		for (auto& ast : bgAsteroids)
+		{
+			ast->render(screen);
+		}
+		
 		buttons[3]->render(screen);
 		buttons[4]->render(screen);
 
