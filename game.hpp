@@ -50,7 +50,7 @@ public:
 	void Restart();
 	void Shutdown();
 	void Tick( float deltaTime );
-	void MouseWheelScrolled(int y) { if (currentState == GameState::SCORE) toScroll = static_cast<float>(y); }
+	void MouseWheelScrolled(int y) { if (currentState == GameState::SCORE) toScroll += static_cast<float>(y); }
 	void MouseUp(int button) { if (button == SDL_BUTTON_LEFT) wasMouseUp = true; }
 	void MouseDown(int button) { if( button == SDL_BUTTON_LEFT) wasMouseDown = true; }
 	void MouseMove(int x, int y) { mousePosition = { x, y }; }
@@ -109,9 +109,24 @@ private:
 	//UI player data
 	int playerHealth = 0;
 	bool isPlayerUpgraded = false;
-	
 
 	float gameTimer = 0.f;
+
+	// -- Background asteroids -- //
+	//Asterpoid and frame
+	std::unordered_map<std::shared_ptr<Object>, int> bgAsteroids;
+
+	void initBgAsteroids();
+	void spawnBgAsteroid();
+	void createBgAsteroid(const vec2& position, const vec2& size);
+	void updateAsteroids(float deltaTime);
+
+	float bgAsteroidsSpawnTime = 5.f;
+	float bgAsteroidsSpawnTimer = 5.f;
+	float bgAsteroidMaxSpeed = 100.f;
+	float bgAsteroidAcceleration = 35.f;
+	float bgAsteroidRotation = 15.f;
+	// -- -- //
 
 	void loadData();
 	void saveData();
@@ -141,16 +156,6 @@ private:
 	void renderScore(Tmpl8::Surface& screen);
 
 	void DebugContol(float deltaTime);
-
-	//Spawn asteroids in the background
-
-	std::vector<std::shared_ptr<Object>> bgAsteroids;
-
-	void spawnBgAsteroid();
-	void updateAsteroids(float deltaTime);
-
-	float bgAsteroidsSpawnTime = 5.f;
-	float bgAsteroidsSpawnTimer = 5.f;
 };
 
 }; // namespace Tmpl8

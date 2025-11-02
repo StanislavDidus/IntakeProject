@@ -40,6 +40,7 @@ public:
 	void setDirection(Tmpl8::vec2 direction);
 	void setAngle(float angle);
 	void setTag(const std::string& tag);
+	void setFrame(int frame);
 
 	//Getters
 	std::shared_ptr<Tmpl8::Sprite> getSprite() const;

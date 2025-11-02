@@ -22,6 +22,7 @@ namespace Tmpl8
 		{
 		case GameState::MENU:
 			//initGameManager();
+			initBgAsteroids();
 			break;
 		case GameState::GAME:
 			// -- Init game -- //
@@ -136,9 +137,10 @@ namespace Tmpl8
 
 	void Game::renderMenu(Tmpl8::Surface& screen)
 	{
-		for (auto& ast : bgAsteroids)
+		for (auto& [asteroid, frame] : bgAsteroids)
 		{
-			ast->render(screen);
+			asteroid->setFrame(frame);
+			asteroid->render(screen);
 		}
 		
 		//gameManager->render(screen);
@@ -219,9 +221,10 @@ namespace Tmpl8
 
 	void Game::renderScore(Tmpl8::Surface& screen)
 	{
-		for (auto& ast : bgAsteroids)
+		for (auto& [asteroid, frame] : bgAsteroids)
 		{
-			ast->render(screen);
+			asteroid->setFrame(frame);
+			asteroid->render(screen);
 		}
 		
 		buttons[3]->render(screen);

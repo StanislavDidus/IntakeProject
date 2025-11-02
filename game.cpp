@@ -272,6 +272,21 @@ namespace Tmpl8
 		}
 	}
 
+	void Game::initBgAsteroids()
+	{
+		int bgAsteroidNumber = 2;
+
+		for (int i = 0; i < bgAsteroidNumber; i++)
+		{
+			int width = Random::randomRange(64, 256);
+			int height = width;
+
+			vec2 position = Random::randomVector2(vec2{0.f}, vec2{ScreenWidth, ScreenHeight});
+
+			createBgAsteroid(position, vec2{static_cast<float>(width), static_cast<float>(height)});
+		}
+	}
+
 	void Game::spawnBgAsteroid()
 	{
 		int width = Random::randomRange(64, 256);
@@ -280,23 +295,30 @@ namespace Tmpl8
 		float x = static_cast<float>(Random::ff() ? -width : ScreenWidth - 1);
 		float y = static_cast<float>(Random::ff() ? -height : ScreenHeight - 1);
 
+		createBgAsteroid(Tmpl8::vec2{ x, y }, Tmpl8::vec2{ static_cast<float>(width), static_cast<float>(height) });
+	}
+
+	void Game::createBgAsteroid(const vec2& position, const vec2& size)
+	{
 		Tmpl8::vec2 randomTarget = { Random::randomVector2({100.f, 50.f}, {ScreenWidth - 100.f, ScreenHeight - 50.f}) };
-		Tmpl8::vec2 direction = randomTarget - Tmpl8::vec2{ x , y };
+		Tmpl8::vec2 direction = randomTarget - position;
 		direction.normalize();
+		
+		int frame = Random::randomRange(0, 2);
 
 		auto ast = std::make_shared<Object>
 			(
 				spriteMap["asteroid"],
-				Tmpl8::vec2{ x, y },
-				Tmpl8::vec2{ static_cast<float>(width), static_cast<float>(height) }
+				position,
+				size
 			);
 
 		ast->setDirection(direction);
-		ast->setMaxSpeed(150.f);
+		ast->setMaxSpeed(bgAsteroidMaxSpeed);
 		ast->setAngle(Random::randomRange(0.f, 360.f));
-		ast->setAcceleration(Tmpl8::vec2{40.f * direction.x, 40.f * direction.y});
+		ast->setAcceleration(Tmpl8::vec2{ bgAsteroidAcceleration * direction.x, bgAsteroidAcceleration * direction.y });
 
-		bgAsteroids.push_back(ast);
+		bgAsteroids[ast] = frame;
 	}
 
 	void Game::updateAsteroids(float deltaTime)
@@ -310,11 +332,12 @@ namespace Tmpl8
 
 		for (auto it = bgAsteroids.begin(); it != bgAsteroids.end(); )
 		{
-			auto& ast = *it;
+			auto& ast = (*it).first;
 
 			ast->move(deltaTime);
 			ast->update(deltaTime);
-			ast->setAngle(ast->getAngle() + 20.f * deltaTime);
+
+			ast->setAngle(ast->getAngle() + bgAsteroidRotation * deltaTime);
 
 			auto pos = ast->getPosition();
 			auto size = ast->getSize();

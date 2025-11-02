@@ -8,14 +8,6 @@
 GameManager::GameManager(const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap) :
      spriteMap(spriteMap), soundMap(soundMap)
 {
-    //Init asteroid frame sprites
-    for (int i = 0; i < 3; i++)
-    {
-        auto sprite = std::make_shared<Tmpl8::Sprite>(new Tmpl8::Surface("assets/asteroid.png"), 3);
-        sprite->SetFrame(i);
-        asteroidSprites.push_back(sprite);
-    }
-
     initTimerManager();
 
     EventBus::Get().subscribe<EventType::PLAYER_USED_UPGRADE>(this, [this] 
@@ -154,7 +146,8 @@ void GameManager::updateObjects(float deltaTime)
 
                     for (int i = 0; i < newAsteroidsNumber; i++)
                     {
-                        auto& newSprite = asteroidSprites[Random::randomRange(0, 2)];
+                        auto& newSprite = spriteMap["asteroid"];
+                        int newIndex = Random::randomRange(0, 2);
                         
                         Tmpl8::vec2 newPosition = Random::randomVector2(position, position + size);
                         Tmpl8::vec2 newSize = { Random::randomRange(32.f, size.x / 1.5f) };
@@ -164,7 +157,7 @@ void GameManager::updateObjects(float deltaTime)
                         Tmpl8::vec2 newDirection = randomTarget - newPosition;
                         newDirection.normalize();
 
-                        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, newAsteroidsNumber);
+                        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, newAsteroidsNumber, newIndex);
 
                         ast->setMaxSpeed(asteroidMaxSpeed * 0.9f);
                         ast->setAcceleration({ asteroidAcceleration * 0.9f * newDirection.x, asteroidAcceleration * 0.9f * newDirection.y });
@@ -338,10 +331,11 @@ void GameManager::spawnAsteroid()
 
     auto asteroid = std::make_shared<Asteroid>
         (
-            asteroidSprites[Random::randomRange(0, 2)],
+            spriteMap["asteroid"],
             Tmpl8::vec2{x ,y},
             Tmpl8::vec2{static_cast<float>(width), static_cast<float>(height)},
-            health
+            health,
+            Random::randomRange(0,2)
         );
 
     asteroid->setMaxSpeed(asteroidMaxSpeed);

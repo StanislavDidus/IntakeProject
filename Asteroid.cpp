@@ -7,11 +7,11 @@
 Asteroid::Asteroid
 (
 	std::shared_ptr<Tmpl8::Sprite> sprite,
-	Tmpl8::vec2 position,
+	Tmpl8::vec2 position,	
 	Tmpl8::vec2 size,
-	float maxHealth
-) : Object(sprite, position, size), rotationSpeed(10.f), maxHealth(maxHealth), currentHealth(maxHealth), barWidth(75),
-	barHeight(5), divide(false), turnToSheep(false)
+	float maxHealth,
+	int frameIndex
+) : Object(sprite, position, size), maxHealth(maxHealth), currentHealth(maxHealth), frameIndex(frameIndex)
 {
 	hpBar = std::make_unique<FillBar>(Tmpl8::GreenMask, position, Tmpl8::vec2{static_cast<float>(barWidth), 5.f}, 0.f, maxHealth);
 }
@@ -36,6 +36,8 @@ void Asteroid::update(float deltaTime)
 void Asteroid::render(Tmpl8::Surface& screen)
 {
 	//sprite->DrawScaledRotated(x, y, width, height, angle, &screen);
+	sprite->SetFrame(frameIndex);
+
 	std::vector<Vertex> v = getVertices();
 	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 

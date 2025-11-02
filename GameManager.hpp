@@ -64,8 +64,6 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> spriteMap;
 	std::unordered_map<std::string, Audio::Sound> soundMap;
 
-	std::vector<std::shared_ptr<Tmpl8::Sprite>> asteroidSprites;
-
 	//Asteroids
 	float asteroidAcceleration = 500.f;
 	float asteroidMaxSpeed = 100.f;

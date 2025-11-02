@@ -68,6 +68,11 @@ void Object::setTag(const std::string& tag)
 	this->tag = tag;
 }
 
+void Object::setFrame(int frame)
+{
+	sprite->SetFrame(frame);
+}
+
 Tmpl8::vec2 Object::getPosition() const
 {
 	return position;

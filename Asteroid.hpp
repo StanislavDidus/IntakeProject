@@ -11,7 +11,8 @@ public:
 		std::shared_ptr<Tmpl8::Sprite> sprite,
 		Tmpl8::vec2 position,
 		Tmpl8::vec2 size,
-		float maxHealth
+		float maxHealth,
+		int frameIndex
 	);
 
 	void update(float deltaTime) override;
@@ -21,13 +22,17 @@ public:
 	void onCollisionStay(std::shared_ptr<Object> object, float deltaTime) override;
 	void onCollisionExit(std::shared_ptr<Object> object) override;
 
-	bool divide;
-	bool turnToSheep;
+	bool divide = false;
+	bool turnToSheep = false;
 private:
-	std::unique_ptr<FillBar> hpBar;
-	int barWidth, barHeight;
+	int frameIndex = 0;
 
-	float rotationSpeed;
-	float maxHealth, currentHealth;
+	std::unique_ptr<FillBar> hpBar;
+	int barWidth = 75;
+	int barHeight = 5;
+
+	float rotationSpeed = 10.f;
+	float maxHealth = 4;
+	float currentHealth = 4;
 };
 
