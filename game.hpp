@@ -39,6 +39,47 @@ struct RunData
 	float runTime;
 };
 
+enum class SpriteName
+{
+	SHIP,
+	SHIP_ENGINE,
+	SHIP_ENGINE_UPGRADED,
+	SHIP_ENGINE_EFFECT,
+	SHIP_ENGINE_UPGRADED_EFFECT,
+	SHIP_EXPLOSION,
+	SHIP_WEAPON,
+	SHIP_WEAPON_UPGRADED,
+	SHIP_HIT_EFFECT,
+	SHIP_BULLET,
+	SHIP_BULLET_UPGRADED,
+	SHIP_BULLET_UPGRADED_TRAIL,
+
+	SHEEP,
+
+	ASTEROID,
+	ASTEROID_EXPLOSION,
+	
+	SPACE,
+
+	UPGRADE,
+
+	BUTTON_START,
+	BUTTON_SCORE,
+	BUTTON_EXIT,
+	BUTTON_DELETE,
+	BUTTON_CANCEL,
+
+	UI_LOGO,
+	UI_CLOCK,
+	UI_SMILEYS,
+	UI_LABEL,
+};
+
+enum class SoundName
+{
+	SHOOT
+};
+
 namespace Tmpl8 {
 
 class Surface;
@@ -108,7 +149,8 @@ private:
 
 	//UI player data
 	int playerHealth = 0;
-	bool isPlayerUpgraded = false;
+	bool isPlayerWeaponUpgraded = false;
+	bool isPlayerEngineUpgraded = false;
 
 	float gameTimer = 0.f;
 

@@ -384,4 +384,10 @@ void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 dire
     tempObjects.push_back(sheep);
 
     sheepCounter++;
+
+    //If more than 10 asteroids where turned into sheep - upgrade player
+    if (sheepCounter == 10)
+    {
+        player->upgradeEngine();
+    }
 }

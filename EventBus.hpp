@@ -11,9 +11,10 @@ enum class EventType
 	GAMEOVER,
 	RESTART,
 	PLAYER_USED_UPGRADE,
+	//UPGRADE_PLAYER_ENGINE,
 
 	//Debug
-	KILL_ALL
+	KILL_ALL,
 };
 
 class Listener { };

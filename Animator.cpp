@@ -42,7 +42,7 @@ FrameCycledAnimation::FrameCycledAnimation(std::shared_ptr<Tmpl8::Sprite> sprite
 
 int FrameCycledAnimation::play(float deltaTime)
 {
-	int frame = currentFrame;
+	//int frame = currentFrame;
 	
 	timer += deltaTime;
 
@@ -144,7 +144,7 @@ void Animator::setAnimationFrame(std::shared_ptr<Tmpl8::Sprite> sprite)
 	auto it = spriteAnimationFrames.find(sprite);
 	if (it != spriteAnimationFrames.end())
 	{
-		sprite->SetFrame(spriteAnimationFrames[sprite]);
+		sprite->SetFrame(it->second);
 	}
 }
 

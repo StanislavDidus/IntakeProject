@@ -22,7 +22,7 @@ namespace Tmpl8
 		{
 		case GameState::MENU:
 			//initGameManager();
-			initBgAsteroids();
+			
 			break;
 		case GameState::GAME:
 			// -- Init game -- //
@@ -172,17 +172,29 @@ namespace Tmpl8
 		if (player)
 		{
 			playerHealth = player->getHealth();
-			isPlayerUpgraded = player->isUpgraded();
+			isPlayerWeaponUpgraded = player->isUpgradedWeapon();
+			isPlayerEngineUpgraded = player->isUpgradedEngine();
 		}
 
 		//Render Ship UI
 
-		spriteMap["engineEffect"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
-		if (!isPlayerUpgraded)
+		
+		if (!isPlayerWeaponUpgraded)
 			spriteMap["weapon"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
 		else
 			spriteMap["weapon1"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
-		spriteMap["shipEngine"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+
+		if (!isPlayerEngineUpgraded)
+		{
+			spriteMap["shipEngine"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			spriteMap["engineEffect"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+		}
+		else
+		{
+			spriteMap["engineEffect1"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			spriteMap["shipEngine1"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+		}
+
 		spriteMap["ship"]->DrawScaled(posX, 0, uiSize, uiSize, screen);
 
 		posX += uiSize;

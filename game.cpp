@@ -36,8 +36,13 @@ namespace Tmpl8
 	{
 		//Ship
 		spriteMap["ship"] = std::make_shared<Sprite>(new Surface("assets/ship.png"), 4);
+
 		spriteMap["shipEngine"] = std::make_shared<Sprite>(new Surface("assets/engine.png"), 1);
+		spriteMap["shipEngine1"] = std::make_shared<Sprite>(new Surface("assets/engine1.png"), 1);
+
 		spriteMap["engineEffect"] = std::make_shared<Sprite>(new Surface("assets/engineEffect.png"), 7);
+		spriteMap["engineEffect1"] = std::make_shared<Sprite>(new Surface("assets/engineEffect1.png"), 8);
+
 		spriteMap["explosion"] = std::make_shared<Sprite>(new Surface("assets/explosion.png"), 11);
 		spriteMap["explosion1"] = std::make_shared<Sprite>(new Surface("assets/explosion1.png"), 10);
 		spriteMap["weapon"] = std::make_shared<Sprite>(new Surface("assets/weapon.png"), 7);
@@ -75,7 +80,8 @@ namespace Tmpl8
 		soundMap["charge"] = Audio::Sound{ "assets/Sounds/charge.mp3" };
 		soundMap["hit"] = Audio::Sound{ "assets/Sounds/hitEffect.mp3" };
 		soundMap["charge"] = Audio::Sound{ "assets/Sounds/charge.mp3" };
-		soundMap["upgrade"] = Audio::Sound{ "assets/Sounds/upgrade.mp3" };
+		soundMap["upgradeWeapon"] = Audio::Sound{ "assets/Sounds/upgradeWeapon.mp3" };
+		soundMap["upgradeEngine"] = Audio::Sound{ "assets/Sounds/upgradeEngine.mp3" };
 		soundMap["shipDamaged"] = Audio::Sound{ "assets/Sounds/shipDamaged.mp3" };
 		soundMap["shipDestroyed"] = Audio::Sound{ "assets/Sounds/shipDestroyed.mp3" };
 		soundMap["asteroidDestroyed"] = Audio::Sound{ "assets/Sounds/asteroidDestroyed.mp3" };
@@ -83,7 +89,7 @@ namespace Tmpl8
 		soundMap["buttonCover"] = Audio::Sound{ "assets/Sounds/buttonCover.mp3" };
 		soundMap["buttonUp"] = Audio::Sound{ "assets/Sounds/buttonUp.mp3" };
 
-		Audio::Device::setMasterVolume(0.f);
+		Audio::Device::setMasterVolume(0.1f);
 	}
 
 	void Game::initGameManager()
@@ -141,6 +147,8 @@ namespace Tmpl8
 		
 		//Init menu
 		setState(GameState::MENU);
+
+		initBgAsteroids();
 	}
 
 	void Game::Restart()
@@ -270,11 +278,16 @@ namespace Tmpl8
 		{
 			EventBus::Get().push<EventType::KILL_ALL>();
 		}
+		else if (isKeyUp('u'))
+		{
+			auto player = gameManager->getPlayer();
+			if (player) player->upgradeEngine();
+		}
 	}
 
 	void Game::initBgAsteroids()
 	{
-		int bgAsteroidNumber = 2;
+		int bgAsteroidNumber = 1;
 
 		for (int i = 0; i < bgAsteroidNumber; i++)
 		{

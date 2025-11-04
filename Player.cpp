@@ -25,9 +25,15 @@ void Player::initAnimator()
 {
 	animator = std::make_unique<Animator>();
 
+	//EngineEffect
 	animator->addFrameAnimation(spriteMap["engineEffect"], 0.1f, 0, 2, [this]() {return abs(velocity.length()) <= 75.f; });
 
 	animator->addFrameAnimation(spriteMap["engineEffect"], 0.1f, 3, 6, [this]() {return abs(velocity.length()) > 75.f; });
+
+	//EngineEffect1
+	animator->addFrameAnimation(spriteMap["engineEffect1"], 0.1f, 0, 3, [this]() {return abs(velocity.length()) <= 75.f; });
+
+	animator->addFrameAnimation(spriteMap["engineEffect1"], 0.1f, 4, 7, [this]() {return abs(velocity.length()) > 75.f; });
 
 	//Common weapon shooting
 	animator->addFrameCycledAnimation(spriteMap["weapon"], shootTime / 2.f, 1, 2, "LeftShoot");
@@ -108,18 +114,32 @@ void Player::render(Tmpl8::Surface& screen)
 		bullet->render(screen);
 	}
 
-
-	// Draw engine
-	renderShipPart(spriteMap["shipEngine"], screen);
-
 	// Draw weapon
-	if (!upgraded)
+	if (!upgradedWeapon)
+	{
 		renderShipPart(spriteMap["weapon"], screen);
+	}
 	else
+	{
 		renderShipPart(spriteMap["weapon1"], screen);
+	}
 
-	//// Draw engine effect
-	renderShipPart(spriteMap["engineEffect"], screen);
+	if (!upgradedEngine)
+	{
+		// Draw engine
+		renderShipPart(spriteMap["shipEngine"], screen);
+
+		// Draw engine effect
+		renderShipPart(spriteMap["engineEffect"], screen);
+	}
+	else
+	{
+		// Draw engine
+		renderShipPart(spriteMap["shipEngine1"], screen);
+
+		// Draw engine effect
+		renderShipPart(spriteMap["engineEffect1"], screen);
+	}
 
 	// Draw main ship
 	renderShipPart(sprite, screen);
@@ -162,6 +182,17 @@ int Player::getHealth() const
 	return currentHealth;
 }
 
+void Player::upgradeEngine()
+{
+	upgradedEngine = true;
+
+	maxSpeed = 175.f;
+	acceleration = Tmpl8::vec2{600.f, 600.f};
+	rotationSpeed = 220.f;
+
+	soundMap["upgradeEngine"].replay();
+}
+
 void Player::move(float deltaTime)
 {
 	velocity += acceleration * direction * deltaTime;
@@ -201,10 +232,10 @@ void Player::onCollisionEnter(std::shared_ptr<Object> object)
 
 	if (object->getTag() == "upgrade")
 	{
-		soundMap["upgrade"].replay();
+		soundMap["upgradeWeapon"].replay();
 
 		object->destroy = true;
-		upgraded = true;
+		upgradedWeapon = true;
 	}
 }
 
@@ -246,9 +277,14 @@ void Player::onCollisionExit(std::shared_ptr<Object> object)
 	}
 }
 
-bool Player::isUpgraded() const
+bool Player::isUpgradedWeapon() const
 {
-	return upgraded;
+	return upgradedWeapon;
+}
+
+bool Player::isUpgradedEngine() const
+{
+	return upgradedEngine;
 }
 
 void Player::updateBullets(float deltaTime)

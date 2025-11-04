@@ -21,6 +21,20 @@ enum class PlayerState
 	SUPERSHOOT
 };
 
+//enum class PlayerWeapon
+//{
+//	NONE,
+//	COMMON,
+//	CHARGE
+//};
+//
+//enum class PlayerEngine
+//{
+//	NONE,
+//	COMMON,
+//	SUPER
+//};
+
 class Player : public Object, public Listener
 {
 public:
@@ -38,6 +52,8 @@ public:
 	const std::vector<std::shared_ptr<IBullet>>& getBullets() const;
 	int getHealth() const;
 
+	void upgradeEngine();
+
 	void move(float deltaTime) override;
 	void rotate(float angle, float deltaTime);
 
@@ -45,7 +61,8 @@ public:
 	void onCollisionStay(std::shared_ptr<Object> object, float deltaTime) override;
 	void onCollisionExit(std::shared_ptr<Object> object) override;
 
-	bool isUpgraded() const;
+	bool isUpgradedWeapon() const;
+	bool isUpgradedEngine() const;
 private:
 	void initAnimator();
 	void initTimerManager();
@@ -67,7 +84,6 @@ private:
 	void updateIdle(float deltaTime);
 	void updateShoot(float deltaTime);
 	void updateSuperShoot(float deltaTime);
-	void updateDamage(float deltaTime);
 
 	void renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surface& screen);
 
@@ -99,8 +115,11 @@ private:
 
 	float rotationSpeed = 200.f;
 
-	//Upgrade
-	bool upgraded = false;
+	//Upgrade engie
+	bool upgradedEngine = false;
+
+	//Upgrade weapon
+	bool upgradedWeapon = false;
 	bool isChargedStarted = false;
 	float chargeTime = 1.f, chargeTimer = chargeTime;
 

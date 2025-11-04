@@ -81,6 +81,7 @@ private:
 
 	//stores an index of a current frame for each sprite
 	//map is necessary when one animator is managing multiple sprites at once
+	//!!! Should use std::pair<std::weak_ptr>, int> instead
 	std::map<std::shared_ptr<Tmpl8::Sprite>, int> spriteAnimationFrames;
 };
 

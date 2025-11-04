@@ -58,7 +58,7 @@ void Player::exitState(PlayerState state)
 		soundMap["shoot1"].replay();
 
 		canShoot = false;
-		timerManager->addTimer(shootTime / 2.f * 5.f, [&] {upgraded = false; canShoot = true; shootTimer = .5f; });
+		timerManager->addTimer(shootTime / 2.f * 5.f, [&] {upgradedWeapon = false; canShoot = true; shootTimer = .5f; });
 
 		chargeTimer = std::max(chargeTimer, 0.f);
 		float bulletForce = -300.f * chargeTimer + 400.f;
@@ -102,11 +102,11 @@ void Player::updateIdle(float deltaTime)
 	checkMove(deltaTime);
 	checkRotation(deltaTime);
 	
-	if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && !upgraded && canShoot)
+	if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && !upgradedWeapon && canShoot)
 	{
 		setState(PlayerState::SHOOT);
 	}
-	else if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && upgraded && canShoot)
+	else if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && upgradedWeapon && canShoot)
 	{
 		setState(PlayerState::SUPERSHOOT);
 	}
@@ -122,7 +122,7 @@ void Player::updateShoot(float deltaTime)
 	{
 		setState(PlayerState::IDLE);
 	}
-	if (upgraded)
+	if (upgradedWeapon)
 	{
 		setState(PlayerState::SUPERSHOOT);
 	}
