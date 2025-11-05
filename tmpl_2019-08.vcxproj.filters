@@ -132,6 +132,7 @@
     <ClInclude Include="Random.hpp">
       <Filter>include\Algorithms</Filter>
     </ClInclude>
+    <ClInclude Include="AssetNames.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

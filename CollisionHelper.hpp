@@ -101,6 +101,9 @@ struct Edge
 		w0.y = edgeFunction(p, p2, dx.y, dy.y) + bias1;
 		w0.z = edgeFunction(p, p0, dx.z, dy.z) + bias2;
 
+		//Add 0.5 offset to get the pixel center
+		w0 += (dx + dy) / 2.f;
+
 		w = w0;
 	}
 

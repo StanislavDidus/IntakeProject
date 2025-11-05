@@ -5,7 +5,7 @@
 
 #include "Random.hpp"
 
-GameManager::GameManager(const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<std::string, Audio::Sound>& soundMap) :
+GameManager::GameManager(const std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<SoundName, Audio::Sound>& soundMap) :
      spriteMap(spriteMap), soundMap(soundMap)
 {
     initTimerManager();
@@ -99,7 +99,7 @@ void GameManager::update(float deltaTime)
         {
             if (bullet->destroy)
             {
-                auto par = std::make_shared<Particle>(spriteMap["hitEffect"], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
+                auto par = std::make_shared<Particle>(spriteMap[SpriteName::SHIP_HIT_EFFECT], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
 
                 particles.push_back(par);
             }
@@ -146,7 +146,7 @@ void GameManager::updateObjects(float deltaTime)
 
                     for (int i = 0; i < newAsteroidsNumber; i++)
                     {
-                        auto& newSprite = spriteMap["asteroid"];
+                        auto& newSprite = spriteMap[SpriteName::ASTEROID];
                         int newIndex = Random::randomRange(0, 2);
                         
                         Tmpl8::vec2 newPosition = Random::randomVector2(position, position + size);
@@ -169,7 +169,7 @@ void GameManager::updateObjects(float deltaTime)
 
                     //Spawn explosion particle
 
-                    auto par = std::make_shared<Particle>(spriteMap["explosion1"], asteroid->getPosition(), asteroid->getSize(), 1.f);
+                    auto par = std::make_shared<Particle>(spriteMap[SpriteName::ASTEROID_EXPLOSION], asteroid->getPosition(), asteroid->getSize(), 1.f);
 
                     par->resize(1.5f);
 
@@ -238,9 +238,9 @@ void GameManager::updateObjects(float deltaTime)
     //Restart game when player dies 
     if (player && player->destroy)
     {
-        soundMap["shipDestroyed"].replay();
+        soundMap[SoundName::SHIP_DESTROYED].replay();
 
-        auto par = std::make_shared<Particle>(spriteMap["explosion"], player->getPosition(), player->getSize(), 1.2f);
+        auto par = std::make_shared<Particle>(spriteMap[SpriteName::SHIP_EXPLOSION], player->getPosition(), player->getSize(), 1.2f);
         particles.push_back(par);
 
         player = nullptr;
@@ -331,7 +331,7 @@ void GameManager::spawnAsteroid()
 
     auto asteroid = std::make_shared<Asteroid>
         (
-            spriteMap["asteroid"],
+            spriteMap[SpriteName::ASTEROID],
             Tmpl8::vec2{x ,y},
             Tmpl8::vec2{static_cast<float>(width), static_cast<float>(height)},
             health,
@@ -354,7 +354,7 @@ void GameManager::spawnUpgrade()
     float y = static_cast<float>(Random::randomRange(100, ScreenHeight - h));
 
     auto upgrd = std::make_shared<Upgrade>(
-        spriteMap["upgrade"],
+        spriteMap[SpriteName::UPGRADE],
         Tmpl8::vec2{x, y},
         Tmpl8::vec2{static_cast<float>(w), static_cast<float>(h)}
     );
@@ -370,7 +370,7 @@ void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 dire
 {
     auto sheep = std::make_shared<Sheep>
         (
-            spriteMap["sheep"],
+            spriteMap[SpriteName::SHEEP],
             pos,
             size
         );

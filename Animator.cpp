@@ -105,8 +105,8 @@ void Animator::update(float deltaTime)
 	{
 		if (animation->getCondition()())
 		{
-			if(auto s = animation->getSprite().lock())
-				spriteAnimationFrames[s] = animation->play(deltaTime);
+			//if(auto s = animation->getSprite().lock())
+			spriteAnimationFrames[animation->getSprite()] = animation->play(deltaTime);
 		}
 	}
 
@@ -114,8 +114,8 @@ void Animator::update(float deltaTime)
 	{
 		if (animation->active)
 		{
-			if (auto s = animation->getSprite().lock())
-				spriteAnimationFrames[s] = animation->play(deltaTime);
+			//if (auto s = animation->getSprite().lock())
+			spriteAnimationFrames[animation->getSprite()] = animation->play(deltaTime);
 		}
 	}
 }
@@ -133,10 +133,10 @@ void Animator::stopAnimation(const std::string& name)
 	auto& animation = frameCycledAnimations[name];
 	auto sprite = animation->getSprite();
 
-	if (auto s = sprite.lock())
-	{
-		spriteAnimationFrames[s] = animation->stop();
-	}
+	//if (auto s = sprite.lock())
+	//{
+	spriteAnimationFrames[sprite] = animation->stop();
+	//}
 }
 
 void Animator::setAnimationFrame(std::shared_ptr<Tmpl8::Sprite> sprite)

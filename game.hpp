@@ -10,6 +10,7 @@
 #include <chrono>
 #include <ctime>
 
+#include "AssetNames.hpp"
 #include "Player.hpp"
 #include "GameManager.hpp"
 #include "CollisionManager.hpp"
@@ -39,46 +40,7 @@ struct RunData
 	float runTime;
 };
 
-enum class SpriteName
-{
-	SHIP,
-	SHIP_ENGINE,
-	SHIP_ENGINE_UPGRADED,
-	SHIP_ENGINE_EFFECT,
-	SHIP_ENGINE_UPGRADED_EFFECT,
-	SHIP_EXPLOSION,
-	SHIP_WEAPON,
-	SHIP_WEAPON_UPGRADED,
-	SHIP_HIT_EFFECT,
-	SHIP_BULLET,
-	SHIP_BULLET_UPGRADED,
-	SHIP_BULLET_UPGRADED_TRAIL,
 
-	SHEEP,
-
-	ASTEROID,
-	ASTEROID_EXPLOSION,
-	
-	SPACE,
-
-	UPGRADE,
-
-	BUTTON_START,
-	BUTTON_SCORE,
-	BUTTON_EXIT,
-	BUTTON_DELETE,
-	BUTTON_CANCEL,
-
-	UI_LOGO,
-	UI_CLOCK,
-	UI_SMILEYS,
-	UI_LABEL,
-};
-
-enum class SoundName
-{
-	SHOOT
-};
 
 namespace Tmpl8 {
 
@@ -120,8 +82,12 @@ private:
 	std::shared_ptr<GameManager> gameManager;
 	std::shared_ptr<CollisionManager> collisionManager;
 
-	std::unordered_map<std::string, std::shared_ptr<Sprite>> spriteMap;
-	std::unordered_map<std::string, Audio::Sound> soundMap;
+	//ASSETS
+	void loadSprite(SpriteName spriteName, const std::string& path, int frames);
+	void loadSound(SoundName soundName, const std::string& path, Audio::Sound::Type type = Audio::Sound::Type::Sound);
+
+	std::unordered_map<SpriteName, std::shared_ptr<Sprite>> spriteMap;
+	std::unordered_map<SoundName, Audio::Sound> soundMap;
 
 	std::unique_ptr<Animator> animator;
 

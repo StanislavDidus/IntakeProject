@@ -15,12 +15,12 @@ public:
 
 	virtual int play(float deltaTime) = 0;
 
-	std::weak_ptr<Tmpl8::Sprite> getSprite() const
+	std::shared_ptr<Tmpl8::Sprite> getSprite() const
 	{
 		return sprite;
 	}
 protected:
-	std::weak_ptr<Tmpl8::Sprite> sprite;
+	std::shared_ptr<Tmpl8::Sprite> sprite;
 };
 
 class FrameAnimation : public Animation

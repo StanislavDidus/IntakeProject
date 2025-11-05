@@ -6,11 +6,11 @@
 
 Player::Player
 (
-	const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
-	const std::unordered_map<std::string, Audio::Sound>& soundMap,
+	const std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>>& sprites,
+	const std::unordered_map<SoundName, Audio::Sound>& soundMap,
 	Tmpl8::vec2 position,
 	Tmpl8::vec2 size
-) : Object(sprites.at("ship"), position, size), spriteMap(sprites), soundMap(soundMap)
+) : Object(sprites.at(SpriteName::SHIP), position, size), spriteMap(sprites), soundMap(soundMap)
 {
 	setState(PlayerState::IDLE);
 
@@ -26,27 +26,22 @@ void Player::initAnimator()
 	animator = std::make_unique<Animator>();
 
 	//EngineEffect
-	animator->addFrameAnimation(spriteMap["engineEffect"], 0.1f, 0, 2, [this]() {return abs(velocity.length()) <= 75.f; });
+	animator->addFrameAnimation(spriteMap[SpriteName::SHIP_ENGINE_EFFECT], 0.1f, 0, 2, [this]() {return abs(velocity.length()) <= 75.f; });
 
-	animator->addFrameAnimation(spriteMap["engineEffect"], 0.1f, 3, 6, [this]() {return abs(velocity.length()) > 75.f; });
+	animator->addFrameAnimation(spriteMap[SpriteName::SHIP_ENGINE_EFFECT], 0.1f, 3, 6, [this]() {return abs(velocity.length()) > 75.f; });
 
 	//EngineEffect1
-	animator->addFrameAnimation(spriteMap["engineEffect1"], 0.1f, 0, 3, [this]() {return abs(velocity.length()) <= 75.f; });
+	animator->addFrameAnimation(spriteMap[SpriteName::SHIP_ENGINE_UPGRADED_EFFECT], 0.1f, 0, 3, [this]() {return abs(velocity.length()) <= 75.f; });
 
-	animator->addFrameAnimation(spriteMap["engineEffect1"], 0.1f, 4, 7, [this]() {return abs(velocity.length()) > 75.f; });
+	animator->addFrameAnimation(spriteMap[SpriteName::SHIP_ENGINE_UPGRADED_EFFECT], 0.1f, 4, 7, [this]() {return abs(velocity.length()) > 75.f; });
 
 	//Common weapon shooting
-	animator->addFrameCycledAnimation(spriteMap["weapon"], shootTime / 2.f, 1, 2, "LeftShoot");
-	animator->addFrameCycledAnimation(spriteMap["weapon"], shootTime / 2.f, 3, 4, "RightShoot");
+	animator->addFrameCycledAnimation(spriteMap[SpriteName::SHIP_WEAPON], shootTime / 2.f, 1, 2, "LeftShoot");
+	animator->addFrameCycledAnimation(spriteMap[SpriteName::SHIP_WEAPON], shootTime / 2.f, 3, 4, "RightShoot");
 
 	//Upgraded weapon charge and shooting
-	animator->addFrameCycledAnimation(spriteMap["weapon1"], chargeTime / 6.f, 1, 6, "Charge", false);
-	animator->addFrameCycledAnimation(spriteMap["weapon1"], shootTime / 2.f, 7, 11, "ChargeShoot", true);
-	
-	//Destroy animation
-	//animator->addFrameCycledAnimation(spriteMap["explosion"], explosionAnimationSpeed, 0, 11, "Explosion", true);
-
-	//animator->addFrameAnimation(sprite, 1.f, 0, 3, [this]() {return true; });
+	animator->addFrameCycledAnimation(spriteMap[SpriteName::SHIP_WEAPON_UPGRADED], chargeTime / 6.f, 1, 6, "Charge", false);
+	animator->addFrameCycledAnimation(spriteMap[SpriteName::SHIP_WEAPON_UPGRADED], shootTime / 2.f, 7, 11, "ChargeShoot", true);
 }
 
 void Player::initTimerManager()
@@ -117,28 +112,28 @@ void Player::render(Tmpl8::Surface& screen)
 	// Draw weapon
 	if (!upgradedWeapon)
 	{
-		renderShipPart(spriteMap["weapon"], screen);
+		renderShipPart(spriteMap[SpriteName::SHIP_WEAPON], screen);
 	}
 	else
 	{
-		renderShipPart(spriteMap["weapon1"], screen);
+		renderShipPart(spriteMap[SpriteName::SHIP_WEAPON_UPGRADED], screen);
 	}
 
 	if (!upgradedEngine)
 	{
 		// Draw engine
-		renderShipPart(spriteMap["shipEngine"], screen);
+		renderShipPart(spriteMap[SpriteName::SHIP_ENGINE], screen);
 
 		// Draw engine effect
-		renderShipPart(spriteMap["engineEffect"], screen);
+		renderShipPart(spriteMap[SpriteName::SHIP_ENGINE_EFFECT], screen);
 	}
 	else
 	{
 		// Draw engine
-		renderShipPart(spriteMap["shipEngine1"], screen);
+		renderShipPart(spriteMap[SpriteName::SHIP_ENGINE_UPGRADED], screen);
 
 		// Draw engine effect
-		renderShipPart(spriteMap["engineEffect1"], screen);
+		renderShipPart(spriteMap[SpriteName::SHIP_ENGINE_UPGRADED_EFFECT], screen);
 	}
 
 	// Draw main ship
@@ -190,7 +185,7 @@ void Player::upgradeEngine()
 	acceleration = Tmpl8::vec2{600.f, 600.f};
 	rotationSpeed = 220.f;
 
-	soundMap["upgradeEngine"].replay();
+	soundMap[SoundName::SHIP_UPGRADE_ENGINE].replay();
 }
 
 void Player::move(float deltaTime)
@@ -232,7 +227,7 @@ void Player::onCollisionEnter(std::shared_ptr<Object> object)
 
 	if (object->getTag() == "upgrade")
 	{
-		soundMap["upgradeWeapon"].replay();
+		soundMap[SoundName::SHIP_UPGRADE_WEAPON].replay();
 
 		object->destroy = true;
 		upgradedWeapon = true;
@@ -247,7 +242,7 @@ void Player::onCollisionStay(std::shared_ptr<Object> object, float deltaTime)
 		currentHealth--;
 		isHit = true;
 
-		soundMap["shipDamaged"].replay();
+		soundMap[SoundName::SHIP_DAMAGED].replay();
 
 		//Disable invulnerability after some time
 		timerManager->addTimer(invulnerableTime, [this]

@@ -12,6 +12,7 @@
 #include "TimerManager.hpp"
 #include "Audio/Device.hpp"
 #include "EventBus.hpp"
+#include "AssetNames.hpp"
 
 enum class PlayerState
 {
@@ -21,27 +22,13 @@ enum class PlayerState
 	SUPERSHOOT
 };
 
-//enum class PlayerWeapon
-//{
-//	NONE,
-//	COMMON,
-//	CHARGE
-//};
-//
-//enum class PlayerEngine
-//{
-//	NONE,
-//	COMMON,
-//	SUPER
-//};
-
 class Player : public Object, public Listener
 {
 public:
 	Player
 	(
-		const std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>>& sprites,
-		const std::unordered_map<std::string, Audio::Sound>& soundMap,
+		const std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>>& sprites,
+		const std::unordered_map<SoundName, Audio::Sound>& soundMap,
 		Tmpl8::vec2 position,
 		Tmpl8::vec2 size
 	);
@@ -89,8 +76,8 @@ private:
 
 	std::vector<std::shared_ptr<IBullet>> bullets;
 
-	std::unordered_map<std::string, std::shared_ptr<Tmpl8::Sprite>> spriteMap;
-	std::unordered_map<std::string, Audio::Sound> soundMap;
+	std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>> spriteMap;
+	std::unordered_map<SoundName, Audio::Sound> soundMap;
 
 	std::unique_ptr<Animator> animator;
 

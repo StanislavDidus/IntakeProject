@@ -249,6 +249,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.hpp" />
+    <ClInclude Include="AssetNames.hpp" />
     <ClInclude Include="Asteroid.hpp" />
     <ClInclude Include="Bullet.hpp" />
     <ClInclude Include="Button.hpp" />

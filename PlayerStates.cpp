@@ -36,7 +36,7 @@ void Player::enterState(PlayerState state)
 	{
 	case PlayerState::SUPERSHOOT:
 
-		soundMap["charge"].replay();
+		soundMap[SoundName::SHIP_CHARGE].replay();
 
 		animator->playAnimation("Charge");
 
@@ -55,7 +55,7 @@ void Player::exitState(PlayerState state)
 		animator->stopAnimation("Charge");
 		animator->playAnimation("ChargeShoot");
 
-		soundMap["shoot1"].replay();
+		soundMap[SoundName::SHIP_SHOOT_UPGRADED].replay();
 
 		canShoot = false;
 		timerManager->addTimer(shootTime / 2.f * 5.f, [&] {upgradedWeapon = false; canShoot = true; shootTimer = .5f; });
@@ -69,8 +69,8 @@ void Player::exitState(PlayerState state)
 
 		auto  bullet = std::make_shared<SuperBullet>
 			(
-				spriteMap["bullet1"],
-				spriteMap["trail"],
+				spriteMap[SpriteName::SHIP_BULLET_UPGRADED],
+				spriteMap[SpriteName::SHIP_BULLET_UPGRADED_TRAIL],
 				Tmpl8::vec2{ position.x + size.x / 2.f - bulletWidth * areaMultiplier / 2.f, position.y + size.y / 2.f - bulletHeight * areaMultiplier / 2.f },
 				Tmpl8::vec2{ bulletWidth * areaMultiplier, bulletHeight * areaMultiplier},
 				areaMultiplier
@@ -150,7 +150,7 @@ void Player::updateShoot(float deltaTime)
 
 	auto  bullet = std::make_shared<Bullet>
 		(
-			spriteMap["bullet"],
+			spriteMap[SpriteName::SHIP_BULLET],
 			Tmpl8::vec2{ bulletPosition.x - size.x / 4.f, bulletPosition.y - size.y / 4.f },
 			Tmpl8::vec2{size.x / 2.f, size.y / 2.f}
 		);
@@ -165,7 +165,7 @@ void Player::updateShoot(float deltaTime)
 
 	velocity += -Tmpl8::vec2{ direction.x, direction.y } * 10.f;
 
-	soundMap["shoot"].replay();
+	soundMap[SoundName::SHIP_SHOOT].replay();
 }
 
 void Player::updateSuperShoot(float deltaTime)
@@ -177,11 +177,11 @@ void Player::updateSuperShoot(float deltaTime)
 	{
 		setState(PlayerState::IDLE);
 
-		soundMap["charge"].stop();
+		soundMap[SoundName::SHIP_CHARGE].stop();
 	}
 
 	chargeTimer -= deltaTime;
 
-	if (chargeTimer <= 0.f) soundMap["charge"].stop();
+	if (chargeTimer <= 0.f) soundMap[SoundName::SHIP_CHARGE].stop();
 }
 
