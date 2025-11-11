@@ -22,6 +22,7 @@ void Trail::update(float deltaTime)
 {
 	animator->update(deltaTime);
 
+	//Code from an external source
 	const auto& asteroidPosition = asteroid->getPosition();
 	const auto& asteroidSize = asteroid->getSize();
 

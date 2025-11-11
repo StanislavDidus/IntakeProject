@@ -65,7 +65,7 @@ public:
 	std::vector<Vertex>      getVertices               (std::shared_ptr<Tmpl8::Sprite> sprite, const Tmpl8::vec2& pos) const;
 	std::vector<Vertex>      getVertices               ()                                                              const;
 	Tmpl8::vec2              getRotatedPoint           (const Tmpl8::vec2& point, const Tmpl8::vec2& pos, float dir = 1.f)                       const;
-	Tmpl8::Pixel             getPixelAtRotatedPosition (int pixelX, int pixelY)                                        const;
+	bool                     isPixelAtPosition         (int pixelX, int pixelY)                                        const;
 	//Tmpl8::vec2 getRotatedPointWithCenter        (const Tmpl8::vec2& pos, float dir = 1.f)  const;
 
 	virtual void onCollisionEnter(std::shared_ptr<Object> object);

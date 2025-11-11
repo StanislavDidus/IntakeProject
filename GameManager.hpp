@@ -14,7 +14,7 @@
 #include "TimerManager.hpp"
 #include "CollisionManager.hpp"
 #include "Particle.hpp"
-#include "AssetNames.hpp"
+#include "AssetManager.hpp"
 
 namespace Tmpl8
 {
@@ -24,7 +24,7 @@ namespace Tmpl8
 class GameManager : public Listener
 {
 public:
-	GameManager(const std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<SoundName, Audio::Sound>& soundMap);
+	GameManager(std::shared_ptr<AssetManager> assetManager);
 	virtual ~GameManager();
 
 	void update(float deltaTime);
@@ -46,6 +46,8 @@ private:
 	void spawnAsteroid();
 	void spawnUpgrade();
 	void spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 direction, float angle);
+	void divideAsteroid(std::shared_ptr<Asteroid> asteroid);
+
 		
 	float spawnRate = 2.f;
 	float spawnTimer = 2.f;
@@ -62,8 +64,7 @@ private:
 	//Temp object vector
 	std::vector<std::shared_ptr<Object>> tempObjects;
 
-	std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>> spriteMap;
-	std::unordered_map<SoundName, Audio::Sound> soundMap;
+	std::shared_ptr<AssetManager> assetManager;
 
 	//Asteroids
 	float asteroidAcceleration = 500.f;

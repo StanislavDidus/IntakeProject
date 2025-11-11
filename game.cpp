@@ -12,6 +12,8 @@ namespace Tmpl8
 	// Initialize the application
 	// -----------------------------------------------------------
 
+
+	// -- Inputs -- //
 	std::bitset<256> Game::pressedButtons{};
 	std::bitset<256> Game::releasedButtons{};
 	std::bitset<256> Game::heldButtons{};
@@ -30,78 +32,19 @@ namespace Tmpl8
 	{
 		return releasedButtons[key];
 	}
-
-	void Game::loadSprite(SpriteName spriteName, const std::string& path, int frames)
+	// -- -- //
+	 
+	// -- Initializers -- //
+	void Game::initAssets()
 	{
-		spriteMap[spriteName] = std::make_shared<Sprite>(new Surface(&path[0]), frames);
-	}
-
-	void Game::loadSound(SoundName soundName, const std::string& path, Audio::Sound::Type type)
-	{
-		soundMap[soundName] = Audio::Sound{ path, type };
-	}
-
-	void Game::initSprites()
-	{
-		//Ship
-		loadSprite(SpriteName::SHIP, "assets/ship.png", 4);
-		loadSprite(SpriteName::SHIP_ENGINE, "assets/engine.png", 1);
-		loadSprite(SpriteName::SHIP_ENGINE_UPGRADED, "assets/engine1.png", 1);
-		loadSprite(SpriteName::SHIP_ENGINE_EFFECT, "assets/engineEffect.png", 7);
-		loadSprite(SpriteName::SHIP_ENGINE_UPGRADED_EFFECT, "assets/engineEffect1.png", 8);
-		loadSprite(SpriteName::SHIP_EXPLOSION, "assets/explosion.png", 11);
-		loadSprite(SpriteName::SHIP_WEAPON, "assets/weapon.png", 7);
-		loadSprite(SpriteName::SHIP_WEAPON_UPGRADED, "assets/weapon1.png", 12);
-		loadSprite(SpriteName::SHIP_HIT_EFFECT, "assets/hitEffect.png", 7);
-		loadSprite(SpriteName::SHIP_BULLET, "assets/bullet.png", 4);
-		loadSprite(SpriteName::SHIP_BULLET_UPGRADED, "assets/bullet1.png", 10);
-		loadSprite(SpriteName::SHIP_BULLET_UPGRADED_TRAIL, "assets/bulletEffect.png", 4);
-
-		// Objects
-		loadSprite(SpriteName::SHEEP, "assets/sheep.png", 1);
-		loadSprite(SpriteName::ASTEROID, "assets/asteroid.png", 3);
-		loadSprite(SpriteName::ASTEROID_EXPLOSION, "assets/explosion1.png", 10);
-		loadSprite(SpriteName::SPACE, "assets/space.png", 2);
-		loadSprite(SpriteName::UPGRADE, "assets/upgrade.png", 1);
-
-		// UI
-		loadSprite(SpriteName::BUTTON_START, "assets/startButton.png", 3);
-		loadSprite(SpriteName::BUTTON_SCORE, "assets/scoreButton.png", 3);
-		loadSprite(SpriteName::BUTTON_EXIT, "assets/exitButton.png", 3);
-		loadSprite(SpriteName::BUTTON_DELETE, "assets/deleteButton.png", 3);
-		loadSprite(SpriteName::BUTTON_CANCEL, "assets/cancelButton.png", 3);
-		loadSprite(SpriteName::UI_LOGO, "assets/logo.png", 1);
-		loadSprite(SpriteName::UI_CLOCK, "assets/clock.png", 1);
-		loadSprite(SpriteName::UI_SMILEYS, "assets/smileys.png", 20);
-		loadSprite(SpriteName::UI_LABEL, "assets/label.png", 1);
-	}
-
-	void Game::initSounds()
-	{
-		loadSound(SoundName::MENU_MUSIC, "assets/Sounds/music.mp3", Audio::Sound::Type::Stream);
-		auto& menuMusic = soundMap[SoundName::MENU_MUSIC];
-		menuMusic.setLooping(true);
-		menuMusic.replay();
-
-		loadSound(SoundName::SHIP_SHOOT, "assets/Sounds/shoot.mp3");
-		loadSound(SoundName::SHIP_SHOOT_UPGRADED, "assets/Sounds/shoot1.mp3");
-		loadSound(SoundName::SHIP_CHARGE, "assets/Sounds/charge.mp3");
-		loadSound(SoundName::SHIP_UPGRADE_WEAPON, "assets/Sounds/upgradeWeapon.mp3");
-		loadSound(SoundName::SHIP_UPGRADE_ENGINE, "assets/Sounds/upgradeEngine.mp3");
-		loadSound(SoundName::SHIP_DAMAGED, "assets/Sounds/shipDamaged.mp3");
-		loadSound(SoundName::SHIP_DESTROYED, "assets/Sounds/shipDestroyed.mp3");
-		loadSound(SoundName::BULLET_HIT, "assets/Sounds/hitEffect.mp3");
-		loadSound(SoundName::ASTEROID_DESTROYED, "assets/Sounds/asteroidDestroyed.mp3");
-		loadSound(SoundName::GAME_OVER, "assets/Sounds/gameOver.mp3");
-		loadSound(SoundName::BUTTON_COVER, "assets/Sounds/buttonCover.mp3");
-		loadSound(SoundName::BUTTON_UP, "assets/Sounds/buttonUp.mp3");
-
-		Audio::Device::setMasterVolume(0.1f);
+		assetManager = std::make_shared<AssetManager>();
+		assetManager->loadSprites();
+		assetManager->loadSounds();
 	}
 
 	void Game::initGameManager()
 	{
-		gameManager = std::make_shared<GameManager>(spriteMap, soundMap);
+		gameManager = std::make_shared<GameManager>(assetManager);
 	}
 
 	void Game::initCollisionManager()
@@ -112,10 +55,7 @@ namespace Tmpl8
 	void Game::initAnimators()
 	{
 		animator = std::make_unique<Animator>();
-		animator->addFrameAnimation(spriteMap[SpriteName::SPACE], 1.f, 0, spriteMap[SpriteName::SPACE]->Frames() - 1, []() {return true; });
-
-		//animator->addFrameAnimation(spriteMap["hitEffect"], 0.1f, 0, 6, [] {return true; });
-		//animator->addFrameCycledAnimation(spriteMap["explosion1"], 0.1f, 0, 9, "Explosion1");
+		animator->addFrameAnimation(assetManager->getSprite(SpriteName::SPACE), 1.f, 0, assetManager->getSprite(SpriteName::SPACE)->Frames() - 1, []() {return true; });
 	}
 
 	void Game::initButtons()
@@ -127,17 +67,28 @@ namespace Tmpl8
 		float ScreenW = static_cast<float>(ScreenWidth);
 		float ScreenH = static_cast<float>(ScreenHeight);
 
-		buttons.push_back(std::make_shared<Button>(spriteMap[SpriteName::BUTTON_START], soundMap, Tmpl8::vec2{ ScreenW / 2.f - sizeX / 2, ScreenH / 2 - sizeY / 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { setState(GameState::GAME); }));
-		buttons.push_back(std::make_shared<Button>(spriteMap[SpriteName::BUTTON_SCORE], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { setState(GameState::SCORE);  }));
-		buttons.push_back(std::make_shared<Button>(spriteMap[SpriteName::BUTTON_EXIT], soundMap, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY * 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { Shutdown();  std::exit(0); }));
+		buttons.push_back(std::make_shared<Button>(assetManager->getSprite(SpriteName::BUTTON_START), assetManager, Tmpl8::vec2{ ScreenW / 2.f - sizeX / 2, ScreenH / 2 - sizeY / 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { setState(GameState::GAME); }));
+		buttons.push_back(std::make_shared<Button>(assetManager->getSprite(SpriteName::BUTTON_SCORE), assetManager, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { setState(GameState::SCORE);  }));
+		buttons.push_back(std::make_shared<Button>(assetManager->getSprite(SpriteName::BUTTON_EXIT), assetManager, Tmpl8::vec2{ ScreenW / 2 - sizeX / 2, ScreenH / 2 - sizeY / 2 + sizeY * 2 + posY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { Shutdown();  std::exit(0); }));
 
 		// -- Score Menu -- //
 
 		//Clear all player's data on click
-		buttons.push_back(std::make_shared<Button>(spriteMap[SpriteName::BUTTON_DELETE], soundMap, Tmpl8::vec2{ ScreenW - 100.f - 50.f, ScreenH - sizeY - 25.f - sizeY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { runDataVector.clear(); }));
+		buttons.push_back(std::make_shared<Button>(assetManager->getSprite(SpriteName::BUTTON_DELETE), assetManager, Tmpl8::vec2{ ScreenW - 100.f - 50.f, ScreenH - sizeY - 25.f - sizeY }, Tmpl8::vec2{ sizeX, sizeY }, [this] { runDataVector.clear(); }));
 
 		//Return to main menu
-		buttons.push_back(std::make_shared<Button>(spriteMap[SpriteName::BUTTON_CANCEL], soundMap, Tmpl8::vec2{ ScreenW - 100.f - 50.f, ScreenH - sizeY - 25.f }, Tmpl8::vec2{ sizeX, sizeY }, [this] {setState(GameState::MENU); }));
+		buttons.push_back(std::make_shared<Button>(assetManager->getSprite(SpriteName::BUTTON_CANCEL), assetManager, Tmpl8::vec2{ ScreenW - 100.f - 50.f, ScreenH - sizeY - 25.f }, Tmpl8::vec2{ sizeX, sizeY }, [this] {setState(GameState::MENU); }));
+	
+		//Toggles
+		toggles.push_back(std::make_shared<Toggle>
+			(
+				assetManager->getSprite(SpriteName::UI_TOGGLE_SOUND),
+				Tmpl8::vec2{ScreenW - 60.f, 10.f},
+				Tmpl8::vec2{50.f, 50.f},
+				[this] {Audio::Device::setMasterVolume(0.1f); },
+				[this] {Audio::Device::setMasterVolume(0.f); },
+				false
+			));
 	}
 
 	// -- First init of the game -- //
@@ -146,13 +97,12 @@ namespace Tmpl8
 		// -- Read player's data -- //
 		loadData();
 
-		//Initialize basic game components
-		initSprites();
+		// -- Initialize basic game components -- //
+		initAssets();
 		initAnimators();
-		initSounds();
 		initButtons();
 
-		//Init menu
+		// -- Init menu -- //
 		setState(GameState::MENU);
 
 		initBgAsteroids();
@@ -162,9 +112,9 @@ namespace Tmpl8
 	{
 		setState(GameState::MENU);
 
-		soundMap[SoundName::MENU_MUSIC].replay();
+		assetManager->getSound(SoundName::MENU_MUSIC).replay();
 
-		initSprites();
+		assetManager->loadSprites();
 	}
 
 	// -----------------------------------------------------------
@@ -183,6 +133,19 @@ namespace Tmpl8
 	{
 		deltaTime /= 1000.f;
 
+		fpsCheckTimer += deltaTime;
+
+		frames++;
+
+		if (fpsCheckTimer >= 1.f)
+		{
+			
+			fpsCounter = static_cast<int>(round(frames / fpsCheckTimer));
+
+			frames = 0;
+			fpsCheckTimer = 0.f;
+		}
+
 		update(deltaTime);
 		render(*screen);
 
@@ -195,12 +158,12 @@ namespace Tmpl8
 
 		//FPS Counter
 		std::stringstream ss;
-		ss << "FPS: " + std::to_string(1.f / deltaTime);
-		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
+		ss << "FPS: " + std::to_string(fpsCounter);
+		screen->PrintScaled(&ss.str()[0], 50, 100, 2, 2, 0xffffff);
 #else 
 		std::stringstream ss;
-		ss << "FPS: " + std::to_string(1.f / deltaTime);
-		screen->Print(&ss.str()[0], 0, 100, 0xffffff);
+		ss << "FPS: " + std::to_string(fpsCounter);
+		screen->PrintScaled(&ss.str()[0], 50, 100, 2, 2, 0xffffff);
 #endif
 	}
 
@@ -223,10 +186,12 @@ namespace Tmpl8
 
 		EventBus::Get().process();
 
-		//Update buttons
+		// -- Controls -- //
 		wasMouseDown = false;
 		wasMouseUp = false;
 
+
+		//Wrote with external help
 		pressedButtons = keys & ~heldButtons;
 		releasedButtons = heldButtons & ~keys;
 		heldButtons = keys;
@@ -236,30 +201,9 @@ namespace Tmpl8
 	{
 		screen.Clear(0);
 
-		animator->setAnimationFrame(spriteMap[SpriteName::SPACE]);
+		animator->setAnimationFrame(assetManager->getSprite(SpriteName::SPACE));
 
-		spriteMap[SpriteName::SPACE]->DrawScaled(0, 0, ScreenWidth - 1, ScreenHeight - 1, screen);
-
-		/*Tmpl8::vec2 p0 = { 0.f, 0.f };
-		Tmpl8::vec2 p2 = {ScreenWidth, 0.f};
-		Tmpl8::vec2 p1 = { ScreenWidth, ScreenHeight };
-		Tmpl8::vec2 p = { 0.f, 0.f };
-		Edge e = { p0, p1, p2, p };*/
-
-		//for (int y = p.y; y < ScreenHeight; y++)
-		//{
-		//	for (int x = p.x; x < ScreenWidth; x++)
-		//	{
-		//		if (e.inside())
-		//		{
-		//			//screen.Plot<false>(x, y, Tmpl8::RedMask);
-		//		}
-
-		//		e.stepX();
-		//	}
-
-		//	e.stepY();
-		//}
+		assetManager->getSprite(SpriteName::SPACE)->DrawScaled(0, 0, ScreenWidth - 1, ScreenHeight - 1, screen);
 
 		switch (currentState)
 		{
@@ -301,6 +245,7 @@ namespace Tmpl8
 			int width = Random::randomRange(64, 256);
 			int height = width;
 
+			//Generate random position
 			vec2 position = Random::randomVector2(vec2{ 0.f }, vec2{ ScreenWidth, ScreenHeight });
 
 			createBgAsteroid(position, vec2{ static_cast<float>(width), static_cast<float>(height) });
@@ -312,6 +257,7 @@ namespace Tmpl8
 		int width = Random::randomRange(64, 256);
 		int height = width;
 
+		//Spawn on the left or on the right side of the screen
 		float x = static_cast<float>(Random::ff() ? -width : ScreenWidth - 1);
 		float y = static_cast<float>(Random::ff() ? -height : ScreenHeight - 1);
 
@@ -328,7 +274,7 @@ namespace Tmpl8
 
 		auto ast = std::make_shared<Object>
 			(
-				spriteMap[SpriteName::ASTEROID],
+				assetManager->getSprite(SpriteName::ASTEROID),
 				position,
 				size
 			);

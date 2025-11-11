@@ -1,7 +1,7 @@
 #include "Button.hpp"
 
-Button::Button(std::shared_ptr<Tmpl8::Sprite> sprite, const std::unordered_map<SoundName, Audio::Sound>& sounds, Tmpl8::vec2 position, Tmpl8::vec2 size, const std::function<void()>& func) : 
-	UIElement(sprite, position, size), func(func), isHeld(false), sounds(sounds), wasCovered(false)
+Button::Button(std::shared_ptr<Tmpl8::Sprite> sprite, std::shared_ptr<AssetManager> assetManager, Tmpl8::vec2 position, Tmpl8::vec2 size, const std::function<void()>& func) : 
+	UIElement(sprite, position, size), func(func), isHeld(false), assetManager(assetManager), wasCovered(false)
 {
 }
 
@@ -50,7 +50,7 @@ void Button::CheckClick(Tmpl8::vec2i cpos, bool wasMouseDown, bool wasMouseUp) /
 			sprite->SetFrame(1);
 			func();
 
-			sounds[SoundName::BUTTON_UP].replay();
+			assetManager->getSound(SoundName::BUTTON_UP).replay();
 		}
 	}
 
@@ -61,7 +61,7 @@ void Button::enter()
 {
 	sprite->SetFrame(1);
 
-	sounds[SoundName::BUTTON_COVER].replay();
+	assetManager->getSound(SoundName::BUTTON_COVER).replay();
 }
 
 void Button::stay(bool down, bool up)

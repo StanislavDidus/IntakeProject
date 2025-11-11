@@ -61,6 +61,12 @@
     <ClCompile Include="Random.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Toggle.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">
@@ -132,7 +138,15 @@
     <ClInclude Include="Random.hpp">
       <Filter>include\Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="AssetNames.hpp" />
+    <ClInclude Include="AssetManager.hpp">
+      <Filter>include\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetNames.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Toggle.hpp">
+      <Filter>include\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">
@@ -161,5 +175,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="A Parallel Algorithm for Polygon Rasterization (Pineda, 1988) (1).pdf" />
   </ItemGroup>
 </Project>

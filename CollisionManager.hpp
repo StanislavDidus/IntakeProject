@@ -8,6 +8,8 @@
 
 class GameManager;
 
+//Pair in which order of values does no matter
+// unordered_pair{1,2} and unordered_pair{2,1} would be equal
 template<typename T>
 struct unordered_pair
 {

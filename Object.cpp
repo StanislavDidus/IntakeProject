@@ -264,8 +264,6 @@ std::vector<Vertex> Object::getVertices(std::shared_ptr<Tmpl8::Sprite> sprite, c
 	float w = static_cast<float>(sprite->GetWidth());
 	float h = static_cast<float>(sprite->GetHeight());
 
-	
-	
 	verticies.emplace_back(getVertexAtPos(UP, RIGHT, pos), Tmpl8::vec2{ w, 0.f });
 	verticies.emplace_back(getVertexAtPos(UP, LEFT, pos), Tmpl8::vec2{ 0.f, 0.f });
 	verticies.emplace_back(getVertexAtPos(DOWN, LEFT, pos), Tmpl8::vec2{ 0.f, h });
@@ -352,25 +350,11 @@ Tmpl8::vec2 Object::getRotatedPoint(const Tmpl8::vec2& point, const Tmpl8::vec2&
 	return { sx * cos - sy * sin + centerPos.x, sx * sin + sy * cos + centerPos.y};
 }
 
-//Tmpl8::vec2 Object::getRotatedPointWithCenter(const Tmpl8::vec2& pos, float dir) const
-//{
-//	float radians = angle * dir * Tmpl8::PI / 180.f;
-//	float sin = std::sin(radians);
-//	float cos = std::cos(radians);
-//
-//	Tmpl8::vec2 centerPos = { position.x + center.x, position.y + center.y};
-//
-//	float sx = pos.x - centerPos.x;
-//	float sy = pos.y - centerPos.y;
-//
-//	return { sx * cos - sy * sin + centerPos.x, sx * sin + sy * cos + centerPos.y};
-//}
-
-Tmpl8::Pixel Object::getPixelAtRotatedPosition(int pixelX, int pixelY) const
+bool Object::isPixelAtPosition(int pixelX, int pixelY) const
 {
 	Tmpl8::vec2 c = center;
 
-	return sprite->getPixelAtRotatedPosition(static_cast<int>(position.x), static_cast<int>(position.y), pixelX, pixelY , static_cast<int>(size.x), static_cast<int>(size.y), static_cast<int>(c.x), static_cast<int>(c.y), angle);
+	return sprite->isPixelAtPosition(static_cast<int>(position.x), static_cast<int>(position.y), pixelX, pixelY , static_cast<int>(size.x), static_cast<int>(size.y), static_cast<int>(c.x), static_cast<int>(c.y), angle);
 }
 
 void Object::onCollisionEnter(std::shared_ptr<Object> object)

@@ -12,7 +12,7 @@
 #include "TimerManager.hpp"
 #include "Audio/Device.hpp"
 #include "EventBus.hpp"
-#include "AssetNames.hpp"
+#include "AssetManager.hpp"
 
 enum class PlayerState
 {
@@ -27,11 +27,12 @@ class Player : public Object, public Listener
 public:
 	Player
 	(
-		const std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>>& sprites,
-		const std::unordered_map<SoundName, Audio::Sound>& soundMap,
+		std::shared_ptr<AssetManager> assetManager,
 		Tmpl8::vec2 position,
 		Tmpl8::vec2 size
 	);
+
+	~Player() override;
 
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;
@@ -76,8 +77,7 @@ private:
 
 	std::vector<std::shared_ptr<IBullet>> bullets;
 
-	std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>> spriteMap;
-	std::unordered_map<SoundName, Audio::Sound> soundMap;
+	std::shared_ptr<AssetManager> assetManager;
 
 	std::unique_ptr<Animator> animator;
 

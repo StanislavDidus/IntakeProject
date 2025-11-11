@@ -23,6 +23,7 @@ Tmpl8::vec2 Random::randomVector2(const Tmpl8::vec2& min, const Tmpl8::vec2& max
     return Tmpl8::vec2{ randomRange(min.x, max.x), randomRange(min.y, max.y) };
 }
 
+//fifty-fifty
 bool Random::ff()
 {
     std::bernoulli_distribution dist(0.5);

@@ -5,7 +5,6 @@
 
 #include "Functions.hpp"
 #include <vector>
-#include "glm.hpp"
 
 
 class Object;
@@ -86,6 +85,7 @@ public:
 	void BlendCopyTo( Surface* a_Dst, int a_X, int a_Y );
 	void ScaleColor( unsigned int a_Scale );
 	void Box( int x1, int y1, int x2, int y2, Pixel color );
+
 	template<bool BoundsCheck = false>
 	void Bar(int x1, int y1, int x2, int y2, Pixel color)
 	{
@@ -144,7 +144,10 @@ public:
 	void Draw( Surface* a_Target, int a_X, int a_Y );
 	void DrawScaled( int a_X, int a_Y, int a_Width, int a_Height, Surface& a_Target );
 	void DrawScaledRotated(const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3, Surface& screen);
-	Pixel getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, int centerX, int centerY, float angle);
+
+	// Is pixel at position active (not transparent)
+	bool isPixelAtPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, int centerX, int centerY, float angle);
+
 	void SetFlags( unsigned int a_Flags ) { m_Flags = a_Flags; }
 	void SetFrame( unsigned int a_Index ) { m_CurrentFrame = a_Index; }
 	unsigned int GetFlags() const { return m_Flags; }

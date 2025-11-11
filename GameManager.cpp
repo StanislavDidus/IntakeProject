@@ -5,8 +5,8 @@
 
 #include "Random.hpp"
 
-GameManager::GameManager(const std::unordered_map<SpriteName, std::shared_ptr<Tmpl8::Sprite>>& spriteMap, const std::unordered_map<SoundName, Audio::Sound>& soundMap) :
-     spriteMap(spriteMap), soundMap(soundMap)
+GameManager::GameManager(std::shared_ptr<AssetManager> assetManager) :
+        assetManager(assetManager)
 {
     initTimerManager();
 
@@ -39,12 +39,13 @@ void GameManager::initPlayer()
 {
     player = std::make_shared<Player>
         (
-            spriteMap,
-            soundMap,
+            assetManager,
             Tmpl8::vec2{ static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f, static_cast<float>(ScreenHeight) / 2.f - 32.f / 2.f },
+           // Tmpl8::vec2{static_cast<float>(ScreenWidth) / 2.f - 32.f / 2.f, static_cast<float>(ScreenHeight - 20)},
             Tmpl8::vec2{ 96.f, 96.f }
         );
 
+   // player->setVelocity({ 0.f, -400.f });
     player->setMaxSpeed(150.f);
     player->setAcceleration({ 550.f, 550.f });
     player->setDirection({ 0.f, -1.f });
@@ -66,40 +67,15 @@ void GameManager::update(float deltaTime)
         spawnAsteroid();
     }
 
-    //Spawn hit markers when bullet hits an asteroid
-    /*auto& collisions = collisionManager->getCollisions();
-    for (auto& [col1, col2] : collisions)
-    {
-        std::shared_ptr<Object> bullet;
-        std::shared_ptr<Object> asteroid;
-        
-        if (col1->getTag() == "bullet" && col2->getTag() == "asteroid")
-        {
-            bullet = col1;
-            asteroid = col2;
-        }
-        else if (col2->getTag() == "bullet" && col1->getTag() == "asteroid")
-        {
-            bullet = col2;
-            asteroid = col1;
-        }
-
-        if (bullet && asteroid)
-        {
-            auto par = std::make_shared<Particle>(spriteMap["hitEffect"], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
-
-            particles.push_back(par);
-        }
-    }*/
     if (player)
     {
         const auto& bullets = player->getBullets();
 
         for (const auto& bullet : bullets)
         {
-            if (bullet->destroy)
+            if (bullet->destroy && bullet->getTag() == "bullet")
             {
-                auto par = std::make_shared<Particle>(spriteMap[SpriteName::SHIP_HIT_EFFECT], bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
+                auto par = std::make_shared<Particle>(assetManager->getSprite(SpriteName::SHIP_HIT_EFFECT), bullet->getPosition(), Tmpl8::vec2{ 30.f, 30.f }, 0.3f);
 
                 particles.push_back(par);
             }
@@ -126,57 +102,13 @@ void GameManager::updateObjects(float deltaTime)
             {
                 auto asteroid = std::static_pointer_cast<Asteroid>(obj);
                 
-                if(asteroid->turnToSheep)
+                if (asteroid->turnToSheep)
+                {
                     spawnSheep(obj->getPosition(), obj->getSize(), obj->getDirection(), obj->getAngle());
+                }
                 else if (asteroid->divide)
                 {
-                    // -- Divide an asteroid in the small ones -- //
-                    const auto& position = asteroid->getPosition();
-                    const auto& size = asteroid->getSize();
-                    const auto& direction = asteroid->getDirection();
-
-                    int newAsteroidsNumber;
-
-                    //Size of an asteroid is in range of 64 to 256
-
-                    if (size.x < 90.f) newAsteroidsNumber = 0;
-                    else if (size.x < 150.f) newAsteroidsNumber = 1;
-                    else if (size.x < 210.f) newAsteroidsNumber = 2;
-                    else newAsteroidsNumber = 3;
-
-                    for (int i = 0; i < newAsteroidsNumber; i++)
-                    {
-                        auto& newSprite = spriteMap[SpriteName::ASTEROID];
-                        int newIndex = Random::randomRange(0, 2);
-                        
-                        Tmpl8::vec2 newPosition = Random::randomVector2(position, position + size);
-                        Tmpl8::vec2 newSize = { Random::randomRange(32.f, size.x / 1.5f) };
-
-                        Tmpl8::vec2 randomTarget = { Random::randomVector2({0.f, 0.f}, {ScreenWidth, ScreenHeight}) };
-
-                        Tmpl8::vec2 newDirection = randomTarget - newPosition;
-                        newDirection.normalize();
-
-                        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, newAsteroidsNumber, newIndex);
-
-                        ast->setMaxSpeed(asteroidMaxSpeed * 0.9f);
-                        ast->setAcceleration({ asteroidAcceleration * 0.9f * newDirection.x, asteroidAcceleration * 0.9f * newDirection.y });
-                        ast->setDirection(newDirection);
-                        ast->setTag("asteroid");
-
-                        tempObjects.push_back(ast);
-                    }
-
-                    //Spawn explosion particle
-
-                    auto par = std::make_shared<Particle>(spriteMap[SpriteName::ASTEROID_EXPLOSION], asteroid->getPosition(), asteroid->getSize(), 1.f);
-
-                    par->resize(1.5f);
-
-                    particles.push_back(par);
-
-                    
-                  
+                    divideAsteroid(asteroid);
                 }
             }
 
@@ -238,9 +170,9 @@ void GameManager::updateObjects(float deltaTime)
     //Restart game when player dies 
     if (player && player->destroy)
     {
-        soundMap[SoundName::SHIP_DESTROYED].replay();
+        assetManager->getSound(SoundName::SHIP_DESTROYED).replay();
 
-        auto par = std::make_shared<Particle>(spriteMap[SpriteName::SHIP_EXPLOSION], player->getPosition(), player->getSize(), 1.2f);
+        auto par = std::make_shared<Particle>(assetManager->getSprite(SpriteName::SHIP_EXPLOSION), player->getPosition(), player->getSize(), 1.2f);
         particles.push_back(par);
 
         player = nullptr;
@@ -331,7 +263,7 @@ void GameManager::spawnAsteroid()
 
     auto asteroid = std::make_shared<Asteroid>
         (
-            spriteMap[SpriteName::ASTEROID],
+            assetManager->getSprite(SpriteName::ASTEROID),
             Tmpl8::vec2{x ,y},
             Tmpl8::vec2{static_cast<float>(width), static_cast<float>(height)},
             health,
@@ -354,7 +286,7 @@ void GameManager::spawnUpgrade()
     float y = static_cast<float>(Random::randomRange(100, ScreenHeight - h));
 
     auto upgrd = std::make_shared<Upgrade>(
-        spriteMap[SpriteName::UPGRADE],
+        assetManager->getSprite(SpriteName::UPGRADE),
         Tmpl8::vec2{x, y},
         Tmpl8::vec2{static_cast<float>(w), static_cast<float>(h)}
     );
@@ -370,7 +302,7 @@ void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 dire
 {
     auto sheep = std::make_shared<Sheep>
         (
-            spriteMap[SpriteName::SHEEP],
+            assetManager->getSprite(SpriteName::SHEEP),
             pos,
             size
         );
@@ -390,4 +322,52 @@ void GameManager::spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 dire
     {
         player->upgradeEngine();
     }
+}
+
+void GameManager::divideAsteroid(std::shared_ptr<Asteroid> asteroid)
+{
+    // -- Divide an asteroid in the small ones -- //
+    const auto& position = asteroid->getPosition();
+    const auto& size = asteroid->getSize();
+    const auto& direction = asteroid->getDirection();
+
+    int newAsteroidsNumber;
+
+    //Size of an asteroid is in range of 64 to 256
+
+    if (size.x < 90.f) newAsteroidsNumber = 0;
+    else if (size.x < 150.f) newAsteroidsNumber = 1;
+    else if (size.x < 210.f) newAsteroidsNumber = 2;
+    else newAsteroidsNumber = 3;
+
+    for (int i = 0; i < newAsteroidsNumber; i++)
+    {
+        auto newSprite = assetManager->getSprite(SpriteName::ASTEROID);
+        int newIndex = Random::randomRange(0, 2);
+
+        Tmpl8::vec2 newPosition = Random::randomVector2(position, position + size);
+        Tmpl8::vec2 newSize = { Random::randomRange(32.f, size.x / 1.5f) };
+
+        Tmpl8::vec2 randomTarget = { Random::randomVector2({0.f, 0.f}, {ScreenWidth, ScreenHeight}) };
+
+        Tmpl8::vec2 newDirection = randomTarget - newPosition;
+        newDirection.normalize();
+
+        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, newAsteroidsNumber, newIndex);
+
+        ast->setMaxSpeed(asteroidMaxSpeed * 0.9f);
+        ast->setAcceleration({ asteroidAcceleration * 0.9f * newDirection.x, asteroidAcceleration * 0.9f * newDirection.y });
+        ast->setDirection(newDirection);
+        ast->setTag("asteroid");
+
+        tempObjects.push_back(ast);
+    }
+
+    //Spawn explosion particle
+
+    auto par = std::make_shared<Particle>(assetManager->getSprite(SpriteName::ASTEROID_EXPLOSION), asteroid->getPosition(), asteroid->getSize(), 1.f);
+
+    par->resize(1.5f);
+
+    particles.push_back(par);
 }

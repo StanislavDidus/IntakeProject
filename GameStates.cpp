@@ -27,7 +27,7 @@ namespace Tmpl8
 		case GameState::GAME:
 			// -- Init game -- //
 
-			EventBus::Get().subscribe<EventType::GAMEOVER>(this, [this] {restart = true; soundMap[SoundName::GAME_OVER].replay(); });
+			EventBus::Get().subscribe<EventType::GAMEOVER>(this, [this] {restart = true; assetManager->getSound(SoundName::GAME_OVER).replay(); });
 
 			initCollisionManager();
 			initGameManager();
@@ -92,6 +92,11 @@ namespace Tmpl8
 		buttons[0]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[1]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[2]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
+
+		for (auto& toggle : toggles)
+		{
+			toggle->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
+		}
 	}
 
 	void Game::updateGame(float deltaTime)
@@ -149,7 +154,12 @@ namespace Tmpl8
 		buttons[1]->render(screen);
 		buttons[2]->render(screen);
 
-		spriteMap[SpriteName::UI_LOGO]->DrawScaled(175, 10, ScreenWidth - 350, 225, screen);
+		for (const auto& toggle : toggles)
+		{
+			toggle->render(screen);
+		}
+
+		assetManager->getSprite(SpriteName::UI_LOGO)->DrawScaled(175, 10, ScreenWidth - 350, 225, screen);
 
 		
 	}
@@ -180,22 +190,22 @@ namespace Tmpl8
 
 		
 		if (!isPlayerWeaponUpgraded)
-			spriteMap[SpriteName::SHIP_WEAPON]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			assetManager->getSprite(SpriteName::SHIP_WEAPON)->DrawScaled(posX, 0, uiSize, uiSize, screen);
 		else
-			spriteMap[SpriteName::SHIP_WEAPON_UPGRADED]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			assetManager->getSprite(SpriteName::SHIP_WEAPON_UPGRADED)->DrawScaled(posX, 0, uiSize, uiSize, screen);
 
 		if (!isPlayerEngineUpgraded)
 		{
-			spriteMap[SpriteName::SHIP_ENGINE]->DrawScaled(posX, 0, uiSize, uiSize, screen);
-			spriteMap[SpriteName::SHIP_ENGINE_EFFECT]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			assetManager->getSprite(SpriteName::SHIP_ENGINE)->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			assetManager->getSprite(SpriteName::SHIP_ENGINE_EFFECT)->DrawScaled(posX, 0, uiSize, uiSize, screen);
 		}
 		else
 		{
-			spriteMap[SpriteName::SHIP_ENGINE_UPGRADED]->DrawScaled(posX, 0, uiSize, uiSize, screen);
-			spriteMap[SpriteName::SHIP_ENGINE_UPGRADED_EFFECT]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			assetManager->getSprite(SpriteName::SHIP_ENGINE_UPGRADED)->DrawScaled(posX, 0, uiSize, uiSize, screen);
+			assetManager->getSprite(SpriteName::SHIP_ENGINE_UPGRADED_EFFECT)->DrawScaled(posX, 0, uiSize, uiSize, screen);
 		}
 
-		spriteMap[SpriteName::SHIP]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+		assetManager->getSprite(SpriteName::SHIP)->DrawScaled(posX, 0, uiSize, uiSize, screen);
 
 		posX += uiSize;
 
@@ -207,7 +217,7 @@ namespace Tmpl8
 		posX += letterSize * 2;
 
 		//Render sheep UI
-		spriteMap[SpriteName::SHEEP]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+		assetManager->getSprite(SpriteName::SHEEP)->DrawScaled(posX, 0, uiSize, uiSize, screen);
 
 		std::stringstream sheepText;
 		int sheepTextLength = static_cast<int>(std::to_string(gameManager->getNumberOfSheep()).length()) + 1; // + 1 because we also and 'x' sign
@@ -220,7 +230,7 @@ namespace Tmpl8
 		posX += letterSize * sheepTextLength;
 
 		//Render clock
-		spriteMap[SpriteName::UI_CLOCK]->DrawScaled(posX, 0, uiSize, uiSize, screen);
+		assetManager->getSprite(SpriteName::UI_CLOCK)->DrawScaled(posX, 0, uiSize, uiSize, screen);
 
 		std::stringstream timerText;
 		float roundedTimer = std::round(gameTimer * 100.f) / 100.f;
@@ -252,10 +262,10 @@ namespace Tmpl8
 			int xPos = scoreOffSetX;
 			int yPos = iconHeight * i + scoreYSpace * i + scoreOffSetY - scrolled;
 
-			spriteMap[SpriteName::UI_LABEL]->DrawScaled(0, yPos - 10, 625, iconHeight + 20, screen);
-
-			spriteMap[SpriteName::UI_SMILEYS]->SetFrame(data.spriteIndex);
-			spriteMap[SpriteName::UI_SMILEYS]->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);
+			assetManager->getSprite(SpriteName::UI_LABEL)->DrawScaled(0, yPos - 10, 625, iconHeight + 20, screen);
+			
+			assetManager->getSprite(SpriteName::UI_SMILEYS)->SetFrame(data.spriteIndex);
+			assetManager->getSprite(SpriteName::UI_SMILEYS)->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);
 
 			xPos += iconWidth + scoreXSpace;
 
@@ -279,7 +289,7 @@ namespace Tmpl8
 			screen.PrintScaled(&hoursMinuteText.str()[0], xPos + 2 * letterSizeX, yPos + letterSizeY + scoreYSpace * 2, scoreTextScale, scoreTextScale, 0xFFFFFF);
 
 			xPos += (2 + 1 + 2 + 1 + 4) * letterSizeX + scoreXSpace;
-			spriteMap[SpriteName::SHEEP]->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);
+			assetManager->getSprite(SpriteName::SHEEP)->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);
 
 			xPos += iconWidth + scoreXSpace;
 
@@ -290,7 +300,7 @@ namespace Tmpl8
 
 			xPos += static_cast<int>(std::to_string(data.sheepScore).length()) * letterSizeX + scoreXSpace;
 
-			spriteMap[SpriteName::UI_CLOCK]->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);
+			assetManager->getSprite(SpriteName::UI_CLOCK)->DrawScaled(xPos, yPos, iconWidth, iconHeight, screen);
 
 			xPos += iconWidth + scoreXSpace;
 

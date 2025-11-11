@@ -93,7 +93,7 @@ bool CollisionManager::PointRectangle(Tmpl8::vec2 target, std::shared_ptr<Object
 	Tmpl8::vec2 pos = col->getPosition();
 	Tmpl8::vec2 size = col->getSize();
 
-	Tmpl8::vec2 cTarget = col->getRotatedPoint(target, col->getPosition(), - 1.f);
+	Tmpl8::vec2 cTarget = col->getRotatedPoint(target, col->getPosition(), -1.f);
 
 	if (cTarget.x >= pos.x &&
 		cTarget.x <= pos.x + size.x &&
@@ -110,10 +110,10 @@ bool CollisionManager::PixelPerfectCheck(std::shared_ptr<Object> target, std::sh
 	{
 		for (int y = overlap.y; y < overlap.y + overlap.w; y++)
 		{
-			Tmpl8::Pixel color1 = target->getPixelAtRotatedPosition(x, y);
-			Tmpl8::Pixel color2 = col->getPixelAtRotatedPosition(x, y);
+			bool pixel1 = target->isPixelAtPosition(x, y);
+			bool pixel2 = col->isPixelAtPosition(x, y);
 
-			if (color1 & 0xffffff && color2 & 0xffffff)
+			if (pixel1 && pixel2)
 				return true;
 		}
 	}
@@ -170,7 +170,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 		}
 	}
 
-	//Add verticies that are inside of a rectangle
+	//Add verticies that are inside of a rectangle or intersect it
 	for (const auto& tVerticy : target->getVerticesPosition())
 	{
 		if (PointRectangle(tVerticy, col))
@@ -186,12 +186,14 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 		}
 	}
 
+	//Find AABB 
 	Tmpl8::vec2 min{};
 	Tmpl8::vec2 max{};
 	if (intersectionPoints.size() > 0)
 	{
 		min = { intersectionPoints[0] };
-		max = min;
+		max = { intersectionPoints[0] };
+
 		for (int i = 1; i < intersectionPoints.size(); i++)
 		{
 			auto& intersection = intersectionPoints[i];
@@ -203,6 +205,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 		}
 	}
 
+	//Clamp it to the screen
 	min = clampVec2(min, { 0.f, 0.f }, { static_cast<float>(ScreenWidth) - 1.f, static_cast<float>(ScreenHeight) - 1.f });
 	max = clampVec2(max, { 0.f, 0.f }, { static_cast<float>(ScreenWidth) - 1.f, static_cast<float>(ScreenHeight) - 1.f });
 

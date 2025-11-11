@@ -80,12 +80,9 @@ struct CollisionHelper
 
 };
 
-//Area formula 
-// ||(B - A) * (C - A)|| / 2
-
-//Formula: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
 //Code: https://github.com/3dgep/rasterizer/blob/main/graphics/src/Rasterizer.cpp#L70,
 // https://fgiesen.wordpress.com/2013/02/08/triangle-rasterization-in-practice/#:~:text=again%2C%20I%20digress.-,Fill%20rules,-The%20goal%20of
+//Edge function formula (file): Solution/A Parallel Algorithm for Polygon Rasterization (Pineda, 1988)
 struct Edge
 {
 	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p) :

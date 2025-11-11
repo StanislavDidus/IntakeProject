@@ -10,13 +10,14 @@
 #include <chrono>
 #include <ctime>
 
-#include "AssetNames.hpp"
+#include "AssetManager.hpp"
 #include "Player.hpp"
 #include "GameManager.hpp"
 #include "CollisionManager.hpp"
 #include "Button.hpp"
 #include <Audio/Device.hpp>
 #include "EventBus.hpp"
+#include "Toggle.hpp"
 
 #include <SDL.h>
 
@@ -39,8 +40,6 @@ struct RunData
 
 	float runTime;
 };
-
-
 
 namespace Tmpl8 {
 
@@ -82,18 +81,22 @@ private:
 	std::shared_ptr<GameManager> gameManager;
 	std::shared_ptr<CollisionManager> collisionManager;
 
-	//ASSETS
-	void loadSprite(SpriteName spriteName, const std::string& path, int frames);
-	void loadSound(SoundName soundName, const std::string& path, Audio::Sound::Type type = Audio::Sound::Type::Sound);
-
-	std::unordered_map<SpriteName, std::shared_ptr<Sprite>> spriteMap;
-	std::unordered_map<SoundName, Audio::Sound> soundMap;
+	std::shared_ptr<AssetManager> assetManager;
 
 	std::unique_ptr<Animator> animator;
+
+	//UI Elements
+	std::vector<std::shared_ptr<Toggle>> toggles;
 
 	std::vector<std::shared_ptr<Button>> buttons;
 	Tmpl8::vec2i mousePosition;
 	bool wasMouseDown, wasMouseUp;
+
+	//FPS
+	float fpsCheckTimer = 0.f;
+
+	int fpsCounter = 0;
+	int frames = 0;
 
 	//Score UI
 	int scoreOffSetX = 25;
@@ -141,10 +144,8 @@ private:
 
 	void setState(GameState state);
 
-	void initSprites();
-	void initSounds();
+	void initAssets();
 	void initGameManager();
-	//void initEvents();
 	void initCollisionManager();
 	void initAnimators();
 	void initButtons();

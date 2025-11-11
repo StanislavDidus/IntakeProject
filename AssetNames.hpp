@@ -35,6 +35,7 @@ enum class SpriteName
 	UI_CLOCK,
 	UI_SMILEYS,
 	UI_LABEL,
+	UI_TOGGLE_SOUND
 };
 
 enum class SoundName

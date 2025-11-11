@@ -145,6 +145,7 @@ namespace Tmpl8 {
 			fontInitialized = true;
 		}
 
+		//Took this approach of print scaled letter from the 3dgep discord channel
 		Pixel* t = m_Buffer + x1 + y1 * m_Pitch;
 		for (int i = 0; i < (int)(strlen(a_String)); i++, t += 6 * scaleX) // t - space between letters
 		{
@@ -472,11 +473,6 @@ namespace Tmpl8 {
 
 	void Sprite::DrawScaled(int a_X, int a_Y, int a_Width, int a_Height, Surface& a_Target)
 	{
-		/*if (a_X < 0 ||
-			a_Y < 0 ||
-			a_X + a_Width >= ScreenWidth ||
-			a_Y + a_Height >= ScreenHeight) return;*/
-
 		if ((a_Width == 0) || (a_Height == 0)) return;
 
 		// -- Clipping -- //
@@ -507,6 +503,7 @@ namespace Tmpl8 {
 		}
 	}
 
+	//Code taken from: https://github.com/3dgep/rasterizer/blob/main/graphics/src/Rasterizer.cpp
 	void Sprite::DrawScaledRotated(const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3, Surface& screen)
 	{
 		AABB dst = AABB{ 0, 0, ScreenWidth - 1, ScreenHeight - 1 };
@@ -582,7 +579,7 @@ namespace Tmpl8 {
 		}
 	}
 
-	Pixel Sprite::getPixelAtRotatedPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, int centerX, int centerY, float angle)
+	bool Sprite::isPixelAtPosition(int spriteX, int spriteY, int pixelX, int pixelY, int width, int height, int centerX, int centerY, float angle)
 	{
 		float radians = angle * PI / 180.f;
 		float sin = std::sin(radians);
@@ -600,11 +597,11 @@ namespace Tmpl8 {
 		int u = (int)(rx * ((float)m_Width / (float)width));
 		int v = (int)(ry * ((float)m_Height / (float)height));
 
-		if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) return Pixel{};
+		if (u < 0 || u >= m_Width || v < 0 || v >= m_Height) return false;
 
 		Pixel color = GetBuffer()[u + v * m_Pitch + m_CurrentFrame * m_Width];
 
-		return color;
+		return color & 0xffffff;
 	}
 
 	void Sprite::InitializeStartData()
