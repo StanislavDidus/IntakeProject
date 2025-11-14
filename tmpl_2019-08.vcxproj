@@ -282,6 +282,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="A Parallel Algorithm for Polygon Rasterization (Pineda, 1988) (1).pdf" />
+    <None Include="LICENSE" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

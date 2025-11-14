@@ -22,37 +22,37 @@ Audio::Sound AssetManager::getSound(SoundName name) const
 void AssetManager::loadSprites()
 {
 	//Ship
-	loadSprite(SpriteName::SHIP, "assets/ship.png", 4);
-	loadSprite(SpriteName::SHIP_ENGINE, "assets/engine.png", 1);
-	loadSprite(SpriteName::SHIP_ENGINE_UPGRADED, "assets/engine1.png", 1);
-	loadSprite(SpriteName::SHIP_ENGINE_EFFECT, "assets/engineEffect.png", 7);
-	loadSprite(SpriteName::SHIP_ENGINE_UPGRADED_EFFECT, "assets/engineEffect1.png", 8);
-	loadSprite(SpriteName::SHIP_EXPLOSION, "assets/explosion.png", 11);
-	loadSprite(SpriteName::SHIP_WEAPON, "assets/weapon.png", 7);
-	loadSprite(SpriteName::SHIP_WEAPON_UPGRADED, "assets/weapon1.png", 12);
-	loadSprite(SpriteName::SHIP_HIT_EFFECT, "assets/hitEffect.png", 7);
-	loadSprite(SpriteName::SHIP_BULLET, "assets/bullet.png", 4);
-	loadSprite(SpriteName::SHIP_BULLET_UPGRADED, "assets/bullet1.png", 10);
-	loadSprite(SpriteName::SHIP_BULLET_UPGRADED_TRAIL, "assets/bulletEffect.png", 4);
+	loadSprite(SpriteName::SHIP, "assets/Sprites/ship.png", 4);
+	loadSprite(SpriteName::SHIP_ENGINE, "assets/Sprites/engine.png", 1);
+	loadSprite(SpriteName::SHIP_ENGINE_UPGRADED, "assets/Sprites/engine1.png", 1);
+	loadSprite(SpriteName::SHIP_ENGINE_EFFECT, "assets/Sprites/engineEffect.png", 7);
+	loadSprite(SpriteName::SHIP_ENGINE_UPGRADED_EFFECT, "assets/Sprites/engineEffect1.png", 8);
+	loadSprite(SpriteName::SHIP_EXPLOSION, "assets/Sprites/explosion.png", 11);
+	loadSprite(SpriteName::SHIP_WEAPON, "assets/Sprites/weapon.png", 7);
+	loadSprite(SpriteName::SHIP_WEAPON_UPGRADED, "assets/Sprites/weapon1.png", 12);
+	loadSprite(SpriteName::SHIP_HIT_EFFECT, "assets/Sprites/hitEffect.png", 7);
+	loadSprite(SpriteName::SHIP_BULLET, "assets/Sprites/bullet.png", 4);
+	loadSprite(SpriteName::SHIP_BULLET_UPGRADED, "assets/Sprites/bullet1.png", 10);
+	loadSprite(SpriteName::SHIP_BULLET_UPGRADED_TRAIL, "assets/Sprites/bulletEffect.png", 4);
 
 	// Objects
-	loadSprite(SpriteName::SHEEP, "assets/sheep.png", 1);
-	loadSprite(SpriteName::ASTEROID, "assets/asteroid.png", 3);
-	loadSprite(SpriteName::ASTEROID_EXPLOSION, "assets/explosion1.png", 10);
-	loadSprite(SpriteName::SPACE, "assets/space.png", 2);
-	loadSprite(SpriteName::UPGRADE, "assets/upgrade.png", 1);
+	loadSprite(SpriteName::SHEEP, "assets/Sprites/sheep.png", 1);
+	loadSprite(SpriteName::ASTEROID, "assets/Sprites/asteroid.png", 3);
+	loadSprite(SpriteName::ASTEROID_EXPLOSION, "assets/Sprites/explosion1.png", 10);
+	loadSprite(SpriteName::SPACE, "assets/Sprites/space.png", 2);
+	loadSprite(SpriteName::UPGRADE, "assets/Sprites/upgrade.png", 1);
 
 	// UI
-	loadSprite(SpriteName::BUTTON_START, "assets/startButton.png", 3);
-	loadSprite(SpriteName::BUTTON_SCORE, "assets/scoreButton.png", 3);
-	loadSprite(SpriteName::BUTTON_EXIT, "assets/exitButton.png", 3);
-	loadSprite(SpriteName::BUTTON_DELETE, "assets/deleteButton.png", 3);
-	loadSprite(SpriteName::BUTTON_CANCEL, "assets/cancelButton.png", 3);
-	loadSprite(SpriteName::UI_LOGO, "assets/logo.png", 1);
-	loadSprite(SpriteName::UI_CLOCK, "assets/clock.png", 1);
-	loadSprite(SpriteName::UI_SMILEYS, "assets/smileys.png", 20);
-	loadSprite(SpriteName::UI_LABEL, "assets/label.png", 1);
-	loadSprite(SpriteName::UI_TOGGLE_SOUND, "assets/soundToggle.png", 2);
+	loadSprite(SpriteName::BUTTON_START, "assets/Sprites/startButton.png", 3);
+	loadSprite(SpriteName::BUTTON_SCORE, "assets/Sprites/scoreButton.png", 3);
+	loadSprite(SpriteName::BUTTON_EXIT, "assets/Sprites/exitButton.png", 3);
+	loadSprite(SpriteName::BUTTON_DELETE, "assets/Sprites/deleteButton.png", 3);
+	loadSprite(SpriteName::BUTTON_CANCEL, "assets/Sprites/cancelButton.png", 3);
+	loadSprite(SpriteName::UI_LOGO, "assets/Sprites/logo.png", 1);
+	loadSprite(SpriteName::UI_CLOCK, "assets/Sprites/clock.png", 1);
+	loadSprite(SpriteName::UI_SMILEYS, "assets/Sprites/smileys.png", 20);
+	loadSprite(SpriteName::UI_LABEL, "assets/Sprites/label.png", 1);
+	loadSprite(SpriteName::UI_TOGGLE_SOUND, "assets/Sprites/soundToggle.png", 2);
 }
 
 void AssetManager::loadSounds()

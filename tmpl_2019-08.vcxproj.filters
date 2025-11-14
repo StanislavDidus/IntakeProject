@@ -176,5 +176,6 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="A Parallel Algorithm for Polygon Rasterization (Pineda, 1988) (1).pdf" />
+    <None Include="LICENSE" />
   </ItemGroup>
 </Project>

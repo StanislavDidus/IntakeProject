@@ -17,6 +17,8 @@ Player::Player
 	initTimerManager();
 	initEvents();
 
+	//assetManager->getSprite(SpriteName::SHIP_WEAPON)->SetFrame(1);
+
 	//center = { 0.f, 0.f };
 }
 
