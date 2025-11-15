@@ -67,6 +67,15 @@
     <ClCompile Include="Toggle.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Gamepad.cpp" />
+    <ClCompile Include="GamepadSDL2.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="KeyboardSDL2.cpp" />
+    <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="MouseSDL2.cpp" />
+    <ClCompile Include="Touch.cpp" />
+    <ClCompile Include="TouchSDL2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">

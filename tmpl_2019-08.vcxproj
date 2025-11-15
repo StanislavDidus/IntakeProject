@@ -235,7 +235,14 @@
     <ClCompile Include="FillBar.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Gamepad.cpp" />
+    <ClCompile Include="GamepadSDL2.cpp" />
     <ClCompile Include="GameStates.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="KeyboardSDL2.cpp" />
+    <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="MouseSDL2.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -246,6 +253,8 @@
     <ClCompile Include="surface.cpp" />
     <ClCompile Include="template.cpp" />
     <ClCompile Include="Toggle.cpp" />
+    <ClCompile Include="Touch.cpp" />
+    <ClCompile Include="TouchSDL2.cpp" />
     <ClCompile Include="Trail.cpp" />
     <ClCompile Include="Upgrade.cpp" />
   </ItemGroup>
