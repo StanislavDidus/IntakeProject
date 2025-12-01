@@ -398,6 +398,7 @@ int main( int argc, char **argv )
 				break;
 			case SDL_MOUSEWHEEL:
 				game->MouseWheelScrolled(event.wheel.y);
+				break;
 			default:
 				break;
 			}

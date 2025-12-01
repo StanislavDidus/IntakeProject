@@ -15,7 +15,7 @@ public:
 		float areaMultiplier
 	);
 
-	virtual ~SuperBullet();
+	~SuperBullet() override;
 
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;

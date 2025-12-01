@@ -14,7 +14,7 @@ public:
 		const std::function<void()>& on,
 		bool isOn = false
 	);
-	virtual ~Toggle();
+	~Toggle() override;
 
 	void CheckClick(const Tmpl8::vec2i& cpos, bool wasMouseDown, bool wasMouseUp);
 

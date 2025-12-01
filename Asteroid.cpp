@@ -16,6 +16,10 @@ Asteroid::Asteroid
 	hpBar = std::make_unique<FillBar>(Tmpl8::GreenMask, position, Tmpl8::vec2{static_cast<float>(barWidth), 5.f}, 0.f, maxHealth);
 }
 
+Asteroid::~Asteroid()
+{
+}
+
 void Asteroid::update(float deltaTime)
 {
 	angle += rotationSpeed * deltaTime;	

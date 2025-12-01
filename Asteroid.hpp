@@ -14,6 +14,7 @@ public:
 		float maxHealth,
 		int frameIndex
 	);
+	~Asteroid() override;
 
 	void update(float deltaTime) override;
 	void render(Tmpl8::Surface& screen) override;
