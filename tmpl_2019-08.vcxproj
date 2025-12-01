@@ -124,7 +124,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>lib;lib\OpenGL;lib\SDL2-2.0.3\include;lib\freeimage\inc;$(SolutionDir)extern\Audio\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib;lib\OpenGL;lib\SDL2-2.0.3\include;lib\freeimage\inc;extern\Audio\inc;.\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -195,7 +195,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>lib;lib\OpenGL;lib\SDL2-2.0.3\include;lib\freeimage\inc;$(SolutionDir)extern\Audio\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib;lib\OpenGL;lib\SDL2-2.0.3\include;lib\freeimage\inc;extern\Audio\inc;.\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -229,13 +229,21 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="backends\SDL2\GamepadSDL2.cpp" />
+    <ClCompile Include="backends\SDL2\KeyboardSDL2.cpp" />
+    <ClCompile Include="backends\SDL2\MouseSDL2.cpp" />
+    <ClCompile Include="backends\SDL2\TouchSDL2.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="FillBar.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Gamepad.cpp" />
     <ClCompile Include="GameStates.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -246,6 +254,7 @@
     <ClCompile Include="surface.cpp" />
     <ClCompile Include="template.cpp" />
     <ClCompile Include="Toggle.cpp" />
+    <ClCompile Include="Touch.cpp" />
     <ClCompile Include="Trail.cpp" />
     <ClCompile Include="Upgrade.cpp" />
   </ItemGroup>
@@ -263,6 +272,12 @@
     <ClInclude Include="Functions.hpp" />
     <ClInclude Include="game.hpp" />
     <ClInclude Include="GameManager.hpp" />
+    <ClInclude Include="input\ButtonState.hpp" />
+    <ClInclude Include="input\Gamepad.hpp" />
+    <ClInclude Include="input\Input.hpp" />
+    <ClInclude Include="input\Keyboard.hpp" />
+    <ClInclude Include="input\Mouse.hpp" />
+    <ClInclude Include="input\Touch.hpp" />
     <ClInclude Include="Object.hpp" />
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="Player.hpp" />

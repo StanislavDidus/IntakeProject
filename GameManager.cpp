@@ -353,7 +353,7 @@ void GameManager::divideAsteroid(std::shared_ptr<Asteroid> asteroid)
         Tmpl8::vec2 newDirection = randomTarget - newPosition;
         newDirection.normalize();
 
-        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, newAsteroidsNumber, newIndex);
+        auto ast = std::make_shared<Asteroid>(newSprite, newPosition, newSize, static_cast<float>(newAsteroidsNumber), newIndex);
 
         ast->setMaxSpeed(asteroidMaxSpeed * 0.9f);
         ast->setAcceleration({ asteroidAcceleration * 0.9f * newDirection.x, asteroidAcceleration * 0.9f * newDirection.y });
