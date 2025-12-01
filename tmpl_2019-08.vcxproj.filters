@@ -67,6 +67,33 @@
     <ClCompile Include="Toggle.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Gamepad.cpp">
+      <Filter>source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Touch.cpp">
+      <Filter>source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\SDL2\GamepadSDL2.cpp">
+      <Filter>source\Input\SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\SDL2\KeyboardSDL2.cpp">
+      <Filter>source\Input\SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\SDL2\MouseSDL2.cpp">
+      <Filter>source\Input\SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\SDL2\TouchSDL2.cpp">
+      <Filter>source\Input\SDL2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surface.h">
@@ -147,6 +174,24 @@
     <ClInclude Include="Toggle.hpp">
       <Filter>include\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="input\ButtonState.hpp">
+      <Filter>include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Gamepad.hpp">
+      <Filter>include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Input.hpp">
+      <Filter>include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Keyboard.hpp">
+      <Filter>include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Mouse.hpp">
+      <Filter>include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Touch.hpp">
+      <Filter>include\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">
@@ -166,6 +211,15 @@
     </Filter>
     <Filter Include="include\Algorithms">
       <UniqueIdentifier>{6e7c1b04-8f87-4780-813b-deb37c0e6aaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Input">
+      <UniqueIdentifier>{8ffcfc6a-e737-4cf7-9508-3efe47680554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Input">
+      <UniqueIdentifier>{de1dd361-56fa-4301-8ff5-f60a15f9a18b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Input\SDL2">
+      <UniqueIdentifier>{c63a188f-aa58-48a3-8fb9-3bc41cc431af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

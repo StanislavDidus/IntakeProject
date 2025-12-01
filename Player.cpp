@@ -4,6 +4,10 @@
 #include <iostream>
 #include "CollisionHelper.hpp"
 
+#include <input/Input.hpp>
+
+using namespace input;
+
 Player::Player
 (
 	std::shared_ptr<AssetManager> assetManager,
@@ -11,6 +15,20 @@ Player::Player
 	Tmpl8::vec2 size
 ) : Object(assetManager->getSprite(SpriteName::SHIP), position, size), assetManager(assetManager)
 {
+	Input::addButtonCallback("Forward", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+		{
+			bool rt = false;
+            for (auto& gamepad : gamepads)
+            {
+                rt = rt || gamepad.rightTrigger == ButtonState::Held;
+            }
+
+			bool w = keyboard.getLastState().W;
+            bool up = keyboard.getLastState().Up;
+
+			return rt || w || up;
+		});
+
 	setState(PlayerState::IDLE);
 
 	initAnimator();

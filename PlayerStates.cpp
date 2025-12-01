@@ -2,6 +2,9 @@
 #include "game.hpp"
 #include "SuperBullet.hpp"
 
+#include <input/Input.hpp>
+using namespace input;
+
 void Player::setState(PlayerState state)
 {
 	if (this->state != state)
@@ -14,7 +17,8 @@ void Player::setState(PlayerState state)
 
 void Player::checkMove(float deltaTime)
 {
-	if (Tmpl8::Game::isKeyHold('w'))
+	// if (Tmpl8::Game::isKeyHold('w'))
+    if (Input::getButton("Forward"))
 		move(deltaTime);
 	else
 		stop(deltaTime);

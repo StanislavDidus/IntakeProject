@@ -6,6 +6,10 @@
 #include <fstream>
 #include "Random.hpp"
 
+#include <input/Input.hpp>
+
+using namespace input;
+
 namespace Tmpl8
 {
 	// -----------------------------------------------------------
@@ -169,6 +173,8 @@ namespace Tmpl8
 
 	void Game::update(float deltaTime)
 	{
+		Input::update();
+
 		animator->update(deltaTime);
 
 		switch (currentState)
