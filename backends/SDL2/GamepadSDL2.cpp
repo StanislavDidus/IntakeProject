@@ -137,10 +137,11 @@ private:
     static int SDLEventWatch( void* userdata, SDL_Event* event )
     {
         auto*           self = static_cast<GamepadSDL2*>( userdata );
-        std::lock_guard lock( self->m_Mutex );
 
         if ( event->type == SDL_CONTROLLERDEVICEADDED )
         {
+            std::lock_guard lock(self->m_Mutex);
+            
             int joyIdx = event->cdevice.which;
             if ( joyIdx < 0 || joyIdx >= Gamepad::MAX_PLAYER_COUNT )
                 return 0;
@@ -164,6 +165,8 @@ private:
         }
         else if ( event->type == SDL_CONTROLLERDEVICEREMOVED )
         {
+            std::lock_guard lock(self->m_Mutex);
+            
             SDL_JoystickID joyId = event->cdevice.which;
             for ( int i = 0; i < Gamepad::MAX_PLAYER_COUNT; ++i )
             {

@@ -15,22 +15,9 @@ Player::Player
 	Tmpl8::vec2 size
 ) : Object(assetManager->getSprite(SpriteName::SHIP), position, size), assetManager(assetManager)
 {
-	Input::addButtonCallback("Forward", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
-		{
-			bool rt = false;
-            for (auto& gamepad : gamepads)
-            {
-                rt = rt || gamepad.rightTrigger == ButtonState::Held;
-            }
-
-			bool w = keyboard.getLastState().W;
-            bool up = keyboard.getLastState().Up;
-
-			return rt || w || up;
-		});
-
 	setState(PlayerState::IDLE);
 
+	initInputs();
 	initAnimator();
 	initTimerManager();
 	initEvents();
@@ -42,6 +29,72 @@ Player::Player
 
 Player::~Player()
 {
+}
+
+void Player::initInputs()
+{
+	//Forward
+	Input::addButtonCallback("Forward", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+		{
+			bool rt = false;
+			for (auto& gamepad : gamepads)
+			{
+				rt = rt || (gamepad.getLastState().connected && gamepad.rightTrigger == ButtonState::Held);
+			}
+
+			bool w = keyboard.getLastState().W;
+			bool up = keyboard.getLastState().Up;
+
+			//std::cout << rt << ", " << w << ", " << up << std::endl;
+
+			return rt || w || up;
+		});
+
+	//Left Rotation
+	Input::addButtonCallback("Rotate_Left", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+		{
+			bool al = false; // Arrow-Left
+			for (auto& gamepad : gamepads)
+			{
+				al = al || gamepad.dPadLeft == ButtonState::Held;
+			}
+
+			bool a = keyboard.getLastState().A;
+			bool l = keyboard.getLastState().Left;
+
+			return al || a || l;
+		});
+
+	//Right Rotation
+	Input::addButtonCallback("Rotate_Right", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+		{
+			bool ar = false; // Arrow-right
+			for (auto& gamepad : gamepads)
+			{
+				ar = ar || gamepad.dPadRight == ButtonState::Held;
+			}
+
+			bool d = keyboard.getLastState().D;
+			bool r = keyboard.getLastState().Right;
+
+			return ar || d || r;
+		});
+
+	//Shoot
+	Input::addButtonCallback("Shoot", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+		{
+			bool x = false; // X
+			for (auto& gamepad : gamepads)
+			{
+				x = x || gamepad.x == ButtonState::Held;
+			}
+
+			bool e = keyboard.getLastState().E;
+			bool s = keyboard.getLastState().Space;
+			bool ad = keyboard.getLastState().Down; // Arrow-Down
+
+			return x || e || s || ad;
+		});
 }
 
 void Player::initAnimator()
@@ -70,11 +123,13 @@ void Player::initAnimator()
 void Player::initTimerManager()
 {
 	timerManager = std::make_unique<TimerManager>();
+
+	timerManager->addTimer(8.f, [this]() {drawInputHelp = false; });
 }
 
 void Player::initEvents()
 {
-	
+
 }
 
 void Player::update(float deltaTime)
@@ -161,6 +216,8 @@ void Player::render(Tmpl8::Surface& screen)
 
 	// Draw main ship
 	renderShipPart(sprite, screen);
+
+	renderInputHelp(screen);
 }
 
 
@@ -188,7 +245,27 @@ void Player::renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surfac
 	sprite->DrawScaledRotated(v4[0], v4[1], v4[2], v4[3], screen);
 }
 
+void Player::renderInputHelp(Tmpl8::Surface& screen)
+{
+	if (!drawInputHelp) return;
 
+	int scale = 2;
+	int letterSizeY = scale * 5;
+	int space = 5;
+
+	int x = static_cast<int>(position.x) + 50;
+	int y = static_cast<int>(position.y);
+
+	screen.PrintScaled("(W) or Left-Trigger to MOVE", x, y, scale, scale, 0xFFFFFF);
+
+	y += letterSizeY + space;
+
+	screen.PrintScaled("(A)(D) or DPad-L-R to ROTATE", x, y, scale, scale, 0xFFFFFF);
+
+	y += letterSizeY + space;
+
+	screen.PrintScaled("(E) or (SPACE) or (X) to Shoot", x, y, scale, scale, 0xFFFFFF);
+}
 
 const std::vector<std::shared_ptr<IBullet>>& Player::getBullets() const
 {

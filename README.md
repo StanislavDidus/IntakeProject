@@ -24,13 +24,13 @@ Additionally, if you get 10 "sheep scores", your ship gets improved and its spri
 
 ## Keybinds
 
-| Key | Action |
-| --- | --- |
-| <kbd>W</kbd> | Move ship forward |
-| <kbd>A</kbd> | Rotate ship left |
-| <kbd>D</kbd> | Rotate ship right |
-| <kbd>E</kbd> or <kbd>Space</kbd> | shoot |
-| <kbd>Escape</kbd> | close the game |
+| Keyboard Key | Gamepad Key | Action |
+| --- | --- | --- |
+| <kbd>W</kbd> | <kbd>Right Trigger</kbd> | Move ship forward |
+| <kbd>A</kbd> | <kbd>D-pad left</kbd> | Rotate ship left |
+| <kbd>D</kbd> | <kbd>D-pad right</kbd> | Rotate ship right |
+| <kbd>E</kbd> or <kbd>Space</kbd> | <kbd>X</kbd> | shoot |
+| <kbd>Escape</kbd> | <kbd>START</kbd> | close the game |
 
 ## How to install the game
 

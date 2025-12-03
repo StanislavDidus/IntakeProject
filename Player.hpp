@@ -52,6 +52,7 @@ public:
 	bool isUpgradedWeapon() const;
 	bool isUpgradedEngine() const;
 private:
+	void initInputs();
 	void initAnimator();
 	void initTimerManager();
 	void initEvents();
@@ -74,6 +75,9 @@ private:
 	void updateSuperShoot(float deltaTime);
 
 	void renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surface& screen);
+
+	void renderInputHelp(Tmpl8::Surface& screen);
+	bool drawInputHelp = true;
 
 	std::vector<std::shared_ptr<IBullet>> bullets;
 

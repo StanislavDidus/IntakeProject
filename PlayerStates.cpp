@@ -17,7 +17,6 @@ void Player::setState(PlayerState state)
 
 void Player::checkMove(float deltaTime)
 {
-	// if (Tmpl8::Game::isKeyHold('w'))
     if (Input::getButton("Forward"))
 		move(deltaTime);
 	else
@@ -26,10 +25,12 @@ void Player::checkMove(float deltaTime)
 
 void Player::checkRotation(float deltaTime)
 {
-	if (Tmpl8::Game::isKeyHold('a'))
+	//if (Tmpl8::Game::isKeyHold('a'))
+	if (Input::getButton("Rotate_Left"))
 		rotate(-1.f, deltaTime);
 
-	if (Tmpl8::Game::isKeyHold('d'))
+	//if (Tmpl8::Game::isKeyHold('d'))
+	if (Input::getButton("Rotate_Right"))
 		rotate(1.f, deltaTime);
 }
 
@@ -106,11 +107,11 @@ void Player::updateIdle(float deltaTime)
 	checkMove(deltaTime);
 	checkRotation(deltaTime);
 	
-	if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && !upgradedWeapon && canShoot)
+	if ((Input::getButton("Shoot")) && !upgradedWeapon && canShoot)
 	{
 		setState(PlayerState::SHOOT);
 	}
-	else if ((Tmpl8::Game::isKeyHold('e') || Tmpl8::Game::isKeyHold(' ')) && upgradedWeapon && canShoot)
+	else if ((Input::getButton("Shoot")) && upgradedWeapon && canShoot)
 	{
 		setState(PlayerState::SUPERSHOOT);
 	}
@@ -122,7 +123,7 @@ void Player::updateShoot(float deltaTime)
 	checkMove(deltaTime);
 	checkRotation(deltaTime);
 	
-	if (!Tmpl8::Game::isKeyHold('e') && !Tmpl8::Game::isKeyHold(' '))
+	if (!Input::getButton("Shoot"))
 	{
 		setState(PlayerState::IDLE);
 	}
@@ -177,7 +178,7 @@ void Player::updateSuperShoot(float deltaTime)
 	checkMove(deltaTime);
 	checkRotation(deltaTime);
 	
-	if (!Tmpl8::Game::isKeyHold('e') && !Tmpl8::Game::isKeyHold(' '))
+	if (!Input::getButton("Shoot"))
 	{
 		setState(PlayerState::IDLE);
 
