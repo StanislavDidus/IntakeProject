@@ -19,7 +19,7 @@
 #include "EventBus.hpp"
 #include "Toggle.hpp"
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 enum class GameState
 {

@@ -2,6 +2,10 @@
 #include "Random.hpp"
 #include <fstream>
 
+#include <input/Input.hpp>
+
+using namespace input;
+
 namespace Tmpl8
 {
 	void Game::setState(GameState state)
@@ -88,6 +92,10 @@ namespace Tmpl8
 		updateAsteroids(deltaTime);
 
 		//gameManager->update(deltaTime);
+
+		// If "Start" or "A" button is pressed on the controller, start the game.
+		if (Input::getButton("Submit"))
+			setState(GameState::GAME);
 		
 		buttons[0]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[1]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);

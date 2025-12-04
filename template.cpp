@@ -19,7 +19,7 @@
 #include <io.h>
 #include "template.h"
 #include <corecrt_math.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "surface.h"
 #include <cstdio>
 #include <iostream>
