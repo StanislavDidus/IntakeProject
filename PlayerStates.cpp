@@ -25,13 +25,7 @@ void Player::checkMove(float deltaTime)
 
 void Player::checkRotation(float deltaTime)
 {
-	//if (Tmpl8::Game::isKeyHold('a'))
-	if (Input::getButton("Rotate_Left"))
-		rotate(-1.f, deltaTime);
-
-	//if (Tmpl8::Game::isKeyHold('d'))
-	if (Input::getButton("Rotate_Right"))
-		rotate(1.f, deltaTime);
+	rotate(Input::getAxis("Rotate"), deltaTime);
 }
 
 
