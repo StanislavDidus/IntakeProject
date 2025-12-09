@@ -82,7 +82,7 @@ struct CollisionHelper
 
 //Code: https://github.com/3dgep/rasterizer/blob/main/graphics/src/Rasterizer.cpp#L70,
 // https://fgiesen.wordpress.com/2013/02/08/triangle-rasterization-in-practice/#:~:text=again%2C%20I%20digress.-,Fill%20rules,-The%20goal%20of
-//Edge function formula (file): Solution/A Parallel Algorithm for Polygon Rasterization (Pineda, 1988)
+//Edge function formula (file): SolutionFolder/A Parallel Algorithm for Polygon Rasterization (Pineda, 1988)
 struct Edge
 {
 	Edge(const Tmpl8::vec2& p0, const Tmpl8::vec2& p1, const Tmpl8::vec2& p2, const Tmpl8::vec2& p) :
@@ -94,6 +94,7 @@ struct Edge
 		float bias1 = isLeftOrTopEdge(p2, p0) ? 0.f : -1.f;
 		float bias2 = isLeftOrTopEdge(p0, p1) ? 0.f : -1.f;
 		
+		//Add bias to prevent triangles from covering the same pixels twice
 		w0.x = edgeFunction(p, p1, dx.x, dy.x) + bias0;
 		w0.y = edgeFunction(p, p2, dx.y, dy.y) + bias1;
 		w0.z = edgeFunction(p, p0, dx.z, dy.z) + bias2;

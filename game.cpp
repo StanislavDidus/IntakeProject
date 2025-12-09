@@ -15,28 +15,6 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	// Initialize the application
 	// -----------------------------------------------------------
-
-
-	// -- Inputs -- //
-	std::bitset<256> Game::pressedButtons{};
-	std::bitset<256> Game::releasedButtons{};
-	std::bitset<256> Game::heldButtons{};
-
-	bool Game::isKeyDown(int key)
-	{
-		return pressedButtons[key];
-	}
-
-	bool Game::isKeyHold(int key)
-	{
-		return heldButtons[key];
-	}
-
-	bool Game::isKeyUp(int key)
-	{
-		return releasedButtons[key];
-	}
-	// -- -- //
 	 
 	// -- Initializers -- //
 	void Game::initAssets()
@@ -60,6 +38,60 @@ namespace Tmpl8
 	{
 		animator = std::make_unique<Animator>();
 		animator->addFrameAnimation(assetManager->getSprite(SpriteName::SPACE), 1.f, 0, assetManager->getSprite(SpriteName::SPACE)->Frames() - 1, []() {return true; });
+	}
+
+	void Game::initInput()
+	{
+		//Debug keys
+		//Restart
+		Input::addButtonCallback("Restart", [](std::span<const GamepadStateTracker>, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+			{
+				bool r = keyboard.isKeyPressed(input::Keyboard::Key::R);
+				return r;
+			});
+
+		//Upgrade ship
+		Input::addButtonCallback("Upgrade", [](std::span<const GamepadStateTracker>, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+			{
+				bool u = keyboard.isKeyPressed(input::Keyboard::Key::U);
+				return u;
+			});
+
+		//Kill all objects
+		Input::addButtonCallback("Kill_All", [](std::span<const GamepadStateTracker>, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+			{
+				bool k = keyboard.isKeyPressed(input::Keyboard::Key::K);
+				return k;
+			});
+
+		//Mouse wheel
+		//Kill all objects
+		Input::addAxisCallback("Mouse_Wheel", [](std::span<const GamepadStateTracker>, const KeyboardStateTracker&, const MouseStateTracker& mouse)
+			{
+				auto m = static_cast<float>(mouse.scrollWheelDelta);
+				return std::clamp(m, -1.f, 1.f);
+			});
+
+		Input::addAxisCallback("Scroll", [](std::span<const GamepadStateTracker>, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
+			{
+				const auto& w = keyboard.getLastState().W ? -1.f : 0.f;
+				const auto& s = keyboard.getLastState().S ? 1.f : 0.f;
+				return std::clamp(w + s, -1.f, 1.f);
+			});
+
+		//Left mouse button down
+		Input::addButtonCallback("Mouse_Down", [](std::span<const GamepadStateTracker>, const KeyboardStateTracker&, const MouseStateTracker& mouse)
+			{
+				bool m = mouse.leftButton == input::ButtonState::Pressed;
+				return m;
+			});
+
+		//Left mouse button up
+		Input::addButtonCallback("Mouse_Up", [](std::span<const GamepadStateTracker>, const KeyboardStateTracker&, const MouseStateTracker& mouse)
+			{
+				bool m = mouse.leftButton == input::ButtonState::Released;
+				return m;
+			});
 	}
 
 	void Game::initButtons()
@@ -105,6 +137,7 @@ namespace Tmpl8
 		initAssets();
 		initAnimators();
 		initButtons();
+		initInput();
 
 		// -- Init menu -- //
 		setState(GameState::MENU);
@@ -126,7 +159,6 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::Shutdown()
 	{
-		// -- Save player's data -- //
 		saveData();
 	}
 
@@ -175,6 +207,11 @@ namespace Tmpl8
 	{
 		Input::update();
 
+		// -- Controls -- //
+		wasMouseDown = Input::getButton("Mouse_Down");
+		wasMouseUp = Input::getButton("Mouse_Up");
+		mousePosition = { static_cast<int>(Input::getMouseX()), static_cast<int>(Input::getMouseY()) };
+
 		animator->update(deltaTime);
 
 		switch (currentState)
@@ -191,16 +228,6 @@ namespace Tmpl8
 		}
 
 		EventBus::Get().process();
-
-		// -- Controls -- //
-		wasMouseDown = false;
-		wasMouseUp = false;
-
-
-		//Wrote with external help
-		pressedButtons = keys & ~heldButtons;
-		releasedButtons = heldButtons & ~keys;
-		heldButtons = keys;
 	}
 
 	void Game::render(Tmpl8::Surface& screen)
@@ -227,15 +254,15 @@ namespace Tmpl8
 
 	void Game::DebugContol(float deltaTime)
 	{
-		if (isKeyUp('r'))
+		if (Input::getButton("Restart"))
 		{
 			Restart();
 		}
-		else if (isKeyUp('k'))
+		else if (Input::getButton("Kill_All"))
 		{
 			EventBus::Get().push<EventType::KILL_ALL>();
 		}
-		else if (isKeyUp('u'))
+		else if (Input::getButton("Upgrade"))
 		{
 			auto player = gameManager->getPlayer();
 			if (player) player->upgradeEngine();
@@ -265,6 +292,7 @@ namespace Tmpl8
 
 		//Spawn on the left or on the right side of the screen
 		float x = static_cast<float>(Random::ff() ? -width : ScreenWidth - 1);
+		//Spawn above or beneath the screen
 		float y = static_cast<float>(Random::ff() ? -height : ScreenHeight - 1);
 
 		createBgAsteroid(Tmpl8::vec2{ x, y }, Tmpl8::vec2{ static_cast<float>(width), static_cast<float>(height) });

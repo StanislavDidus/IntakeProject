@@ -40,7 +40,7 @@ void CollisionManager::checkCollision(std::shared_ptr<GameManager> gameManager, 
 						isCollision = true;
 					}
 				}
-				//Else the collision is already occured between two bounding boxes, so we return true
+				//Else, the collision has already occured between two bounding boxes, so we return true
 				else
 				{
 					isCollision = true;
@@ -186,7 +186,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 		}
 	}
 
-	//Find AABB 
+	//Find minimum size bounding box that can fit intersection area
 	Tmpl8::vec2 min{};
 	Tmpl8::vec2 max{};
 	if (intersectionPoints.size() > 0)

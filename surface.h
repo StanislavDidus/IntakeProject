@@ -67,6 +67,7 @@ public:
 	void Clear( Pixel a_Color );
 	void Line( float x1, float y1, float x2, float y2, Pixel color );
 
+	//Modified by Jeremiah
 	template<bool BoundsCheck = true>
 	void Plot(int x, int y, Pixel c)
 	{

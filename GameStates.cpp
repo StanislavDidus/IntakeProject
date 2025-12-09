@@ -91,11 +91,12 @@ namespace Tmpl8
 	{
 		updateAsteroids(deltaTime);
 
-		//gameManager->update(deltaTime);
-
+		// Added by Jeremiah
+		//{
 		// If "Start" or "A" button is pressed on the controller, start the game.
 		if (Input::getButton("Submit"))
 			setState(GameState::GAME);
+		//}
 		
 		buttons[0]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[1]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
@@ -125,16 +126,9 @@ namespace Tmpl8
 		buttons[3]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 		buttons[4]->CheckClick(mousePosition, wasMouseDown, wasMouseUp);
 
-		if (isKeyHold('w'))
-		{
-			toScroll += scrollButtonSpeed * deltaTime;
-		}
-		else if (isKeyHold('s'))
-		{
-			toScroll -= scrollButtonSpeed * deltaTime;
-		}
+		toScroll = Input::getAxis("Mouse_Wheel") * scrollWheelSpeed * inverseMouseWheel + Input::getAxis("Scroll") * scrollButtonSpeed * deltaTime;
 
-		scrolled += static_cast<int>(toScroll * inverseMouseWheel * scrollWheelSpeed);
+		scrolled += static_cast<int>(toScroll);
 		toScroll = 0;
 
 		int maxPossibleScroll = 0;

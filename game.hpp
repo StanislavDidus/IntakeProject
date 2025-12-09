@@ -52,24 +52,15 @@ public:
 	void Restart();
 	void Shutdown();
 	void Tick( float deltaTime );
-	void MouseWheelScrolled(int y) { if (currentState == GameState::SCORE) toScroll += static_cast<float>(y); }
-	void MouseUp(int button) { if (button == SDL_BUTTON_LEFT) wasMouseUp = true; }
-	void MouseDown(int button) { if( button == SDL_BUTTON_LEFT) wasMouseDown = true; }
-	void MouseMove(int x, int y) { mousePosition = { x, y }; }
-	void KeyUp(int key) { if (key < 256) keys.reset(key); }
-	void KeyDown(int key) { if (key < 256) keys.set(key); }
-
-	static bool isKeyDown(int key);
-	static bool isKeyHold(int key);
-	static bool isKeyUp(int key);	
+	void MouseWheelScrolled(int y) { /*if (currentState == GameState::SCORE) toScroll += static_cast<float>(y);*/ }
+	void MouseUp(int button) { /*if (button == SDL_BUTTON_LEFT) wasMouseUp = true;*/ }
+	void MouseDown(int button) { /*if( button == SDL_BUTTON_LEFT) wasMouseDown = true;*/ }
+	void MouseMove(int x, int y) {/* mousePosition = { x, y }; */}
+	void KeyUp(int key) { /*if (key < 256) keys.reset(key);*/ }
+	void KeyDown(int key) {/* if (key < 256) keys.set(key);*/ }
 
 	bool restart = false;
 private:
-
-	static std::bitset<256> pressedButtons;
-	static std::bitset<256> releasedButtons;
-	static std::bitset<256> heldButtons;
-	std::bitset<256> keys;
 
 	Surface* screen;
 
@@ -112,8 +103,8 @@ private:
 
 	float inverseMouseWheel = -1.f; // -1.f - scroll down to move down, 1.f - scroll up to move down
 	float toScroll = 0.f;
-	float scrollButtonSpeed = 75.f;
-	float scrollWheelSpeed = 20.f;
+	float scrollButtonSpeed = 1000.f;
+	float scrollWheelSpeed = 15.f;
 	int scrolled = 0;
 
 	//UI player data
@@ -148,6 +139,7 @@ private:
 	void initGameManager();
 	void initCollisionManager();
 	void initAnimators();
+	void initInput();
 	void initButtons();
 
 	void enterState(GameState state);

@@ -33,6 +33,8 @@ Player::~Player()
 
 void Player::initInputs()
 {
+    //Written with Jeremiah's help
+    
     //Forward
     Input::addButtonCallback("Forward", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
         {
@@ -47,12 +49,10 @@ void Player::initInputs()
             bool w = keyboard.getLastState().W;
             bool up = keyboard.getLastState().Up;
 
-            //std::cout << rt << ", " << w << ", " << up << std::endl;
-
             return rt || leftStickUp || w || up;
         });
 
-    //Left Rotation
+    //Rotation
     Input::addAxisCallback("Rotate", [](std::span<const GamepadStateTracker> gamepads, const KeyboardStateTracker& keyboard, const MouseStateTracker&)
         {
             float dPad = 0.0f;
@@ -228,7 +228,7 @@ void Player::renderShipPart(std::shared_ptr<Tmpl8::Sprite> sprite, Tmpl8::Surfac
     int width = static_cast<int>(size.x);
     int height = static_cast<int>(size.y);
 
-    //center = { size.x / 2.f, size.y };
+    //Render a ship part in 4 corners of the screen
 
     auto v1 = getVertices(sprite, position);
     auto v2 = getVertices(sprite, Tmpl8::vec2{ static_cast<float>(fmod(x + width + ScreenWidth, ScreenWidth) - width), static_cast<float>(fmod(y + height + ScreenHeight, ScreenHeight) - static_cast<double>(height)) });
@@ -309,8 +309,6 @@ void Player::rotate(float angle, float deltaTime)
     direction.y = -cos;
 
     direction.normalize();
-
-    //std::cout << direction.x << ", " << direction.y << "\n";
 }
 
 void Player::onCollisionEnter(std::shared_ptr<Object> object)
