@@ -106,7 +106,7 @@ private:
 
 	float rotationSpeed = 200.f;
 
-	//Upgrade engie
+	//Upgrade engine
 	bool upgradedEngine = false;
 
 	//Upgrade weapon

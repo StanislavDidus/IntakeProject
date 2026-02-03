@@ -50,6 +50,7 @@ struct CollisionHelper
 			auto objVerticies = target->getVerticesPosition();
 			auto colVerticies = col->getVerticesPosition();
 
+			//Project each vertex on each axes
 			float min = objVerticies[0].dot(axis), max = min;
 			for (int i = 1; i < 4; i++)
 			{
