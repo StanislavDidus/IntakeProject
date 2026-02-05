@@ -26,6 +26,9 @@ enum class GameState
 	NONE, MENU, GAME, SCORE
 };
 
+/// <summary>
+/// Structure that is used to store run data after of a player after each game.
+/// </summary>
 struct RunData
 {
 	int spriteIndex; //Index in an array

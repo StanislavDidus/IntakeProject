@@ -13,17 +13,8 @@ int FrameAnimation::play(float deltaTime)
 	{
 		timer = 0.f;
 
-		/*int spriteFrame = sprite->getCurrentFrame();
-		if (spriteFrame < firstFrame || spriteFrame > lastFrame) currentFrame = firstFrame;
-		else currentFrame = spriteFrame;
-
 		currentFrame++;
 		if (currentFrame > lastFrame) currentFrame = firstFrame;
-		sprite->SetFrame(currentFrame);*/
-
-		currentFrame++;
-		if (currentFrame > lastFrame) currentFrame = firstFrame;
-		//sprite->SetFrame(currentFrame);
 		
 	}
 	return currentFrame;
@@ -50,10 +41,6 @@ int FrameCycledAnimation::play(float deltaTime)
 	{
 		timer = 0.f;
 
-		//sprite->SetFrame(currentFrame);
-
-		//std::cout << currentFrame << "\n";
-
 		currentFrame++;
 
 		if (currentFrame > lastFrame)
@@ -67,7 +54,6 @@ int FrameCycledAnimation::play(float deltaTime)
 		}
 	}
 
-	//std::cout << currentFrame << "\n";
 	return currentFrame;
 }
 
@@ -80,7 +66,9 @@ int FrameCycledAnimation::stop()
 		return 0;
 	}
 	else
+	{
 		return currentFrame;
+	}
 }
 
 void FrameCycledAnimation::setBaseFrame()

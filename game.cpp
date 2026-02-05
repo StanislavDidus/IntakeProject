@@ -359,7 +359,8 @@ namespace Tmpl8
 		std::ifstream data("data.bin", std::ios::binary);
 		if (!data)
 		{
-			std::cerr << "ERROR: Could not open file for reading\n";
+			//I don't need to output ERROR here because the program expects that this file might not exist.
+			//For example when you run this game for the first time
 			return;
 		}
 

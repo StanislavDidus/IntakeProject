@@ -24,8 +24,8 @@ struct unordered_pair
 class CollisionManager
 {
 public:
-	CollisionManager();
-	virtual ~CollisionManager();
+	CollisionManager() = default;
+	~CollisionManager() = default;
 
 	void checkCollision(std::shared_ptr<GameManager> gameManager, float deltaTime);
 	void render(Tmpl8::Surface& screen);

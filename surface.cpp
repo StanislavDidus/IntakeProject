@@ -506,11 +506,14 @@ namespace Tmpl8 {
 	//Code taken from: https://github.com/3dgep/rasterizer/blob/main/graphics/src/Rasterizer.cpp
 	void Sprite::DrawScaledRotated(const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3, Surface& screen)
 	{
+		//Create screen and object AABBs
 		AABB dst = AABB{ 0, 0, ScreenWidth - 1, ScreenHeight - 1 };
 		AABB src = AABB{ v0.position, v1.position, v2.position, v3.position };
 
+		//If they do not intersect then we don't need to render anything
 		if (!dst.intersects(src)) return;
 
+		//Clamp screen to the object
 		dst.clamp(src);
 
 		int minX = static_cast<int>(dst.x);
@@ -518,6 +521,7 @@ namespace Tmpl8 {
 		int maxX = static_cast<int>(dst.x + dst.width);
 		int maxY = static_cast<int>(dst.y + dst.height);
 
+		//Find starting point
 		Tmpl8::vec2 p = { static_cast<float>(minX), static_cast<float>(minY) };
 
 		Edge edges[2]
@@ -526,14 +530,16 @@ namespace Tmpl8 {
 			{v2.position, v3.position, v0.position, p}
 		};
 
-		Vertex verts[4]
+		const Vertex verts[4]
 		{
 			v0, v1, v2, v3
 		};
 
-		uint32_t indicies[6]
+		const uint32_t indices[6]
 		{
+			//Vertex indices for the first edge
 			0, 1, 2,
+			//Indices for the second edge
 			2, 3, 0
 		};
 
@@ -548,10 +554,12 @@ namespace Tmpl8 {
 
 					if (e.inside())
 					{
-						uint32_t i0 = indicies[i * 3 + 0];
-						uint32_t i1 = indicies[i * 3 + 1];
-						uint32_t i2 = indicies[i * 3 + 2];
+						//Find indices of 3 points
+						uint32_t i0 = indices[i * 3 + 0];
+						uint32_t i1 = indices[i * 3 + 1];
+						uint32_t i2 = indices[i * 3 + 2];
 
+						//Find vertices by using these indices
 						const Vertex& a = verts[i0];
 						const Vertex& b = verts[i1];
 						const Vertex& c = verts[i2];
@@ -585,12 +593,10 @@ namespace Tmpl8 {
 		float sin = std::sin(radians);
 		float cos = std::cos(radians);
 
-		//int cx = width / 2;
-		//int cy = height / 2;
-
 		int sx = pixelX - spriteX - centerX;
 		int sy = pixelY - spriteY - centerY;
 
+		//Use rotation matrix to find position of a pixel before rotation
 		float rx = float(sx) * cos + float(sy) * sin + float(centerX);
 		float ry = float(-sx) * sin + float(sy) * cos + float(centerY);
 

@@ -29,12 +29,6 @@ void Asteroid::update(float deltaTime)
 	applyVelocity(deltaTime);
 
 	hpBar->setPosition({position.x + size.x / 2.f - static_cast<float>(barWidth) / 2.f, position.y - 5.f});
-
-	//if (x >= ScreenWidth) x = 0;
-	//if (y >= ScreenHeight) y = 0;
-
-	//if (x <= static_cast<float>(-width)) x = ScreenWidth - static_cast<float>(width);
-	//if (y <= static_cast<float>(-height)) y = ScreenHeight - static_cast<float>(height);
 }
 
 void Asteroid::render(Tmpl8::Surface& screen)

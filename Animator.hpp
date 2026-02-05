@@ -13,6 +13,7 @@ public:
 	Animation(std::shared_ptr<Tmpl8::Sprite> sprite) : sprite(sprite) {}
 	virtual ~Animation() {}
 
+	//Function returns the index of a current frame
 	virtual int play(float deltaTime) = 0;
 
 	std::shared_ptr<Tmpl8::Sprite> getSprite() const

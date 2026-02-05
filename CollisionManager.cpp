@@ -1,17 +1,9 @@
 #include "CollisionManager.hpp"
+
+#include <algorithm>
 #include "Functions.hpp"
 #include "CollisionHelper.hpp"
 #include "GameManager.hpp"
-
-CollisionManager::CollisionManager()
-{
-	
-}
-
-CollisionManager::~CollisionManager()
-{
-	
-}
 
 void CollisionManager::checkCollision(std::shared_ptr<GameManager> gameManager, float deltaTime)
 {
@@ -189,7 +181,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 	//Find minimum size bounding box that can fit intersection area
 	Tmpl8::vec2 min{};
 	Tmpl8::vec2 max{};
-	if (intersectionPoints.size() > 0)
+	if (!intersectionPoints.empty())
 	{
 		min = { intersectionPoints[0] };
 		max = { intersectionPoints[0] };
@@ -197,11 +189,11 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 		for (int i = 1; i < intersectionPoints.size(); i++)
 		{
 			auto& intersection = intersectionPoints[i];
-			if (intersection.x < min.x) min.x = intersection.x;
-			if (intersection.y < min.y) min.y = intersection.y;
+			min.x = std::min(intersection.x, min.x);
+			min.y = std::min(intersection.y, min.y);
 
-			if (intersection.x > max.x) max.x = intersection.x;
-			if (intersection.y > max.y) max.y = intersection.y;
+			max.x = std::max(intersection.x, max.x);
+			max.y = std::max(intersection.y, max.y);
 		}
 	}
 
@@ -217,7 +209,7 @@ Tmpl8::vec4 CollisionManager::getIntersection(std::shared_ptr<Object>  target, s
 void CollisionManager::SendCollisionEvents(std::shared_ptr<Object>  A, std::shared_ptr<Object>  B, bool isCollision, float deltaTime)
 {
 	unordered_pair<std::shared_ptr<Object>> pair{ A,B };
-	auto it = std::find(collisions.begin(), collisions.end(), pair);
+	auto it = std::ranges::find(collisions, pair);
 
 	if (isCollision)
 	{
