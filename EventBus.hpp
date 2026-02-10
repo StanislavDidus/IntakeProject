@@ -17,11 +17,9 @@ enum class EventType
 	KILL_ALL,
 };
 
-class Listener { };
-
 struct Event
 {
-	Listener* subscriber;
+	int caller_id;
 	std::function<void()> function;
 };
 
@@ -34,17 +32,19 @@ public:
 		return instance;
 	}
 
+	// Each object receives unique called_id (int) to then unsubscribe from an event
 	template<EventType T>
-	void subscribe(Listener* l, const std::function<void()>& func)
+	int subscribe(const std::function<void()>& func)
 	{
-		events[T].emplace_back(l, func);
+		events[T].emplace_back(callers, func);
+		return callers++;
 	}
 
 	template<EventType T>
-	void unsubscribe(Listener* l)
+	void unsubscribe(int caller_id)
 	{
 		auto& vector = events[T];
-		vector.erase(std::remove_if(vector.begin(), vector.end(), [l](const Event& e) { return e.subscriber == l; }), vector.end());
+		vector.erase(std::remove_if(vector.begin(), vector.end(), [caller_id](const Event& e) { return e.caller_id == caller_id; }), vector.end());
 	}
 
 	template<EventType T>
@@ -68,5 +68,7 @@ public:
 private:
 	std::unordered_map<EventType, std::vector<Event>> events;
 	std::queue<Event> eventQueue;
+	//The number of objects subscribed for any event
+	int callers = 0;
 };
 

@@ -192,6 +192,9 @@
     <ClInclude Include="input\Touch.hpp">
       <Filter>include\Input</Filter>
     </ClInclude>
+    <ClInclude Include="EventSubscriber.hpp">
+      <Filter>include\Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

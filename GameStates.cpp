@@ -31,7 +31,7 @@ namespace Tmpl8
 		case GameState::GAME:
 			// -- Init game -- //
 
-			EventBus::Get().subscribe<EventType::GAMEOVER>(this, [this] {restart = true; assetManager->getSound(SoundName::GAME_OVER).replay(); });
+			caller_id = EventBus::Get().subscribe<EventType::GAMEOVER>([this] {restart = true; assetManager->getSound(SoundName::GAME_OVER).replay(); });
 
 			initCollisionManager();
 			initGameManager();
@@ -61,10 +61,8 @@ namespace Tmpl8
 
 			std::time_t t = std::time(0);
 			std::tm* now = std::localtime(&t);
-
-			runData.saveTimeDay = now->tm_mday;
-			runData.saveTimeMonth = now->tm_mon + 1;
-			runData.saveTimeYear = now->tm_year + 1900;
+				
+			runData.time_point = std::chrono::system_clock::now();
 					
 			runData.saveTimeHours = now->tm_hour;
 			runData.saveTimeMinutes = now->tm_min;
@@ -76,8 +74,7 @@ namespace Tmpl8
 			runDataVector.push_back(runData);
 
 			// -- Destroy all game objects -- //
-			EventBus::Get().unsubscribe<EventType::GAMEOVER>(this);
-
+			EventBus::Get().unsubscribe<EventType::GAMEOVER>(caller_id);
 			gameManager = nullptr;
 			collisionManager = nullptr;
 			break;
@@ -274,10 +271,11 @@ namespace Tmpl8
 			std::stringstream dayMonthYearText;
 
 			//Add dates to the stream and also include '0' before numbers that are less than 10
+			const std::chrono::year_month_day ymd = std::chrono::floor<std::chrono::days>(runData.time_point);
 			dayMonthYearText
-				<< std::setw(2) << std::setfill('0') << data.saveTimeDay << '/'
-				<< std::setw(2) << std::setfill('0') << data.saveTimeMonth << '/'
-				<< std::setw(4) << std::setfill('0') << data.saveTimeYear;
+				<< std::setw(2) << std::setfill('0') << static_cast<unsigned>(ymd.day()) << '/'
+				<< std::setw(2) << std::setfill('0') << static_cast<unsigned>(ymd.month()) << '/'
+				<< std::setw(4) << std::setfill('0') << static_cast<int>(ymd.year());
 
 			screen.PrintScaled(&dayMonthYearText.str()[0], xPos, yPos + scoreYSpace, scoreTextScale, scoreTextScale, 0xFFFFFF);
 

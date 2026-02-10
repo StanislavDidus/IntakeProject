@@ -22,7 +22,7 @@ enum class PlayerState
 	SUPERSHOOT
 };
 
-class Player : public Object, public Listener
+class Player : public Object
 {
 public:
 	Player

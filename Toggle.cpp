@@ -3,21 +3,21 @@
 Toggle::Toggle
 (
 	std::shared_ptr<Tmpl8::Sprite> sprite,
-	const Tmpl8::vec2& position,
-	const Tmpl8::vec2& size,
-	const std::function<void()>& off,
-	const std::function<void()>& on,
+	Tmpl8::vec2 position,
+	Tmpl8::vec2 size,
+	std::function<void()> off,
+	std::function<void()> on,
 	bool isOn) :
-	UIElement(sprite, position, size), isOn(isOn), on(on), off(off)
+	UIElement(sprite, position, size), isOn(isOn), on(std::move(on)), off(std::move(off))
 {
 	if (isOn)
 	{
-		on();
+		this->on();
 		sprite->SetFrame(1);
 	}
 	else
 	{
-		off();
+		this->off();
 		sprite->SetFrame(0);
 	}
 }

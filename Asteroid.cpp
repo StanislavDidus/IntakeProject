@@ -29,6 +29,7 @@ void Asteroid::update(float deltaTime)
 	applyVelocity(deltaTime);
 
 	hpBar->setPosition({position.x + size.x / 2.f - static_cast<float>(barWidth) / 2.f, position.y - 5.f});
+	hpBar->setValue(currentHealth);
 }
 
 void Asteroid::render(Tmpl8::Surface& screen)
@@ -39,7 +40,7 @@ void Asteroid::render(Tmpl8::Surface& screen)
 	std::vector<Vertex> v = getVertices();
 	sprite->DrawScaledRotated(v[0], v[1], v[2], v[3], screen);
 
-	hpBar->render(screen, currentHealth);
+	hpBar->render(screen);
 
 #ifdef _DEBUG
 	Tmpl8::vec2i posi = { static_cast<int>(position.x), static_cast<int>(position.y) };

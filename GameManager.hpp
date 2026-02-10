@@ -15,13 +15,14 @@
 #include "CollisionManager.hpp"
 #include "Particle.hpp"
 #include "AssetManager.hpp"
+#include "EventSubscriber.hpp"
 
 namespace Tmpl8
 {
 	class Game;
 }
 
-class GameManager : public Listener
+class GameManager
 {
 public:
 	GameManager(std::shared_ptr<AssetManager> assetManager);
@@ -48,6 +49,12 @@ private:
 	void spawnSheep(Tmpl8::vec2 pos, Tmpl8::vec2 size, Tmpl8::vec2 direction, float angle);
 	void divideAsteroid(std::shared_ptr<Asteroid> asteroid);
 
+	//RAII Event subscribers that automatically unsubscribe from the events 
+	EventSubscriber<EventType::PLAYER_USED_UPGRADE> event_subscriber1;
+
+#ifdef _DEBUG
+	EventSubscriber<EventType::KILL_ALL> event_subscriber2;
+#endif
 		
 	float spawnRate = 2.f;
 	float spawnTimer = 2.f;

@@ -18,6 +18,7 @@
 #include <Audio/Device.hpp>
 #include "EventBus.hpp"
 #include "Toggle.hpp"
+#include "EventSubscriber.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -33,9 +34,7 @@ struct RunData
 {
 	int spriteIndex; //Index in an array
 
-	int saveTimeDay;
-	int saveTimeMonth;
-	int saveTimeYear;
+	std::chrono::time_point<std::chrono::system_clock> time_point;
 	int saveTimeHours;
 	int saveTimeMinutes;
 
@@ -47,7 +46,7 @@ struct RunData
 namespace Tmpl8 {
 
 class Surface;
-class Game : public Listener
+class Game
 {
 public:
 	void SetTarget( Surface* surface ) { screen = surface; }
@@ -69,7 +68,10 @@ private:
 
 	GameState currentState = GameState::NONE;
 
+	//Run information(score, time) of the current run
 	RunData runData;
+
+	//Previous runs are stored here
 	std::vector<RunData> runDataVector;
 
 	std::shared_ptr<GameManager> gameManager;
@@ -78,6 +80,10 @@ private:
 	std::shared_ptr<AssetManager> assetManager;
 
 	std::unique_ptr<Animator> animator;
+
+	//Events
+	//ID used to unsubscribe from an event
+	int caller_id;
 
 	//UI Elements
 	std::vector<std::shared_ptr<Toggle>> toggles;

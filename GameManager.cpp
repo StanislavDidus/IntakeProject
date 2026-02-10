@@ -6,21 +6,13 @@
 #include "Random.hpp"
 
 GameManager::GameManager(std::shared_ptr<AssetManager> assetManager) :
-        assetManager(assetManager)
+    assetManager(assetManager)
+    , event_subscriber1([this] { timerManager->addTimer(upgradeSpawnTime, [this] {spawnUpgrade(); }); })
+#ifdef _DEBUG
+    , event_subscriber2([this] { objects.clear(); })
+#endif
 {
     initTimerManager();
-
-    EventBus::Get().subscribe<EventType::PLAYER_USED_UPGRADE>(this, [this] 
-        {
-            timerManager->addTimer(upgradeSpawnTime, [this] {spawnUpgrade(); });
-        });
-
-#ifdef _DEBUG
-    EventBus::Get().subscribe<EventType::KILL_ALL>(this, [this] 
-        {
-            objects.clear();
-        });
-#endif
 
     //Spawn first upgrade
     timerManager->addTimer(upgradeSpawnTime, [this] {spawnUpgrade(); });
@@ -28,11 +20,6 @@ GameManager::GameManager(std::shared_ptr<AssetManager> assetManager) :
 
 GameManager::~GameManager()
 {
-    EventBus::Get().unsubscribe<EventType::PLAYER_USED_UPGRADE>(this);
-
-#ifdef _DEBUG
-    EventBus::Get().unsubscribe<EventType::KILL_ALL>(this);
-#endif
 }
 
 void GameManager::initPlayer()
