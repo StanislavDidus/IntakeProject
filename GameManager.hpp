@@ -61,7 +61,7 @@ private:
 
 	std::unique_ptr<TimerManager> timerManager;
 
-	//Particles
+	//Particles. Usually only 3-4 on the screen
 	std::vector<std::shared_ptr<Particle>> particles;
 
 

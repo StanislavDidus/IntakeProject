@@ -1,14 +1,8 @@
 #pragma once
 
-#include <set>
 #include <memory>
 #include <unordered_map>
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <bitset>
 #include <chrono>
-#include <ctime>
 
 #include "AssetManager.hpp"
 #include "Player.hpp"
@@ -16,11 +10,7 @@
 #include "CollisionManager.hpp"
 #include "Button.hpp"
 #include <Audio/Device.hpp>
-#include "EventBus.hpp"
 #include "Toggle.hpp"
-#include "EventSubscriber.hpp"
-
-#include <SDL2/SDL.h>
 
 enum class GameState
 {
@@ -124,7 +114,7 @@ private:
 	float gameTimer = 0.f;
 
 	// -- Background asteroids -- //
-	//Asterpoid and frame
+	//Asteroid and frame
 	std::unordered_map<std::shared_ptr<Object>, int> bgAsteroids;
 
 	void initBgAsteroids();
@@ -165,7 +155,7 @@ private:
 	void renderGame(Tmpl8::Surface& screen);
 	void renderScore(Tmpl8::Surface& screen);
 
-	void DebugContol(float deltaTime);
+	void DebugControl(float deltaTime);
 };
 
 }; // namespace Tmpl8

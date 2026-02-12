@@ -160,6 +160,8 @@ namespace Tmpl8
 	void Game::Shutdown()
 	{
 		saveData();
+		saveData();
+
 	}
 
 	// -----------------------------------------------------------
@@ -187,7 +189,7 @@ namespace Tmpl8
 
 		if (restart) Restart(); restart = false;
 #ifdef _DEBUG
-		DebugContol(deltaTime);
+		DebugControl(deltaTime);
 
 		if (currentState == GameState::GAME)
 			collisionManager->renderDEBUG(gameManager, *screen);
@@ -252,7 +254,7 @@ namespace Tmpl8
 		}
 	}
 
-	void Game::DebugContol(float deltaTime)
+	void Game::DebugControl(float deltaTime)
 	{
 		if (Input::getButton("Restart"))
 		{
